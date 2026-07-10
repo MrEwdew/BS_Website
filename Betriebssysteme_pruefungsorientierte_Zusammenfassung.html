@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Betriebssysteme - prüfungsorientierte Zusammenfassung</title>
+<link rel="icon" href="data:,">
+<style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #152033;
+  --muted: #5d6678;
+  --line: #d9deea;
+  --accent: #1f5eff;
+  --accent2: #0f766e;
+  --hot: #b42318;
+  --mid: #925200;
+  --low: #475467;
+  --code: #f0f3f8;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef3ff 0%, var(--bg) 260px);
+  line-height: 1.55;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: grid; grid-template-columns: 280px 1fr; gap: 28px; max-width: 1320px; margin: 0 auto; padding: 24px; }
+.sidebar { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow: auto; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); box-shadow: 0 10px 32px rgba(21,32,51,.08); }
+.sidebar h2 { font-size: 14px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.sidebar nav { display: grid; gap: 7px; }
+.sidebar a { display: block; padding: 7px 9px; border-radius: 10px; color: #283044; font-size: 14px; }
+.sidebar a:hover { background: #eef3ff; text-decoration: none; }
+.main { min-width: 0; }
+.hero { padding: 34px 34px 26px; border-radius: 26px; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(21,32,51,.10); margin-bottom: 24px; }
+.hero h1 { margin: 0; font-size: clamp(28px, 5vw, 50px); line-height: 1.05; letter-spacing: -0.04em; }
+.hero p { max-width: 850px; font-size: 18px; color: var(--muted); margin: 14px 0 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.badge { border: 1px solid var(--line); background: #f8fafc; padding: 7px 10px; border-radius: 999px; font-size: 13px; color: #344054; }
+section { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 28px; margin: 0 0 22px; box-shadow: 0 8px 26px rgba(21,32,51,.05); }
+section h2 { margin: 0 0 18px; font-size: 28px; letter-spacing: -0.025em; }
+h3 { margin: 26px 0 10px; font-size: 20px; }
+h4 { margin: 18px 0 8px; font-size: 16px; }
+p { margin: 10px 0; }
+ul, ol { padding-left: 24px; }
+li { margin: 5px 0; }
+.table-wrap { overflow-x: auto; margin: 14px 0 18px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 10px 11px; vertical-align: top; }
+th { text-align: left; background: #f1f5ff; color: #26324a; }
+tr:nth-child(even) td { background: #fcfdff; }
+code { font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 6px; }
+pre { overflow: auto; background: #101828; color: #f2f4f7; padding: 16px; border-radius: 14px; font-size: 13px; line-height: 1.45; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.callout { border-left: 5px solid var(--accent); background: #f5f8ff; padding: 13px 15px; border-radius: 14px; margin: 16px 0; }
+.callout.warn { border-left-color: var(--mid); background: #fff8eb; }
+.callout.danger { border-left-color: var(--hot); background: #fff3f1; }
+.callout.good { border-left-color: var(--accent2); background: #ecfdf8; }
+.pill { display:inline-block; font-weight:700; border-radius:999px; padding: 2px 9px; font-size: 12px; }
+.pill.hot { color:#fff; background:var(--hot); }
+.pill.mid { color:#fff; background:var(--mid); }
+.pill.low { color:#fff; background:var(--low); }
+.grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.card { border: 1px solid var(--line); background: #fbfcff; border-radius: 16px; padding: 16px; }
+.card h3, .card h4 { margin-top: 0; }
+.small { font-size: 13px; }
+.muted { color: var(--muted); }
+.checklist li { list-style: none; position: relative; padding-left: 28px; }
+.checklist li::before { content: "□"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+.source-list { columns: 2; font-size: 13px; color: var(--muted); }
+.klausurbox { border: 1px dashed #b6c3e0; background: #fbfdff; border-radius: 14px; padding: 13px 15px; margin: 14px 0; }
+.klausurbox strong { color: #20315f; }
+.diagram { overflow-x: auto; border: 1px solid var(--line); background: #fbfcff; border-radius: 16px; padding: 14px; margin: 16px 0 18px; }
+.diagram h4 { margin: 0 0 8px; color: #20315f; }
+.diagram p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+.diagram svg { width: 100%; min-width: 620px; height: auto; display: block; }
+.diagram .node { fill: #ffffff; stroke: #23407a; stroke-width: 2; }
+.diagram .node-hot { fill: #fff3f1; stroke: #b42318; stroke-width: 2; }
+.diagram .node-good { fill: #ecfdf8; stroke: #0f766e; stroke-width: 2; }
+.diagram .node-mid { fill: #fff8eb; stroke: #925200; stroke-width: 2; }
+.diagram .edge { stroke: #344054; stroke-width: 2.2; fill: none; }
+.diagram .edge-hot { stroke: #b42318; stroke-width: 2.4; fill: none; }
+.diagram .label { font: 600 14px Inter, Arial, sans-serif; fill: #152033; }
+.diagram .label-on-dark { font: 700 14px Inter, Arial, sans-serif; fill: #ffffff; }
+.diagram .small-label { font: 500 12px Inter, Arial, sans-serif; fill: #475467; }
+.diagram .axis { stroke: #98a2b3; stroke-width: 1; }
+.diagram .gantt-a { fill: #1f5eff; }
+.diagram .gantt-b { fill: #0f766e; }
+.diagram .gantt-c { fill: #925200; }
+.schedule-method { display: block; border: 1px solid #999; background: #fff; padding: 10px 16px; margin: 14px 0 18px; font-family: "Times New Roman", Times, serif; color: #000; }
+.method-step { display: grid; grid-template-columns: 28px 145px 1fr; gap: 8px; align-items: baseline; border: 0; background: transparent; border-radius: 0; padding: 0; margin: 6px 0; }
+.method-step span { display: inline; width: auto; height: auto; border-radius: 0; background: transparent; color: #000; font: 700 15px "Times New Roman", Times, serif; margin: 0; }
+.method-step span::after { content: "."; }
+.method-step strong { display: block; color: #000; margin: 0; font: 700 15px "Times New Roman", Times, serif; }
+.method-step p { margin: 0; color: #000; font: 15px/1.25 "Times New Roman", Times, serif; }
+.schedule-example { border: 1px solid #999; background: #fff; border-radius: 0; padding: 24px 34px 28px; margin: 18px 0; color: #000; font-family: "Times New Roman", Times, serif; }
+.schedule-example h4 { margin: 0 0 16px; color: #000; font: 700 16px "Times New Roman", Times, serif; }
+.schedule-head { display: block; margin-bottom: 12px; }
+.schedule-head p { margin: 8px 0 0; color: #000; font: 15px/1.25 "Times New Roman", Times, serif; max-width: 760px; }
+.task-strip { display: block; margin: 10px 0 18px; }
+.exam-task-table { border-collapse: collapse; table-layout: fixed; width: min(620px, 100%); margin: 10px 0 18px 8px; color: #000; font: 15px "Times New Roman", Times, serif; }
+.exam-task-table th, .exam-task-table td { border: 1px solid #777; padding: 2px 8px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.exam-task-table th { font-weight: 700; background: #fff; }
+.exam-question { margin: 14px 0 0 8px; color: #000; font: 15px/1.25 "Times New Roman", Times, serif; max-width: 760px; }
+.exam-help { margin: 16px 0 4px 8px; color: #000; font: 700 15px "Times New Roman", Times, serif; }
+.rule-chip { display: block; border: 0; background: transparent; border-radius: 0; padding: 0; font: 700 15px "Times New Roman", Times, serif; color: #000; }
+.plot-scroll { display: block; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+.coord-board-wrap { width: 760px; max-width: none; border: 0; background: #fff; border-radius: 0; padding: 0; box-shadow: none; }
+.coord-board { width: 100%; height: auto; display: block; }
+.coord-board .exam-axis { stroke: #000; stroke-width: 1.8; marker-end: url(#schedule-axis-arrow); }
+.coord-board .exam-grid { stroke: #000; stroke-width: 1; stroke-dasharray: 1 3; }
+.coord-board .exam-tick { stroke: #000; stroke-width: 1.5; }
+.coord-board .exam-label { font: 700 17px "Times New Roman", Times, serif; fill: #000; }
+.coord-board .exam-small { font: 14px "Times New Roman", Times, serif; fill: #000; }
+.coord-board .exam-tiny { font: 11px "Times New Roman", Times, serif; fill: #000; }
+.coord-board .exam-bar { stroke: #000; stroke-width: 1.5; }
+.coord-board .exam-bar-text { font: 700 13px "Times New Roman", Times, serif; fill: #000; }
+.coord-board .exam-deadline { stroke: #000; stroke-width: 1; stroke-dasharray: 4 4; }
+.coord-board .exam-mark { font: 700 18px "Times New Roman", Times, serif; fill: #000; }
+.board-caption { margin: 8px 0 0 8px; color: #000; font: 15px/1.25 "Times New Roman", Times, serif; }
+.board-note { border: 1px solid #999; background: #fff; border-radius: 0; padding: 8px 10px; margin: 14px 0 0 8px; font: 15px/1.25 "Times New Roman", Times, serif; color: #000; }
+.board-note strong { color: #000; }
+.decision-strip { display: block; margin: 14px 0 0 8px; font-family: "Times New Roman", Times, serif; }
+.decision { border: 0; background: transparent; border-radius: 0; padding: 0; margin: 8px 0; font-size: 15px; color: #000; }
+.decision strong { color: #000; }
+@media (max-width: 940px) {
+  .layout { grid-template-columns: 1fr; padding: 14px; }
+  .sidebar { position: static; max-height: none; }
+  .grid { grid-template-columns: 1fr; }
+  .schedule-head { display: block; }
+  .rule-chip { display: inline-block; margin-top: 8px; }
+  .schedule-method, .decision-strip { grid-template-columns: 1fr; }
+  section, .hero { padding: 20px; }
+  .source-list { columns: 1; }
+}
+@media print {
+  body { background: #fff; }
+  .layout { display: block; max-width: none; padding: 0; }
+  .sidebar { display: none; }
+  section, .hero { box-shadow: none; border: 1px solid #bbb; page-break-inside: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <h2>Navigation</h2>
+  <nav>
+    <a href="index.html">Lernpaket-Start</a>
+    <a href="#start">Start / Benutzung</a>
+    <a href="#prioritaeten">0. Prioritäten</a>
+    <a href="#formeln">Formeln</a>
+    <a href="#bs">1. Betriebssystem</a>
+    <a href="#hardware">2. Hardware / Interrupts</a>
+    <a href="#prozesse">3. Prozesse</a>
+    <a href="#scheduling">4. Scheduling</a>
+    <a href="scheduling_trainer.html">Scheduling-Trainer</a>
+    <a href="#threads">5. Threads</a>
+    <a href="#sync">6. Synchronisation</a>
+    <a href="synchronisation_trainer.html">Synchronisations-Trainer</a>
+    <a href="#ipc">7. Kommunikation</a>
+    <a href="#deadlocks">8. Deadlocks</a>
+    <a href="deadlock_trainer.html">Deadlock-Trainer</a>
+    <a href="#speicher">9. Speicherverwaltung</a>
+    <a href="speicher_trainer.html">Speicher-Trainer</a>
+    <a href="#dateien">10. Dateisysteme</a>
+    <a href="dateisystem_trainer.html">Dateisystem-Trainer</a>
+    <a href="mini_klausur_trainer.html">Mini-Klausurmodus</a>
+    <a href="#io">11. E/A-Notfallwissen</a>
+    <a href="#antworten">12. Antwortmuster</a>
+    <a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a>
+    <a href="originalklausur_check.html">Originalklausur-Check</a>
+    <a href="fehlerlog.html">Fehlerlog</a>
+    <a href="#glossar">13. Glossar</a>
+    <a href="#checkliste">14. Checkliste</a>
+    <a href="#quellen">Quellen</a>
+  </nav>
+</aside>
+<main class="main">
+<header class="hero" id="start">
+  <h1>Betriebssysteme<br>prüfungsorientierte Zusammenfassung</h1>
+  <p>Aus den bereitgestellten Folien, Klausuren und Übungsfragen. Fokus: Was du in der Klausur reproduzieren, rechnen und begründen musst.</p>
+  <div class="meta-row">
+    <span class="badge">HTML-Einzeldokument</span>
+    <span class="badge">Print-freundlich</span>
+    <span class="badge">Lernprioritäten + Formeln + Fallen</span>
+    <span class="badge">Stand: 08.07.2026</span>
+  </div>
+</header>
+
+<section id="prioritaeten">
+  <h2>0. Prioritäten für die Klausur</h2>
+  <aside class="callout danger"><strong>Brutale Wahrheit:</strong> Wenn du nur liest, aber keine Zeitdiagramme, Page-Replacement-Tabellen und FAT/I-Node-Rechnungen aktiv rechnest, täuschst du dich selbst. Betriebssysteme ist keine reine Auswendiglernklausur.</aside>
+  <div class="table-wrap"><table class=""><thead><tr><th>Priorität</th><th>Themenblock</th><th>Was du können musst</th></tr></thead><tbody><tr><td><span class="pill hot">A++</span></td><td><strong>Scheduling / Echtzeit-Scheduling</strong></td><td>Zeitdiagramme zeichnen, Verdrängung erkennen, EDF/RMS anwenden, RMS-Auslastungstest, Prioritätsinvertierung erklären.</td></tr><tr><td><span class="pill hot">A++</span></td><td><strong>Synchronisation + Deadlocks</strong></td><td>Race Condition, kritische Abschnitte, Semaphore/Monitore, Deadlock-Zyklen, Ressourcengraphen, Barriere-Pseudocode.</td></tr><tr><td><span class="pill hot">A++</span></td><td><strong>Speicherverwaltung</strong></td><td>Adressaufteilung, Seiten/Kacheln/Rahmen, Seitentabellen, Page Faults, FIFO/LRU/Clock, Thrashing.</td></tr><tr><td><span class="pill mid">A</span></td><td><strong>Dateisysteme</strong></td><td>FAT/I-Node-Rechnungen, Block-/Cluster-Verbrauch, Belegungsarten, Verzeichnisse, Journaling/VFS.</td></tr><tr><td><span class="pill mid">B</span></td><td><strong>Prozesse/Threads/Kommunikation</strong></td><td>Begriffe sauber unterscheiden, Prozesswechsel, Thread-Vorteile/-Nachteile, IPC-Arten.</td></tr><tr><td><span class="pill low">B-</span></td><td><strong>Grundlagen/Interrupts/E/A</strong></td><td>Rechenzustand, Interrupts, DMA, memory-mapped vs. port-mapped I/O. Nicht ignorieren, weil es in alten Klausuren vorkam.</td></tr><tr><td><span class="pill low">C</span></td><td><strong>Historie/Definitionen</strong></td><td>Nur Standarddefinitionen. Keine Zeit in Details versenken.</td></tr></tbody></table></div>
+  <h3>Grobe Themen-Signale aus den bereitgestellten Klausuren/Übungsfragen</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Thema</th><th>Treffer in Klausur-/Übungsdateien</th><th>Keyword-Treffer</th></tr></thead><tbody><tr><td>Speicherverwaltung</td><td>10/10</td><td>286</td></tr><tr><td>Prozesse/Threads</td><td>9/10</td><td>114</td></tr><tr><td>Scheduling</td><td>8/10</td><td>163</td></tr><tr><td>Dateisysteme</td><td>6/10</td><td>77</td></tr><tr><td>Synchronisation</td><td>7/10</td><td>134</td></tr><tr><td>Kommunikation/IPC</td><td>6/10</td><td>35</td></tr><tr><td>Deadlocks</td><td>7/10</td><td>19</td></tr><tr><td>E/A/Interrupts/DMA</td><td>1/10</td><td>7</td></tr></tbody></table></div><p class="small muted">Hinweis: Basis sind die 10 Klausur-/Übungsdateien im Ordner, nicht die 10 Vorlesungsfolien. Das ist eine grobe Keyword-Auswertung, keine exakte Statistik.</p>
+  <div class="klausurbox"><strong>Lernstrategie:</strong> Erst A++-Blöcke aktiv üben, dann A/B-Theorie sauber formulieren. Rechen- und Ablaufaufgaben bringen die Punkte: <a href="scheduling_trainer.html">Scheduling</a>, <a href="synchronisation_trainer.html">Synchronisation</a>, <a href="deadlock_trainer.html">Deadlocks</a>, <a href="speicher_trainer.html">Speicher</a>, <a href="dateisystem_trainer.html">Dateisysteme</a>. Danach gemischt prüfen: <a href="mini_klausur_trainer.html">Mini-Klausurmodus öffnen</a>. Echte Klausuraufgaben planst du mit dem <a href="originalklausur_check.html">Originalklausur-Check</a>, Fehler sammelst du im <a href="fehlerlog.html">Fehlerlog</a>.</div>
+</section>
+
+  <section id="formeln">
+  <h2>Formelsammlung und Rechenregeln</h2>
+  <div class="table-wrap"><table class=""><thead><tr><th>Thema</th><th>Formel / Regel</th><th>Klausurhinweis</th></tr></thead><tbody><tr><td>Paging: Offset-Bits</td><td><code>offset_bits = log2(Pagegröße in Byte)</code></td><td>Bei 4 KiB = 2<sup>12</sup> Byte → Offset 12 Bit.</td></tr><tr><td>Virtuelle Seiten</td><td><code>Anzahl Seiten = virtueller Adressraum / Pagegröße</code></td><td>Bei 32 Bit und 4 KiB: 2<sup>32</sup> / 2<sup>12</sup> = 2<sup>20</sup> Seiten.</td></tr><tr><td>Physische Rahmen</td><td><code>Anzahl Rahmen = physischer Speicher / Pagegröße</code></td><td>Nur Rahmennummern stehen in Seitentabellen, nicht komplette physische Adressen.</td></tr><tr><td>Seitentabelle</td><td><code>Speicherbedarf = Einträge × Bytes pro Eintrag</code></td><td>Oft riesig → mehrstufige Seitentabellen.</td></tr><tr><td>RMS notwendiges Kriterium</td><td><code>Σ Cᵢ / Pᵢ ≤ 1</code></td><td>Notwendig, aber allein nicht hinreichend.</td></tr><tr><td>RMS Garantie</td><td><code>Σ Cᵢ/Pᵢ &lt; n(2^(1/n)-1)</code></td><td>Hinreichend. n=2: 82,8 %, n=3: 77,9 %, n→∞: ln(2)=69,3 %.</td></tr><tr><td>FAT max. Partition</td><td><code>Einträge × Blockgröße</code> bzw. <code>Einträge × Clustergröße</code></td><td>16-Bit-FAT → 2<sup>16</sup> Einträge. Cluster vergrößern Maximalgröße, aber auch interne Fragmentierung.</td></tr><tr><td>Verkettete Liste ohne Tabelle</td><td><code>Nutzdaten pro Block = Blockgröße - Zeigergröße</code><br><code>Blöcke = ceil(Dateigröße / Nutzdaten pro Block)</code></td><td>Der Zeiger liegt im Datenblock. Belegter Plattenplatz ist trotzdem <code>Blöcke × Blockgröße</code>.</td></tr><tr><td>I-Node max. Dateigröße</td><td><code>(direkte Blöcke + indirekt adressierbare Datenblöcke) × Blockgröße</code></td><td>Wenn nach Nutzdateigröße gefragt ist, Zeigerblöcke nicht als Nutzdaten zählen.</td></tr><tr><td>I-Node Plattenverbrauch</td><td><code>(Datenblöcke + benötigte I-Node-/Zeigerblöcke) × Blockgröße</code></td><td>Wenn nach Platz auf der Festplatte gefragt ist, Verwaltungsblöcke mitzählen, sofern die Aufgabe sie nicht ausdrücklich ignoriert.</td></tr><tr><td>Cache mittlere Zugriffszeit</td><td><code>HitRate·T_cache + MissRate·(T_cache + T_slow)</code><br><code>oder: HitRate·T_cache + MissRate·T_slow</code></td><td>Die zweite Variante gilt, wenn die Aufgabenstellung sagt, dass die Miss-Zeit schon in der Hauptspeicherzeit enthalten ist.</td></tr></tbody></table></div>
+  <div class="klausurbox"><strong>Array über Rahmen:</strong> <code>offset = Startadresse mod Pagegröße</code>, dann <code>Rahmen = floor((offset + Länge - 1) / Pagegröße) + 1</code>. Minimum/Maximum-Frage: Minimum ist <code>ceil(Länge / Pagegröße)</code>, Maximum ist <code>ceil((Pagegröße - 1 + Länge) / Pagegröße)</code>.</div>
+  <div class="klausurbox"><strong>Cache-Mini-Beispiel:</strong> 200 Byte sequentiell lesen, Cacheblock 64 Byte, Cold Cache → <code>ceil(200/64)=4</code> Misses und 196 Hits. Bei <code>T_cache=5 ns</code> und Miss-Zeit bereits in <code>T_RAM=60 ns</code> enthalten: <code>196·5 + 4·60 = 1220 ns</code>, also <code>6,1 ns</code> im Mittel.</div>
+</section>
+
+<section id="bs">
+  <h2>1. Betriebssystem: Begriff, Aufgaben, Schichten</h2>
+  <h3>1.1 Definition</h3>
+  <p>Ein Betriebssystem ist die Softwareschicht zwischen Anwendungen und Hardware. Es verwaltet die Betriebsmittel des Rechners, abstrahiert Hardwaredetails und stellt Programmen ein kontrolliertes Ausführungsmodell bereit.</p>
+  <ul><li><strong>Abstraktion</strong>: Anwendungen sollen nicht direkt mit jeder Hardware-Besonderheit umgehen müssen.</li><li><strong>Verwaltung</strong>: CPU-Zeit, Speicher, Dateien, E/A-Geräte, Prozesse, Threads, Kommunikationsobjekte.</li><li><strong>Schutz</strong>: Prozesse dürfen sich nicht beliebig gegenseitig oder das System zerstören.</li><li><strong>Fairness/Leistung</strong>: Betriebsmittel sollen effizient, berechenbar und je nach Zielsetzung gerecht verteilt werden.</li></ul>
+  <h3>1.2 Typische Aufgabenbereiche</h3>
+  <ul><li>Prozess- und Threadverwaltung: Erzeugen, Beenden, Zustandswechsel, Scheduling.</li><li>Speicherverwaltung: Adressräume, Paging, virtueller Speicher, Schutz.</li><li>Dateisysteme: Dateien, Verzeichnisse, Blockbelegung, Metadaten, Persistenz.</li><li>E/A-Verwaltung: Treiber, Interrupts, DMA, Pufferung.</li><li>Kommunikation und Synchronisation: IPC, Semaphore, Monitore, Shared Memory.</li><li>Sicherheits-/Schutzmechanismen: Rechte, Isolation, kontrollierte Systemaufrufe.</li></ul>
+  <aside class="callout note"><strong>Klausurantwort:</strong> Wenn nach Aufgaben eines Betriebssystems gefragt wird: nicht poetisch werden. Nenne verwaltete Ressourcen und die Abstraktions-/Schutzfunktion.</aside>
+</section>
+
+<section id="hardware">
+  <h2>2. Hardwaregrundlagen, Rechenzustand, Interrupts</h2>
+  <h3>2.1 Von Programm zu Maschine</h3>
+  <ul><li><strong>Compiler</strong>: übersetzt Quellcode in Maschinencode bzw. Objektcode.</li><li><strong>Linker</strong>: verbindet Objektdateien und Bibliotheken zu einem ausführbaren Programm; löst externe Referenzen.</li><li><strong>Loader</strong>: lädt das Programm in den Speicher und startet die Ausführung.</li><li><strong>CPU-Zyklus</strong>: Befehl holen, dekodieren, ausführen; Program Counter zeigt auf nächste Instruktion.</li></ul>
+  <h3>2.2 Register und Rechenzustand</h3>
+  <ul><li><strong>Program Counter / Instruction Pointer</strong>: Adresse des nächsten Befehls.</li><li><strong>Statusregister / PSW</strong>: Flags, Zustand, ggf. Privilegierungsinformationen.</li><li><strong>Stack Pointer</strong>: zeigt auf aktuellen Stackbereich.</li><li><strong>Allgemeine Register</strong>: Operanden, Zwischenwerte, Adressen.</li></ul>
+  <p>Der Rechenzustand eines Prozesses besteht aus den Informationen, die nötig sind, um eine unterbrochene Berechnung später korrekt fortzusetzen. Dazu gehören insbesondere Registerinhalte, Program Counter, Stack Pointer und Verwaltungsinformationen im Prozesskontrollblock.</p>
+  <aside class="callout warn"><strong>Prüfungsfalle:</strong> Bei Prozesswechseln reicht „CPU wechselt“ nicht. Du musst sagen: Zustand von P1 sichern, Zustand von P2 laden, Scheduler/Dispatcher beteiligt, danach läuft P2 an seiner gespeicherten Stelle weiter.</aside>
+  <h3>2.3 Interrupts</h3>
+  <ul><li><strong>Interrupt</strong>: Unterbrechung des laufenden Programms durch Hardware oder Systemereignis.</li><li><strong>Interrupt-Service-Routine</strong>: Code, der das Ereignis behandelt.</li><li><strong>Trap / Exception</strong>: software-/prozessnahe Unterbrechung, z.B. Systemaufruf oder Seitenfehler.</li><li><strong>Sinn</strong>: CPU muss nicht dauernd aktiv auf E/A warten; Ereignisse können asynchron behandelt werden.</li></ul>
+  <h3>2.4 Speicherhierarchie</h3>
+  <ul><li>Von schnell/klein/teuer nach langsam/groß/billig: Register → CPU-Cache → Hauptspeicher → SSD/HDD → externe/Netz-Speicher.</li><li>Caches nutzen Lokalität: Häufig oder bald benötigte Daten sollen in schnelleren Schichten liegen.</li><li>Flüchtig: Register, Cache, RAM. Persistent: SSD/HDD, Flash, optische Medien.</li></ul>
+</section>
+
+<section id="prozesse">
+  <h2>3. Prozesse</h2>
+  <h3>3.1 Prozessbegriff</h3>
+  <p>Ein Prozess ist ein Programm in Ausführung plus sein Ausführungskontext. Ein Programm ist nur statischer Code; ein Prozess hat Zustand, Adressraum, Ressourcen und Verwaltungsdaten.</p>
+  <ul><li><strong>Eigener Adressraum</strong>: Code, Daten, Heap, Stack; Schutz gegen andere Prozesse.</li><li><strong>Ressourcen</strong>: offene Dateien, E/A-Objekte, Rechte, Signalhandler, Umgebungsvariablen.</li><li><strong>PCB / Prozesskontrollblock</strong>: Prozess-ID, Zustand, Registerabbild, Scheduling-Informationen, Speicherinformationen, Ressourcenlisten.</li></ul>
+  <h3>3.2 Prozesszustände</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Zustand</th><th>Bedeutung</th><th>Klausurpunkt</th></tr></thead><tbody><tr><td>Running / Aktiv</td><td>Prozess besitzt gerade die CPU.</td><td>Auf Single-Core ohne Hyperthreading maximal 1 Prozess.</td></tr><tr><td>Ready / Bereit</td><td>Prozess könnte laufen, wartet aber auf CPU-Zuteilung.</td><td>Hier entscheidet der Scheduler; Scheduling-Verfahren unterscheiden sich vor allem beim Zugriff auf die Ready Queue.</td></tr><tr><td>Blocked / Wartend</td><td>Prozess wartet auf Ereignis, z.B. E/A, Semaphore, Nachricht.</td><td>Kann nicht laufen, selbst wenn CPU frei ist.</td></tr></tbody></table></div>
+  <ul><li>Running → Blocked: Prozess wartet auf E/A, Semaphore, Nachricht usw.</li><li>Running → Ready: Verdrängung durch Scheduler, Zeitquantum abgelaufen, höhere Priorität kommt hinzu.</li><li>Ready → Running: Scheduler wählt Prozess aus.</li><li>Blocked → Ready: erwartetes Ereignis tritt ein.</li></ul>
+  <div class="diagram">
+    <h4>Beispielgraph: Prozesszustände</h4>
+    <svg viewBox="0 0 760 320" role="img" aria-label="Prozesszustandsgraph mit Ready, Running und Blocked">
+      <defs><marker id="arrow-proc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker></defs>
+      <rect class="node-good" x="40" y="125" width="120" height="56" rx="10"/>
+      <text class="label" x="100" y="148" text-anchor="middle">New</text>
+      <text class="small-label" x="100" y="166" text-anchor="middle">erzeugt</text>
+      <rect class="node" x="245" y="52" width="130" height="64" rx="10"/>
+      <text class="label" x="310" y="78" text-anchor="middle">Ready</text>
+      <text class="small-label" x="310" y="98" text-anchor="middle">lauffähig</text>
+      <rect class="node-hot" x="520" y="52" width="130" height="64" rx="10"/>
+      <text class="label" x="585" y="78" text-anchor="middle">Running</text>
+      <text class="small-label" x="585" y="98" text-anchor="middle">hat CPU</text>
+      <rect class="node-mid" x="245" y="214" width="130" height="64" rx="10"/>
+      <text class="label" x="310" y="240" text-anchor="middle">Blocked</text>
+      <text class="small-label" x="310" y="260" text-anchor="middle">wartet</text>
+      <rect class="node-good" x="600" y="214" width="120" height="56" rx="10"/>
+      <text class="label" x="660" y="238" text-anchor="middle">Terminated</text>
+      <text class="small-label" x="660" y="256" text-anchor="middle">beendet</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M160 153 C195 153 205 92 245 84"/>
+      <text class="small-label" x="177" y="119">admit</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M375 84 L520 84"/>
+      <text class="small-label" x="425" y="72">dispatch</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M520 106 C468 150 425 151 375 106"/>
+      <text class="small-label" x="430" y="145">preempt</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M560 116 C520 178 435 221 375 242"/>
+      <text class="small-label" x="472" y="201">wait / I/O</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M310 214 L310 116"/>
+      <text class="small-label" x="320" y="170">event</text>
+      <path class="edge" marker-end="url(#arrow-proc)" d="M610 116 C635 150 650 180 660 214"/>
+      <text class="small-label" x="650" y="167">exit</text>
+    </svg>
+    <p>Wichtig: Nur Ready-Prozesse sind Kandidaten für den Scheduler. Blocked ist nicht lauffähig, egal ob die CPU frei wäre.</p>
+  </div>
+  <h3>3.3 Prozesswechsel / Context Switch</h3>
+  <ol><li>Unterbrechung oder Schedulerentscheidung tritt ein.</li><li>Kernel speichert Rechenzustand des laufenden Prozesses P1 im PCB.</li><li>P1 wird je nach Grund in Ready oder Blocked eingetragen.</li><li>Scheduler wählt P2 aus der Ready Queue.</li><li>Kernel lädt Rechenzustand von P2; Speicher-/Adressraumkontext wird aktiviert.</li><li>Dispatcher gibt CPU an P2; P2 läuft an gespeicherter Stelle weiter.</li></ol>
+  <h3>3.4 Prozesserzeugung, Prozessfamilien, Pipelining</h3>
+  <ul><li>Systemprozesse werden schon beim Booten gestartet, z.B. Hintergrunddienste/Daemons, Spooler oder I/O-Dienste.</li><li>Prozesse können interaktiv durch Benutzer oder durch andere Prozesse erzeugt werden. Typische Begriffe: Eltern-/Kindprozess, UNIX <code>fork</code>, Windows <code>CreateProcess</code>.</li><li>Prozessfamilien lösen eine größere Aufgabe gemeinsam. Das Betriebssystem muss dafür Erzeugung, gleichzeitige Ausführung und Kommunikation unterstützen.</li><li>Prozess-Pipelining: Jeder Prozess übernimmt eine Teilaufgabe. Während ein Prozess auf E/A wartet, kann ein anderer weiterarbeiten; nach dem Füllen der Pipeline begrenzt meist die langsamste Stufe den Durchsatz.</li><li>Terminierung: regulär durch Programmende, durch Programmfehler/Exception oder von außen, z.B. <code>kill</code>/<code>TerminateProcess</code>. Danach gibt das Betriebssystem Betriebsmittel frei.</li></ul>
+  <div class="klausurbox"><strong>Pipelining-Rechnung:</strong> Ohne Pipelining dauert ein Objekt ungefähr <code>t1 + t2 + ... + tk</code>. Mit Pipelining ist nach dem Füllen der Pipeline der Takt durch die langsamste Stufe bestimmt: <code>Durchsatz ≈ 1 / max(ti)</code>. Für wenige Objekte gilt grob: <code>Gesamtzeit ≈ Summe(ti) + (n-1)·max(ti)</code>.</div>
+  <aside class="callout note"><strong>Merke:</strong> Context Switch ist Overhead: keine Nutzarbeit, aber nötig für Mehrprogrammbetrieb, Reaktionsfähigkeit und Fairness.</aside>
+</section>
+
+<section id="scheduling">
+  <h2>4. Scheduling</h2>
+  <h3>4.1 Grundidee und Ziele</h3>
+  <p>Der Scheduler entscheidet, welcher bereite Prozess als nächstes die CPU erhält. Die Entscheidung betrifft die Ready Queue.</p>
+  <ul><li>Hohe CPU-Auslastung und hoher Durchsatz.</li><li>Kurze Antwortzeit, kurze Wartezeit, kurze Durchlaufzeit.</li><li>Fairness / kein Verhungern.</li><li>Prioritäten beachten.</li><li>Deadlines einhalten, besonders in Echtzeitsystemen.</li><li>Geringer Scheduling-Overhead.</li><li>Stabilität und sinnvolles Verhalten bei Überlast.</li></ul>
+  <aside class="callout warn"><strong>Zielkonflikt:</strong> Kurze Antwortzeit durch häufige Verdrängung widerspricht geringem Overhead. Maximale CPU-Auslastung kann Fairness oder Deadline-Treue verschlechtern. Echtzeitgarantien können Durchschnittsdurchsatz kosten.</aside>
+  <h3>4.2 Verdrängung / Präemption</h3>
+  <p>Verdrängung bedeutet: einem laufenden Prozess wird die CPU weggenommen, obwohl er nicht freiwillig blockiert oder beendet hat.</p>
+  <ul><li>Zeitquantum abgelaufen, z.B. Round Robin.</li><li>Neuer Prozess mit höherer Priorität wird bereit.</li><li>Blockierter Prozess mit höherer Priorität wird wieder bereit.</li><li>Bei SRT/SJF mit Verdrängung kommt ein Job mit kürzerer Restlaufzeit.</li><li>Bei EDF kommt ein Task mit früherer Deadline.</li></ul>
+  <h3>4.3 Klassifikation von Scheduling-Verfahren</h3>
+  <ul><li><strong>Statisch vs. dynamisch</strong>: Prioritäten/Entscheidungsgrundlagen bleiben fest oder ändern sich zur Laufzeit.</li><li><strong>Mit vs. ohne Verdrängung</strong>: CPU kann laufendem Prozess entzogen werden oder nicht.</li><li><strong>Mit vs. ohne Prioritäten</strong>: Prozesse werden nach Priorität oder nur nach Reihenfolge/Laufzeit betrachtet.</li></ul>
+  <h3>4.4 Standardverfahren</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Verfahren</th><th>Regel</th><th>Stärke / Schwachstelle</th></tr></thead><tbody><tr><td>FCFS / FIFO</td><td>Wer zuerst bereit ist, läuft zuerst.</td><td>Sehr einfach, geringer Overhead; schlecht bei langen Jobs vor kurzen Jobs.</td></tr><tr><td>Round Robin</td><td>Jeder Prozess bekommt ein Zeitquantum; danach Verdrängung und hinten anstellen.</td><td>Gut für interaktive Systeme; Quantum zu klein → viel Overhead, zu groß → fast FCFS.</td></tr><tr><td>SJF</td><td>Kürzester Job zuerst.</td><td>Minimiert mittlere Wartezeit bei bekannten Laufzeiten; kann lange Jobs verhungern lassen.</td></tr><tr><td>SRT</td><td>Shortest Remaining Time, verdrängende SJF-Variante.</td><td>Neuer kürzerer Job kann laufenden verdrängen.</td></tr><tr><td>Prioritätsscheduling</td><td>Höchste Priorität zuerst, innerhalb gleicher Priorität z.B. FCFS/RR.</td><td>Gefahr von Starvation und Prioritätsinvertierung.</td></tr><tr><td>Mehrstufige Queues</td><td>Mehrere Ready-Queues mit verschiedenen Regeln/Prioritäten.</td><td>Praxisnah, aber komplexer.</td></tr></tbody></table></div>
+  <h3>4.5 So löst du Scheduling-Zeitdiagramme</h3>
+  <div class="schedule-method">
+    <div class="method-step"><span>1</span><strong>Daten notieren</strong><p>Für jeden Job: Ankunft <code>A</code>, Rechenzeit <code>C</code>, Deadline <code>D</code> bzw. <code>A+x</code>.</p></div>
+    <div class="method-step"><span>2</span><strong>Ereignisse springen</strong><p>Nur bei Ankunft, Ende eines CPU-Abschnitts, Quantum-Ende oder Deadline neu entscheiden.</p></div>
+    <div class="method-step"><span>3</span><strong>Ready Queue prüfen</strong><p>Welche Jobs sind bereit? Welche Restzeit und welche Deadline haben sie gerade?</p></div>
+    <div class="method-step"><span>4</span><strong>Regel anwenden</strong><p>EDF: früheste absolute Deadline. SRT: kürzeste Restzeit. RR: Quantum und Queue.</p></div>
+  </div>
+  <div class="schedule-example">
+    <div class="schedule-head">
+      <div>
+        <h4>Zusammenfassungsbeispiel: EDF in drei Entscheidungen</h4>
+        <p>Dieses Beispiel ist bewusst kleiner als eine Probeklausur. Es zeigt nur die typische Denkfolge: absolute Deadlines berechnen, bei Ereignissen neu entscheiden, Verdrängung markieren und am Ende Deadlines kontrollieren.</p>
+      </div>
+      <span class="rule-chip">EDF-Regel: Der bereite Task mit der kleinsten absoluten Deadline läuft.</span>
+    </div>
+    <table class="exam-task-table">
+      <thead><tr><th>Task</th><th>Ankunft A</th><th>Rechenzeit C</th><th>relative Deadline</th><th>absolute Deadline</th></tr></thead>
+      <tbody>
+        <tr><td>T1</td><td>0</td><td>4</td><td>A+8</td><td>8</td></tr>
+        <tr><td>T2</td><td>1</td><td>2</td><td>A+4</td><td>5</td></tr>
+        <tr><td>T3</td><td>3</td><td>2</td><td>A+6</td><td>9</td></tr>
+      </tbody>
+    </table>
+    <p class="exam-question"><strong>Mini-Aufgabe:</strong> Zeichne das EDF-Zeitdiagramm bis t=9 und markiere die Stelle, an der ein Task verdrängt wird.</p>
+    <p class="exam-help">Erst absolute Deadlines eintragen, dann nur an Ereignispunkten entscheiden.</p>
+    <div class="plot-scroll">
+      <div class="coord-board-wrap">
+        <svg class="coord-board" viewBox="0 0 760 320" role="img" aria-label="Kleines EDF-Zusammenfassungsbeispiel mit einer Verdrängung">
+          <defs>
+            <marker id="schedule-axis-arrow" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+              <path d="M0,0 L9,4 L0,8 Z" fill="#000"/>
+            </marker>
+            <pattern id="exam-hatch" width="6" height="6" patternUnits="userSpaceOnUse">
+              <path d="M0 6 L6 0" stroke="#888" stroke-width="1"/>
+            </pattern>
+          </defs>
+
+          <g class="exam-grid">
+            <line x1="70" y1="50" x2="70" y2="250"/><line x1="128" y1="50" x2="128" y2="250"/><line x1="186" y1="50" x2="186" y2="250"/><line x1="244" y1="50" x2="244" y2="250"/><line x1="302" y1="50" x2="302" y2="250"/>
+            <line x1="360" y1="50" x2="360" y2="250"/><line x1="418" y1="50" x2="418" y2="250"/><line x1="476" y1="50" x2="476" y2="250"/><line x1="534" y1="50" x2="534" y2="250"/><line x1="592" y1="50" x2="592" y2="250"/>
+            <line x1="70" y1="90" x2="620" y2="90"/><line x1="70" y1="145" x2="620" y2="145"/><line x1="70" y1="200" x2="620" y2="200"/>
+          </g>
+
+          <line class="exam-axis" x1="70" y1="250" x2="642" y2="250"/>
+          <line class="exam-axis" x1="70" y1="250" x2="70" y2="36"/>
+          <text class="exam-label" x="38" y="95">T1</text>
+          <text class="exam-label" x="38" y="150">T2</text>
+          <text class="exam-label" x="38" y="205">T3</text>
+
+          <g class="exam-tick">
+            <line x1="70" y1="250" x2="70" y2="263"/><line x1="128" y1="250" x2="128" y2="263"/><line x1="186" y1="250" x2="186" y2="263"/><line x1="244" y1="250" x2="244" y2="263"/><line x1="302" y1="250" x2="302" y2="263"/>
+            <line x1="360" y1="250" x2="360" y2="263"/><line x1="418" y1="250" x2="418" y2="263"/><line x1="476" y1="250" x2="476" y2="263"/><line x1="534" y1="250" x2="534" y2="263"/><line x1="592" y1="250" x2="592" y2="263"/>
+          </g>
+
+          <g class="exam-tiny">
+            <text x="70" y="280" text-anchor="middle">0</text><text x="128" y="280" text-anchor="middle">1</text><text x="186" y="280" text-anchor="middle">2</text><text x="244" y="280" text-anchor="middle">3</text><text x="302" y="280" text-anchor="middle">4</text>
+            <text x="360" y="280" text-anchor="middle">5</text><text x="418" y="280" text-anchor="middle">6</text><text x="476" y="280" text-anchor="middle">7</text><text x="534" y="280" text-anchor="middle">8</text><text x="592" y="280" text-anchor="middle">9</text>
+          </g>
+
+          <line class="exam-deadline" x1="360" y1="50" x2="360" y2="242"/><text class="exam-tiny" x="360" y="42" text-anchor="middle">D2=5</text>
+          <line class="exam-deadline" x1="534" y1="50" x2="534" y2="242"/><text class="exam-tiny" x="534" y="42" text-anchor="middle">D1=8</text>
+          <line class="exam-deadline" x1="592" y1="50" x2="592" y2="242"/><text class="exam-tiny" x="592" y="42" text-anchor="middle">D3=9</text>
+
+          <rect class="exam-bar" x="70" y="78" width="58" height="24" fill="url(#exam-hatch)"/><text class="exam-bar-text" x="99" y="94" text-anchor="middle">T1</text>
+          <rect class="exam-bar" x="128" y="133" width="116" height="24" fill="url(#exam-hatch)"/><text class="exam-bar-text" x="186" y="149" text-anchor="middle">T2</text>
+          <rect class="exam-bar" x="244" y="78" width="174" height="24" fill="url(#exam-hatch)"/><text class="exam-bar-text" x="331" y="94" text-anchor="middle">T1</text>
+          <rect class="exam-bar" x="418" y="188" width="116" height="24" fill="url(#exam-hatch)"/><text class="exam-bar-text" x="476" y="204" text-anchor="middle">T3</text>
+
+          <text class="exam-mark" x="128" y="72" text-anchor="middle">V</text>
+          <text class="exam-small" x="140" y="72">T2 verdrängt T1</text>
+        </svg>
+      </div>
+    </div>
+    <p class="board-caption">Wichtig: EDF vergleicht nicht die relative Deadline allein, sondern die absolute Deadline zum aktuellen Zeitpunkt.</p>
+    <div class="board-note"><strong>Ablauf:</strong> T1 startet bei t=0. Bei t=1 kommt T2 mit D=5 und verdrängt T1 mit D=8. Nach T2 läuft T1 weiter, weil D1=8 früher ist als D3=9. Danach läuft T3.</div>
+    <div class="decision-strip">
+      <div class="decision"><strong>Kontrolle:</strong> CPU-Abschnitte sind T1: 0-1 und 3-6, T2: 1-3, T3: 6-8.</div>
+      <div class="decision"><strong>Verdrängung:</strong> genau eine, bei t=1.</div>
+      <div class="decision"><strong>Deadlines:</strong> T2 ist bei t=3 fertig vor D2=5, T1 bei t=6 vor D1=8, T3 bei t=8 vor D3=9. Also keine Deadline-Verletzung.</div>
+    </div>
+  </div>
+  <div class="klausurbox"><strong>Extra üben:</strong> Für komplette alte Scheduling-Aufgaben mit Raster, Musterlösung, Verdrängungscheck und RMS-Rechnung gibt es eine eigene Seite: <a href="scheduling_trainer.html">Scheduling-Trainer öffnen</a>.</div>
+  <aside class="callout danger"><strong>Falle:</strong> Bei Aufgaben steht oft Deadline als A + x. Dann ist die absolute Deadline Ankunftszeit plus x. Nicht blind x als Zeitpunkt nehmen.</aside>
+  <h3>4.6 EDF - Earliest Deadline First</h3>
+  <ul><li>Dynamisches Prioritätsverfahren: nächste absolute Deadline hat höchste Priorität.</li><li>Normalerweise verdrängend: kommt ein neuer Job mit früherer Deadline, verdrängt er den laufenden Job.</li><li>EDF ist auf einem Einprozessorsystem optimal für unabhängige Tasks: Wenn irgendein Schedule alle Deadlines schaffen kann, findet EDF einen.</li></ul>
+  <h3>4.7 RMS - Rate Monotonic Scheduling</h3>
+  <ul><li>Für periodische Tasks.</li><li>Statische Prioritäten: kürzere Periode = höhere Rate = höhere Priorität.</li><li>Verdrängend: ein neu freigegebener Task mit höherer Priorität verdrängt niedrigere Priorität.</li><li>Typische Annahme: Deadline liegt am Periodenende; Tasks sind unabhängig.</li></ul>
+  <div class="table-wrap"><table class=""><thead><tr><th>RMS-Regel</th><th>Bedeutung</th><th>Klausurhinweis</th></tr></thead><tbody><tr><td>Priorität</td><td><code>kleinere Periode Pᵢ → höhere Priorität</code></td><td>Nicht nach Rechenzeit sortieren.</td></tr><tr><td>Auslastung</td><td><code>U = Σ Cᵢ/Pᵢ</code></td><td>U &gt; 1: nicht machbar auf einem Prozessor.</td></tr><tr><td>Garantie</td><td><code>U &lt; n(2^(1/n)-1)</code></td><td>Unterhalb sicher, oberhalb nicht automatisch falsch.</td></tr><tr><td>Harmonische Perioden</td><td>Perioden sind Vielfache voneinander.</td><td>Dann kann RMS bis U ≤ 1 funktionieren.</td></tr></tbody></table></div>
+  <aside class="callout danger"><strong>Prüfungslogik RMS:</strong> Die Garantiegrenze ist hinreichend, nicht notwendig. Wenn U oberhalb der Grenze liegt, darfst du nicht direkt sagen: unmöglich. Du musst dann ggf. zeichnen oder genauer argumentieren.</aside>
+  <h3>4.8 Prioritätsinvertierung</h3>
+  <p>Prioritätsinvertierung entsteht, wenn ein hochpriorer Prozess auf eine Ressource wartet, die ein niedrigpriorer Prozess hält, während mittelpriore Prozesse den niedrigprioren Prozess verdrängen. Der hochpriore Prozess verhungert indirekt.</p>
+  <ul><li>Lösung: Priority Inheritance - der Ressourceneigentümer erbt temporär die hohe Priorität des wartenden Prozesses.</li><li>Alternative: Priority Ceiling - Ressourcen erhalten eine Prioritätsobergrenze; Prozesse werden beim Sperren entsprechend angehoben.</li><li>Auch kurze kritische Abschnitte und konsistente Sperrstrategie helfen, ersetzen aber nicht immer ein Protokoll.</li></ul>
+  <h3>4.9 Randthemen aus den Folien</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Thema</th><th>Kernaussage</th><th>Wann merken?</th></tr></thead><tbody><tr><td>Least Laxity First</td><td>Priorisiert nach kleinster Reservezeit: Deadline minus Restrechenzeit. Reagiert besser auf Überlast als EDF, verursacht aber mehr Aufwand/Wechsel.</td><td>Als weiteres Echtzeitverfahren nennen können.</td></tr><tr><td>Time-Slice Scheduling</td><td>Prozesse laufen zyklisch mit Zeitscheiben; Zeitscheiben können proportional zur gewünschten CPU-Auslastung sein.</td><td>Abgrenzung zu Round Robin und Echtzeitvarianten.</td></tr><tr><td>Mehrprozessor-Scheduling</td><td>Nicht nur CPU vollhalten: Prozessoraffinität vermeidet Cache-/Kontextverluste; manchmal lässt man CPUs kurz idle, um teure Wechsel zu vermeiden.</td><td>Bei Hyperthreading/Multi-Core-Fragen.</td></tr><tr><td>Gang Scheduling</td><td>Eine Prozess- oder Threadgruppe läuft gemeinsam für eine Zeitscheibe auf mehreren Prozessoren.</td><td>Wenn Prozessfamilien/Threadgruppen eng kooperieren.</td></tr><tr><td>Windows/Linux</td><td>Beide nutzen prioritätsbasiertes, verdrängendes, thread-basiertes Scheduling; Linux unterscheidet u.a. Echtzeit-FIFO, Echtzeit-RR und Nicht-Echtzeit.</td><td>Als Folienwissen, eher Theorie als Rechenaufgabe.</td></tr></tbody></table></div>
+</section>
+
+<section id="threads">
+  <h2>5. Threads</h2>
+  <h3>5.1 Prozess vs. Thread</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Aspekt</th><th>Prozess</th><th>Thread</th></tr></thead><tbody><tr><td>Adressraum</td><td>Eigener geschützter Adressraum.</td><td>Threads eines Prozesses teilen sich Adressraum.</td></tr><tr><td>Ressourcen</td><td>Eigene Ressourcen/Handles.</td><td>Teilen Dateien, Heap, globale Daten, Rechte des Prozesses.</td></tr><tr><td>Zustand</td><td>Eigene Register/Stack.</td><td>Jeder Thread hat eigenen Stack und Registerzustand.</td></tr><tr><td>Kommunikation</td><td>Aufwendiger: IPC nötig.</td><td>Einfacher: gemeinsamer Speicher, aber Synchronisation nötig.</td></tr><tr><td>Wechselkosten</td><td>Höher.</td><td>Niedriger, besonders innerhalb eines Prozesses.</td></tr></tbody></table></div>
+  <h3>5.2 Vorteile von Threads</h3>
+  <ul><li>Bessere Responsiveness: GUI kann reagieren, während Hintergrundarbeit läuft.</li><li>Parallelität auf Multi-Core/Hyperthreading.</li><li>Geringerer Overhead als mehrere Prozesse.</li><li>Einfachere gemeinsame Datennutzung innerhalb eines Prozesses.</li></ul>
+  <h3>5.3 Nachteile und Risiken</h3>
+  <ul><li>Race Conditions und nichtdeterministische Ergebnisse bei gemeinsamem Speicher.</li><li>Deadlocks durch falsche Sperrreihenfolge.</li><li>Fehler in einem Thread können den gesamten Prozess betreffen.</li><li>Debugging schwieriger wegen Interleavings.</li></ul>
+  <h3>5.4 Benutzerthreads vs. Kernelthreads</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Art</th><th>Vorteile</th><th>Nachteile</th></tr></thead><tbody><tr><td>Benutzerthreads</td><td>Sehr schnelle Verwaltung im User Space; Betriebssystem muss nicht jeden Thread kennen.</td><td>Blockierender Systemaufruf kann gesamten Prozess blockieren; echte Parallelität auf mehreren Kernen schwierig/abhängig vom Modell.</td></tr><tr><td>Kernelthreads</td><td>Kernel kann Threads separat schedulen; echte Parallelität und Blockierung einzelner Threads möglich.</td><td>Mehr Overhead durch Kernelbeteiligung.</td></tr></tbody></table></div>
+  <aside class="callout warn"><strong>Klausurantwort:</strong> Ein einzelner sequentieller Thread nutzt nicht automatisch mehrere Kerne. Für echte parallele CPU-Nutzung braucht man mehrere lauffähige Threads oder Prozesse.</aside>
+</section>
+
+<section id="sync">
+  <h2>6. Synchronisation</h2>
+  <div class="klausurbox"><strong>Aktiv üben:</strong> Semaphore-Code ist in alten Aufgaben oft der Punkt, an dem man sich verrechnet oder eine Sperrreihenfolge übersieht. Dafür gibt es jetzt einen eigenen <a href="synchronisation_trainer.html">Synchronisations-Trainer</a> mit Deadlock-Code, kritischen Abschnitten, Producer/Consumer und Barriere-Mustern.</div>
+  <h3>6.1 Race Condition und kritischer Abschnitt</h3>
+  <p>Eine Race Condition entsteht, wenn das Ergebnis vom zeitlichen Ablauf nebenläufiger Zugriffe abhängt. Typisch: mehrere Threads lesen/modifizieren/schreiben dieselbe Variable ohne atomare Sicherung.</p>
+  <ul><li><strong>Kritischer Abschnitt</strong>: Codebereich, der gemeinsam genutzte Daten/Ressourcen manipuliert und daher exklusiv betreten werden muss.</li><li><strong>Mutual Exclusion</strong>: maximal ein Prozess/Thread gleichzeitig im kritischen Abschnitt.</li><li><strong>Progress</strong>: wenn niemand im kritischen Abschnitt ist, soll ein wartender Prozess eintreten können.</li><li><strong>Bounded Waiting</strong>: kein unendliches Verhungern.</li></ul>
+  <aside class="callout danger"><strong>Falle:</strong> Eine normale globale Variable <code>lock</code> reicht nicht, wenn Test und Setzen nicht atomar sind. Zwei Threads können <code>lock</code> gleichzeitig als frei lesen und beide eintreten.</aside>
+  <h3>6.2 Interleaving-Aufgaben</h3>
+  <p>Bei Aufgaben mit zwei unsynchronisierten Threads musst du Statements in atomare Schritte zerlegen. Wenn <code>x = x + 1</code> intern aus Lesen, Rechnen, Schreiben besteht, können andere Threads dazwischenlaufen.</p>
+  <ol><li>Statements in Lese-/Schreibschritte zerlegen, sofern Aufgabe Unterbrechung innerhalb der Zuweisung erlaubt.</li><li>Abhängigkeiten notieren: innerhalb eines Threads bleibt Reihenfolge erhalten.</li><li>Mögliche Verschachtelungen bilden.</li><li>Minimum/Maximum oder alle Werte mit konkreter Reihenfolge begründen.</li></ol>
+  <h3>6.3 Mechanismen für kritische Abschnitte</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Mechanismus</th><th>Prinzip</th><th>Bewertung</th></tr></thead><tbody><tr><td>Interrupts sperren</td><td>Auf Einprozessorsystem verhindert man Unterbrechung im kritischen Abschnitt.</td><td>Einfach, aber schlecht für Reaktionszeit; bei Mehrprozessoren unzureichend.</td></tr><tr><td>Peterson</td><td>Softwareverfahren für zwei Prozesse mit <code>turn</code>/<code>interest</code>.</td><td>Theoretisch wichtig, praktisch begrenzt.</td></tr><tr><td>Test-and-Set / atomare Instruktion</td><td>Prüfen und Setzen ununterbrechbar.</td><td>Basis für Spinlocks; Busy Waiting.</td></tr><tr><td>Mutex</td><td>Exklusives Schloss für kritischen Abschnitt.</td><td>Praxisnah; wartende Threads blockieren oder spinnen je nach Implementierung.</td></tr><tr><td>Semaphore</td><td>Zähler mit atomarem wait/signal.</td><td>Kann Mutex, Ressourcenpool oder Reihenfolgesynchronisation umsetzen; fehleranfällig.</td></tr><tr><td>Monitor</td><td>Modul/Objekt, dessen Prozeduren automatisch exklusiv betreten werden.</td><td>Strukturierter als Semaphore; Conditions für Warten auf Bedingungen.</td></tr></tbody></table></div>
+  <h3>6.4 Semaphore</h3>
+  <p>Eine Semaphore ist ein Synchronisationsobjekt mit atomaren Operationen <code>wait/P</code> und <code>signal/V</code>.</p>
+  <ul><li><strong>Binäre Semaphore</strong>: Wert 0/1. In der Vorlesungsnotation gilt: <code>wait(S=1)</code> setzt <code>S=0</code> und läuft weiter; <code>wait(S=0)</code> blockiert den Prozess in der Semaphor-Warteschlange.</li><li><strong>signal(S)</strong> bei binärer Semaphore: Wenn Prozesse warten, wird einer deblockiert; wenn niemand wartet, wird <code>S=1</code> gesetzt.</li><li><strong>Allgemeine Semaphore</strong>: Zähler für n gleichartige Ressourcen oder Reihenfolgesynchronisation. In der Vorlesungsnotation kann <code>S</code> auch negativ werden; negative Werte stehen dafür, dass Prozesse warten.</li><li><strong>Allgemeines wait/signal</strong>: <code>wait</code> dekrementiert und blockiert bei <code>S &lt; 0</code>; <code>signal</code> inkrementiert und deblockiert bei <code>S ≤ 0</code> einen wartenden Prozess.</li></ul>
+  <aside class="callout danger"><strong>Klausurfalle:</strong> Semaphore schützen nicht automatisch einen kritischen Abschnitt. Sie schützen nur dann, wenn sie korrekt um den kritischen Abschnitt herum verwendet und passend initialisiert werden. Initialwert 0 dient oft der Reihenfolge, nicht dem Mutex.</aside>
+  <h3>6.5 Monitor und Condition Variables</h3>
+  <ul><li>Nur ein Thread/Prozess darf gleichzeitig im Monitor aktiv sein.</li><li>Condition Variable erlaubt Warten auf Bedingung innerhalb des Monitors.</li><li><code>wait/CWAIT</code> gibt den Monitor zwischenzeitlich frei, sonst könnte niemand die Bedingung herstellen.</li><li><code>signal/notify</code> weckt wartenden Thread, aber die genaue Semantik hängt vom System ab.</li><li>Bei Java-artiger Semantik Bedingung nach <code>wait()</code> in einer <code>while</code>-Schleife erneut prüfen, weil der Thread später wieder eintritt.</li></ul>
+  <h3>6.6 Barriere mit Semaphoren - Standardmuster</h3>
+  <p>Idee für n Threads: Alle Threads erhöhen einen Zähler. Erst der n-te Thread öffnet die Barriere. Zählerzugriff wird durch Mutex geschützt.</p>
+  <pre><code>initialisierung:
+    mutex = 1
+    barrier = 0
+    count = 0
+    n = 5
+
+thread-code vor der Barriere:
+    wait(mutex)
+    count = count + 1
+    if count == n:
+        signal(barrier)      // erster Durchgang öffnet das Drehkreuz
+    signal(mutex)
+
+    wait(barrier)
+    signal(barrier)          // lässt den nächsten durch
+
+thread-code nach der Barriere</code></pre>
+  <aside class="callout warn"><strong>Hinweis:</strong> Dieses einfache Turnstile-Muster passt für eine einmalige Barriere. Wiederverwendbare Barrieren brauchen mehr Sorgfalt, sonst laufen Threads in die nächste Runde hinein.</aside>
+  <h3>6.7 Semaphor-Code systematisch prüfen</h3>
+  <ol><li>Für jedes <code>wait(Sx)</code> notieren: Welches Betriebsmittel bzw. welcher Codebereich wird ab hier gehalten?</li><li>Für jedes <code>signal(Sx)</code> notieren: Wo wird dieses Betriebsmittel wieder freigegeben?</li><li>Kritischen Abschnitt prüfen: Gibt es einen Pfad, auf dem zwei Prozesse gleichzeitig zwischen passendem <code>wait</code> und <code>signal</code> sein können?</li><li>Deadlock prüfen: Momentaufnahme suchen, in der P1 ein Semaphor hält und auf eines wartet, das P2 hält, während P2 auf ein von P1 gehaltenes Semaphor wartet.</li><li>Reihenfolge vergleichen: Werden mehrere Semaphore in verschiedenen Reihenfolgen genommen, ist das ein starker Deadlock-Hinweis.</li></ol>
+  <aside class="callout good"><strong>Klausurtechnik:</strong> Schreibe neben den Code kurz „hält S1“, „wartet auf S2“ usw. Dann sieht man Zyklen viel schneller als beim starren Lesen des Pseudocodes.</aside>
+</section>
+
+<section id="ipc">
+  <h2>7. Kommunikation und Kooperation</h2>
+  <h3>7.1 Kommunikation vs. Kooperation</h3>
+  <ul><li><strong>Kommunikation</strong>: Prozesse tauschen Nachrichten/Daten aus.</li><li><strong>Kooperation</strong>: Prozesse arbeiten an gemeinsamen Daten/Ressourcen; braucht Synchronisation.</li><li><strong>Shared Memory</strong>: sehr schnell, aber Synchronisation muss separat korrekt sein.</li><li><strong>Message Passing</strong>: send/receive; Kopplung und Pufferung durch Betriebssystem.</li></ul>
+  <h3>7.2 Synchron/asynchron und direkt/indirekt</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Variante</th><th>Bedeutung</th><th>Typischer Effekt</th></tr></thead><tbody><tr><td>Synchrones Senden</td><td>Sender blockiert, bis Nachricht angenommen/empfangen wurde.</td><td>Starke Kopplung, klare Rückmeldung.</td></tr><tr><td>Asynchrones Senden</td><td>Sender läuft nach Abgabe weiter.</td><td>Entkopplung, Puffer nötig.</td></tr><tr><td>Synchrones Empfangen</td><td>Empfänger blockiert, bis Nachricht da ist.</td><td>Einfaches Warten auf Ereignisse.</td></tr><tr><td>Asynchrones Empfangen</td><td>Empfänger prüft oder wird später benachrichtigt.</td><td>Polling oder Callback/Interrupt/Signal.</td></tr><tr><td>Direkter Kanal</td><td>Sender kennt Empfängerprozess.</td><td>Enge Bindung zwischen Prozessen.</td></tr><tr><td>Indirekter Kanal</td><td>Nachricht geht über Mailbox/Port/Queue.</td><td>Bessere Entkopplung, mehrere Sender/Empfänger möglich.</td></tr></tbody></table></div>
+  <h3>7.3 IPC-Dienste</h3>
+  <ul><li>Pipes: Bytestrom zwischen Prozessen, häufig Eltern-/Kindprozesse.</li><li>Named Pipes/FIFOs: auch für nicht verwandte Prozesse.</li><li>Message Queues/Mailboxes: nachrichtenorientiert, ggf. Typ/Priorität.</li><li>Shared Memory: gemeinsamer Speicherbereich, schnell bei großen Datenmengen.</li><li>Semaphore/Mutexe/Events: Synchronisation statt eigentlicher Datentransport.</li><li>Sockets: Kommunikation lokal oder über Netzwerk.</li><li>Signale: einfache asynchrone Ereignisbenachrichtigung, z.B. Abbruch.</li></ul>
+  <h3>7.4 Signale und Lock-Modi</h3>
+  <ul><li><strong>Signale</strong> sind einfache asynchrone Nachrichten mit Signaltyp. Ein Signal-Handler unterbricht die laufende Ausführung ähnlich wie ein Software-Interrupt.</li><li>Signal-Handler kurz halten: keine komplexen Systemaufrufe oder lange E/A. Gute Praxis ist, nur ein Flag zu setzen und die eigentliche Arbeit in der Hauptschleife zu erledigen.</li><li>Prozesse können Signale maskieren, also temporär sperren; das Betriebssystem kann sie in begrenztem Umfang später ausliefern.</li><li><strong>Lock-Modi</strong> unterscheiden z.B. exklusives Schreiben, geschütztes Schreiben, geschütztes Lesen und konkurrierendes Lesen/Schreiben. Nicht verträgliche Sperren blockieren den anfordernden Prozess.</li></ul>
+  <aside class="callout good"><strong>Auswahlfrage:</strong> Große Datenmenge lokal? Shared Memory plus Synchronisation. Einfache Pipeline? Pipe. Netzwerk/Client-Server? Socket. Ereignis ohne Nutzdaten? Signal/Event.</aside>
+</section>
+
+<section id="deadlocks">
+  <h2>8. Deadlocks</h2>
+  <h3>8.1 Definition</h3>
+  <p>Ein Deadlock ist eine zyklische Wartebeziehung: Jeder beteiligte Prozess wartet auf ein Ereignis bzw. eine Ressource, die nur ein anderer Prozess aus derselben Menge freigeben kann. Deshalb kommt keiner weiter.</p>
+  <h3>8.2 Vier notwendige Deadlock-Bedingungen</h3>
+  <ul><li><strong>Mutual Exclusion</strong>: Ressourcen können exklusiv belegt sein.</li><li><strong>Hold and Wait</strong>: Prozesse halten bereits Ressourcen und warten auf weitere.</li><li><strong>No Preemption</strong>: Ressourcen können nicht zwangsweise entzogen werden.</li><li><strong>Circular Wait</strong>: zyklische Wartekette zwischen Prozessen/Ressourcen.</li></ul>
+  <aside class="callout note"><strong>Prüfungslogik:</strong> Deadlock-Verhinderung heißt: mindestens eine der vier Bedingungen systematisch unmöglich machen.</aside>
+  <h3>8.3 Ressourcenzuordnungsgraph</h3>
+  <ul><li>Prozesse als Kreise, Ressourcen als Rechtecke.</li><li>Kante Ressource → Prozess: Ressource ist zugeordnet.</li><li>Kante Prozess → Ressource: Prozess fordert Ressource an / wartet.</li><li>Zyklus bei je einer Instanz pro Ressource bedeutet Deadlock. Bei mehreren Instanzen ist ein Zyklus nur ein Hinweis, kein automatischer Beweis.</li></ul>
+  <div class="diagram">
+    <h4>Beispielgraph: Deadlock mit Ressourcenzuordnung</h4>
+    <svg viewBox="0 0 760 330" role="img" aria-label="Ressourcenzuordnungsgraph mit Deadlock Zyklus">
+      <defs><marker id="arrow-dead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#b42318"/></marker></defs>
+      <circle class="node-hot" cx="190" cy="95" r="46"/><text class="label" x="190" y="100" text-anchor="middle">P1</text>
+      <rect class="node-mid" x="520" y="62" width="96" height="66" rx="8"/><text class="label" x="568" y="90" text-anchor="middle">R1</text><text class="small-label" x="568" y="110" text-anchor="middle">1 Instanz</text>
+      <circle class="node-hot" cx="568" cy="238" r="46"/><text class="label" x="568" y="243" text-anchor="middle">P2</text>
+      <rect class="node-mid" x="142" y="205" width="96" height="66" rx="8"/><text class="label" x="190" y="233" text-anchor="middle">R2</text><text class="small-label" x="190" y="253" text-anchor="middle">1 Instanz</text>
+      <path class="edge-hot" marker-end="url(#arrow-dead)" d="M520 95 L238 95"/>
+      <text class="small-label" x="370" y="82" text-anchor="middle">R1 → P1 zugeordnet</text>
+      <path class="edge-hot" marker-end="url(#arrow-dead)" d="M190 141 L190 205"/>
+      <text class="small-label" x="205" y="176">P1 wartet auf R2</text>
+      <path class="edge-hot" marker-end="url(#arrow-dead)" d="M238 238 L522 238"/>
+      <text class="small-label" x="380" y="258" text-anchor="middle">R2 → P2 zugeordnet</text>
+      <path class="edge-hot" marker-end="url(#arrow-dead)" d="M568 192 L568 128"/>
+      <text class="small-label" x="585" y="164">P2 wartet auf R1</text>
+      <text class="label" x="380" y="308" text-anchor="middle">Zyklus: P1 → R2 → P2 → R1 → P1</text>
+    </svg>
+    <p>Bei je einer Instanz pro Ressource beweist dieser Zyklus einen Deadlock. Bei mehreren Instanzen ist ein Zyklus nur ein Warnsignal.</p>
+  </div>
+  <div class="klausurbox"><strong>Interaktiv üben:</strong> Für die Klausuraufgaben der Form „P1 belegt B1 und wartet auf B2“ gibt es eine eigene Nebenseite mit großem Ressourcengraphen und Antwortprüfung: <a href="deadlock_trainer.html">Deadlock-Trainer öffnen</a>.</div>
+  <h3>8.4 Strategien</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Strategie</th><th>Prinzip</th><th>Bewertung</th></tr></thead><tbody><tr><td>Ignorieren</td><td>Vogel-Strauß-Verfahren: Problem praktisch selten oder Neustart akzeptiert.</td><td>Einfach, aber keine Garantie.</td></tr><tr><td>Erkennen</td><td>Ressourcengraph/Algorithmus erkennt Deadlock nach Eintritt.</td><td>Dann auflösen: Prozess abbrechen, Ressource entziehen.</td></tr><tr><td>Verhindern</td><td>Eine Coffman-Bedingung ausschalten.</td><td>Konservativ, kann Parallelität und Ressourcennutzung verschlechtern.</td></tr><tr><td>Vermeiden</td><td>Nur Ressourcenzuteilung erlauben, wenn System in sicherem Zustand bleibt.</td><td>Bankieralgorithmus; braucht Maximalanforderungen.</td></tr></tbody></table></div>
+  <h3>8.5 Typische Verhinderungsmethoden</h3>
+  <ul><li>Alle benötigten Ressourcen auf einmal anfordern: verhindert Hold-and-Wait, aber schlechte Auslastung.</li><li>Globale Ressourcenordnung: Ressourcen müssen immer in gleicher Reihenfolge angefordert werden; verhindert Circular Wait.</li><li>Spooling/Virtualisierung: exklusiven Zugriff vermeiden, z.B. Druckaufträge in Queue statt direkter Druckerzugriff.</li><li>Timeouts/Rollback: praktisch möglich, aber nicht immer sauber oder theoretisch garantiert.</li></ul>
+  <aside class="callout danger"><strong>Programmieren:</strong> Die wichtigste Praxisregel: Locks immer in derselben globalen Reihenfolge nehmen. Wer das ignoriert, baut Deadlocks ein und merkt es erst unter Last.</aside>
+</section>
+
+<section id="speicher">
+  <h2>9. Speicherverwaltung</h2>
+  <div class="klausurbox"><strong>Interaktiv üben:</strong> Für Adressrechnung, Array-über-Pages, TLB-Zugriffszeit, mehrstufige Seitentabellen, Working Set, Page-Fault-Ablauf und FIFO/LRU/Clock-Tabellen gibt es eine eigene Seite mit Antwortprüfung: <a href="speicher_trainer.html">Speicher-Trainer öffnen</a>.</div>
+  <h3>9.1 Aufgaben</h3>
+  <ul><li>Zuteilung und Freigabe von Hauptspeicher.</li><li>Schutz zwischen Prozessen.</li><li>Abbildung virtueller Adressen auf physische Adressen.</li><li>Virtueller Speicher: Programme dürfen mehr Adressraum sehen, als physisch im RAM liegt.</li><li>Optimierung durch Lokalität, Caching und Seitenaustausch.</li></ul>
+  <h3>9.2 Adressraum und relative Adressierung</h3>
+  <p>Ein Prozess arbeitet mit virtuellen bzw. logischen Adressen. Die Speicherverwaltung bildet sie auf physische Speicherpositionen ab. Relative Adressierung erlaubt es, Programme an verschiedene Speicherpositionen zu laden, ohne alle internen Referenzen hart auf absolute Adressen festzulegen.</p>
+  <ul><li>Vorteil: Programme sind verschiebbar, mehrere Prozesse können gleiche virtuelle Adressen verwenden.</li><li>Nachteil: Adressumsetzung kostet Hardware/Tabellen/Verwaltungsaufwand.</li></ul>
+  <h3>9.3 Paging</h3>
+  <p>Beim Paging wird der virtuelle Adressraum in gleich große Pages/Seiten und der physische Speicher in gleich große Frames/Rahmen/Kacheln geteilt. Eine Seitentabelle ordnet virtuellen Seiten physische Rahmen zu.</p>
+  <div class="table-wrap"><table class=""><thead><tr><th>Rechnung</th><th>Regel</th><th>Beispiel/Hinweis</th></tr></thead><tbody><tr><td>Adressaufteilung</td><td><code>virtuelle Adresse = Seitennummer | Offset</code></td><td>Offset bestimmt Position innerhalb der Seite.</td></tr><tr><td>Offset-Bits</td><td><code>log2(Pagegröße)</code></td><td>4 KiB = 2<sup>12</sup> → 12 Offset-Bits.</td></tr><tr><td>Seitennummer-Bits</td><td><code>Adressbits - Offsetbits</code></td><td>32 Bit Adresse und 12 Offsetbits → 20 Seitenbits.</td></tr><tr><td>Rahmenanzahl</td><td><code>physischer Speicher / Pagegröße</code></td><td>512 MiB / 4 KiB = 2<sup>29</sup> / 2<sup>12</sup> = 2<sup>17</sup> Rahmen.</td></tr><tr><td>Kleinste Adresse gleicher Page</td><td>Adresse mit Offset = 0</td><td>In Hex: letzte Offset-Stellen nullen.</td></tr><tr><td>Größte Adresse gleicher Page</td><td>Adresse mit Offset = Pagegröße - 1</td><td>In Hex: Offset-Bits alle 1, z.B. bei 4 KiB letzte 3 Hexstellen FFF.</td></tr></tbody></table></div>
+  <div class="diagram">
+    <h4>Beispielgraph: Paging-Adressübersetzung</h4>
+    <svg viewBox="0 0 760 300" role="img" aria-label="Paging Adresse wird in Seitennummer und Offset zerlegt">
+      <defs><marker id="arrow-page" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker></defs>
+      <text class="label" x="40" y="40">Virtuelle Adresse 0x4B30A568</text>
+      <rect class="node" x="40" y="62" width="310" height="54" rx="8"/><rect class="node-good" x="350" y="62" width="150" height="54" rx="8"/>
+      <text class="label" x="195" y="84" text-anchor="middle">Seitennummer</text><text class="small-label" x="195" y="104" text-anchor="middle">0x4B30A</text>
+      <text class="label" x="425" y="84" text-anchor="middle">Offset</text><text class="small-label" x="425" y="104" text-anchor="middle">0x568</text>
+      <text class="small-label" x="40" y="138">4 KiB Pagegröße → 12 Offsetbits → letzte 3 Hex-Ziffern sind Offset</text>
+      <rect class="node-mid" x="80" y="178" width="180" height="76" rx="8"/>
+      <text class="label" x="170" y="204" text-anchor="middle">Seitentabelle</text>
+      <text class="small-label" x="170" y="226" text-anchor="middle">0x4B30A → Frame 0x12F</text>
+      <path class="edge" marker-end="url(#arrow-page)" d="M210 116 L170 178"/>
+      <path class="edge" marker-end="url(#arrow-page)" d="M260 216 L420 216"/>
+      <rect class="node-hot" x="420" y="178" width="250" height="76" rx="8"/>
+      <text class="label" x="545" y="204" text-anchor="middle">Physische Adresse</text>
+      <text class="small-label" x="545" y="226" text-anchor="middle">Frame 0x12F + Offset 0x568</text>
+      <path class="edge" marker-end="url(#arrow-page)" d="M425 116 L520 178"/>
+    </svg>
+    <p>Das Offset wird nicht übersetzt. Nur die Seitennummer wird über die Seitentabelle auf eine Rahmennummer abgebildet.</p>
+  </div>
+  <aside class="callout good"><strong>Hex-Tipp:</strong> Bei 4 KiB Pages sind 12 Offsetbits = 3 Hex-Ziffern. Adresse <code>0x4B30A568</code> → Seitennummer <code>0x4B30A</code>, Offset <code>0x568</code>, Page-Bereich <code>0x4B30A000</code> bis <code>0x4B30AFFF</code>.</aside>
+  <aside class="callout warn"><strong>Array-Aufgaben:</strong> Erst den Start-Offset innerhalb der Page bestimmen. Dann reicht <code>ceil(Arraylänge / Pagegröße)</code> nur, wenn das Array pagebündig beginnt. Allgemein gilt: <code>Rahmen = floor((Offset + Länge - 1) / Pagegröße) + 1</code>.</aside>
+  <h3>9.4 Seitentabellen</h3>
+  <ul><li>Seitentabelleneintrag enthält u.a. Present-Bit, Modified/Dirty-Bit, Use/Referenced-Bit, Schutzbits und Rahmennummer.</li><li>Einträge speichern nicht die ganze physische Adresse, sondern die Rahmennummer plus Statusbits.</li><li>Einstufige Seitentabellen können sehr groß werden.</li><li>Mehrstufige Seitentabellen sparen Speicher, weil nur benötigte Teil-Tabellen angelegt werden.</li><li>TLB: schneller Cache für Adressumsetzungen; verringert Zugriffskosten. Bei einem Prozesswechsel müssen TLB-Inhalte typischerweise invalidiert oder pro Prozess unterschieden werden.</li></ul>
+  <h3>9.5 Virtueller Speicher und Page Fault</h3>
+  <ol><li>Prozess greift auf virtuelle Seite zu, die nicht im Hauptspeicher liegt.</li><li>Hardware erkennt Present-Bit = 0 und löst Page Fault / Kernel Trap aus.</li><li>Betriebssystem blockiert den Prozess.</li><li>Speicherverwaltung findet freien Rahmen oder wählt Opferseite.</li><li>Falls Opferseite geändert wurde, wird sie auf Sekundärspeicher geschrieben.</li><li>Benötigte Seite wird von Sekundärspeicher in den Rahmen geladen.</li><li>Seitentabelle wird aktualisiert.</li><li>Prozess wird wieder Ready und kann später weiterlaufen.</li></ol>
+  <h3>9.6 Lokalitätsprinzip</h3>
+  <ul><li><strong>Zeitliche Lokalität</strong>: was gerade benutzt wurde, wird wahrscheinlich bald wieder benutzt.</li><li><strong>Räumliche Lokalität</strong>: Daten/Befehle nahe der gerade benutzten Adresse werden wahrscheinlich bald benutzt.</li><li>Caches und Paging funktionieren nur gut, wenn Lokalität ausreichend vorhanden ist.</li></ul>
+  <div class="klausurbox"><strong>Cache-Aufgaben rechnen:</strong> Bei sequentiellem Zugriff auf ein Byte-Array bringt ein Miss jeweils einen ganzen Cacheblock. Beispiel: 200 Byte, Blockgröße 64 Byte, leerer Cache → vier Blöcke werden geladen: Byte 0-63, 64-127, 128-191, 192-255. Also 4 Misses, 196 Hits, Hit-Rate <code>196/200 = 98 %</code>.</div>
+  <h3>9.7 Seitenaustauschstrategien</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Strategie</th><th>Regel</th><th>Klausurhinweis</th></tr></thead><tbody><tr><td>Optimal</td><td>Ersetzt die Seite, die am weitesten in der Zukunft wieder gebraucht wird.</td><td>Theoretischer Vergleichswert; praktisch nicht direkt umsetzbar, weil Zukunft unbekannt.</td></tr><tr><td>FIFO</td><td>Ersetzt die Seite, die am längsten im Speicher liegt.</td><td>Einfach; kann Beladys Anomalie zeigen.</td></tr><tr><td>LRU</td><td>Ersetzt die Seite, die am längsten nicht benutzt wurde.</td><td>Nutzt Vergangenheit als Näherung; in Aufgaben letzte Nutzung sauber prüfen.</td></tr><tr><td>Clock / Second Chance</td><td>Zeiger läuft über Frames; Use-Bit 1 → auf 0 setzen und weiter; Use-Bit 0 → ersetzen.</td><td>Praktische Näherung an LRU.</td></tr></tbody></table></div>
+  <h3>9.8 So löst du Page-Replacement-Aufgaben</h3>
+  <ol><li>Rahmen leer initialisieren.</li><li>Referenzstring von links nach rechts abarbeiten.</li><li>Wenn Seite schon in einem Rahmen liegt: Hit, ggf. LRU/Use-Bit aktualisieren.</li><li>Wenn Seite fehlt: Page Fault markieren.</li><li>Wenn freier Rahmen vorhanden: laden.</li><li>Wenn kein freier Rahmen vorhanden: Opfer nach Strategie wählen.</li><li>Nach jedem Schritt Tabellenzustand aktualisieren, sonst verlierst du Punkte.</li></ol>
+  <h3>9.9 Thrashing</h3>
+  <p>Thrashing entsteht, wenn Prozesse zu wenige Rahmen haben und das System fast nur noch Seiten ein- und auslagert statt Nutzarbeit zu verrichten. Symptome: sehr viele Page Faults, hohe Sekundärspeicheraktivität, schlechte CPU-Auslastung.</p>
+  <ul><li>Ursache: Working Sets passen nicht in den Hauptspeicher.</li><li>Gegenmaßnahmen: Multiprogramming-Grad senken, mehr Rahmen zuteilen, bessere Lokalität, Working-Set-Verfahren.</li></ul>
+  <h3>9.10 Segmentierung</h3>
+  <ul><li>Segmentierung teilt den Adressraum in logisch getrennte Bereiche, z.B. Code, Daten, Heap oder Stack.</li><li>Segmente können unterschiedliche Größen haben und mit Paging kombiniert werden: Segmenttabelle verweist dann auf Seitentabellen.</li><li>Vorteile: zusätzliche Schutzmechanismen und gezieltes Sharing. Shared Memory wird häufig über gemeinsam abgebildete Segmente oder vergleichbare Bereiche realisiert.</li></ul>
+</section>
+
+<section id="dateien">
+  <h2>10. Dateisysteme</h2>
+  <div class="klausurbox"><strong>Interaktiv üben:</strong> Für FAT-/Cluster-Rechnungen, verkettete Blöcke und I-Node-Aufgaben gibt es eine eigene Seite mit Antwortprüfung: <a href="dateisystem_trainer.html">Dateisystem-Trainer öffnen</a>.</div>
+  <h3>10.1 Aufgaben eines Dateisystems</h3>
+  <ul><li>Persistente Speicherung von Daten in Dateien.</li><li>Benennung, Organisation und Auffinden von Dateien über Verzeichnisse.</li><li>Verwaltung von Metadaten: Größe, Zeiten, Rechte, Besitzer, Typ.</li><li>Abbildung logischer Dateien auf physische Blöcke des Datenträgers.</li><li>Freispeicherverwaltung, Konsistenz, Zugriffsschutz, Performance.</li></ul>
+  <h3>10.2 Dateien und Verzeichnisse</h3>
+  <ul><li>Datei: benannte Folge von Bytes/Records mit Attributen.</li><li>Dateitypen können durch Endung, Magic Number oder Metadaten erkannt werden.</li><li>Zugriffsarten: sequentiell, direkt/random access, ggf. indexiert.</li><li>Verzeichnisse ordnen Namen Dateireferenzen bzw. Metadaten zu.</li><li>Implementierung: Verzeichniseintrag und Attribute können gemeinsam abgelegt sein, z.B. NTFS, oder der Verzeichniseintrag verweist auf eine I-Node-Nummer, z.B. UNIX.</li><li>Absolute Pfade starten an der Wurzel; relative Pfade vom aktuellen Verzeichnis.</li></ul>
+  <h3>10.3 Organisation von Datenträgern und Boot</h3>
+  <ul><li>Physisch: Datenträger besteht aus adressierbaren Blöcken/Sektoren.</li><li>Logisch: Partitionen/logische Laufwerke, Dateisystemstrukturen, Verzeichnisse, Freispeicher.</li><li>Boot-Grundidee: Firmware/BIOS/UEFI startet, liest Bootinformationen, lädt Bootloader, Bootloader lädt Betriebssystemkern.</li></ul>
+  <h3>10.4 Belegungsstrategien</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Strategie</th><th>Prinzip</th><th>Vorteile / Nachteile</th></tr></thead><tbody><tr><td>Zusammenhängende Belegung</td><td>Datei liegt in aufeinanderfolgenden Blöcken.</td><td>Sehr schneller sequentieller und direkter Zugriff, einfache Adressrechnung; externe Fragmentierung, Wachstum schwierig. Besonders passend für read-only oder wenig veränderliche Medien wie CD-ROM/DVD-ROM.</td></tr><tr><td>Verkettete Liste</td><td>Jeder Block enthält Daten und einen Zeiger auf den nächsten Block.</td><td>Kein externer Fragmentierungszwang; schlechter Direktzugriff, Pointerverlust problematisch, und pro Block geht Nutzdatenplatz für den Zeiger verloren.</td></tr><tr><td>FAT</td><td>Verkettung steht zentral in einer Tabelle im Speicher.</td><td>Direktzugriff besser als bei verteilter Verkettung, weil die Kette im RAM verfolgt werden kann; FAT kann groß werden, Cluster erzeugen interne Fragmentierung.</td></tr><tr><td>I-Nodes</td><td>Indexknoten enthält Attribute sowie direkte und indirekte Blockadressen.</td><td>Guter Direktzugriff und große Dateien durch indirekte Ebenen; I-Node und indirekte Zeigerblöcke sind Verwaltungsaufwand.</td></tr></tbody></table></div>
+  <h3>10.5 FAT- und Belegungsrechnungen</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Rechnung</th><th>Formel</th><th>Beispiel/Hinweis</th></tr></thead><tbody><tr><td>Maximale adressierbare Einträge</td><td><code>bei b Bit: 2^b Einträge</code></td><td>16-Bit-FAT → 2<sup>16</sup> Blöcke/Cluster.</td></tr><tr><td>Maximale Partitionsgröße ohne Cluster</td><td><code>2^b × Blockgröße</code></td><td>2<sup>16</sup> × 512 Byte = 2<sup>25</sup> Byte = 32 MiB.</td></tr><tr><td>FAT-Größe im Hauptspeicher</td><td><code>Anzahl Einträge × Bytes pro Eintrag</code></td><td>2<sup>16</sup> Einträge mit 16 Bit → 2<sup>16</sup> × 2 Byte = 128 KiB.</td></tr><tr><td>Clustergröße</td><td><code>2^i × Blockgröße</code></td><td>i=3 und 512 Byte → 8 × 512 = 4096 Byte.</td></tr><tr><td>Max. Partitionsgröße mit Cluster</td><td><code>2^b × 2^i × Blockgröße</code></td><td>2<sup>16</sup> × 4096 Byte = 2<sup>28</sup> Byte = 256 MiB.</td></tr><tr><td>Platzverbrauch FAT/Cluster</td><td><code>ceil(Dateigröße / Zuordnungseinheit) × Zuordnungseinheit</code></td><td>652 Byte: bei 512-Byte-Blöcken 1024 Byte; bei 4096-Byte-Clustern 4096 Byte.</td></tr><tr><td>Verkettete Liste ohne Tabelle</td><td><code>Nutzdaten = Blockgröße - Zeigergröße</code><br><code>Blöcke = ceil(Dateigröße / Nutzdaten)</code><br><code>Platz = Blöcke × Blockgröße</code></td><td>Bei 512-Byte-Block und 2-Byte-Zeiger passen nur 510 Nutzdatenbytes pro Block.</td></tr><tr><td>Random-Access-Vergleich</td><td>zusammenhängend ≈ sehr schnell; FAT/I-Node gut; einfache verkettete Liste langsam</td><td>Bei der einfachen Liste muss man bis zum gewünschten Block die Kette von vorne verfolgen.</td></tr></tbody></table></div>
+  <h3>10.6 I-Node-Rechnungen</h3>
+  <p>Bei I-Nodes zählst du alle erreichbaren Datenblöcke: direkte Datenblöcke plus Datenblöcke über einfache/zweifache/dreifache Indirektion. Danach multiplizierst du mit Blockgröße.</p>
+  <div class="table-wrap"><table class=""><thead><tr><th>Fall</th><th>Rechnung</th><th>Klausurhinweis</th></tr></thead><tbody><tr><td>Nur direkte Adressen</td><td><code>direkte_Anzahl × Blockgröße</code></td><td>Direkte Einträge zeigen direkt auf Datenblöcke.</td></tr><tr><td>Einfach indirekt</td><td><code>indirekte_Einträge × Adressen_pro_Zeigerblock × Blockgröße</code></td><td>Zeigerblock enthält Adressen von Datenblöcken.</td></tr><tr><td>Beispiel aus Übung</td><td><code>(8 + 4×128) × 512 Byte = 520×512 = 266240 Byte</code></td><td>Also 260 KiB. Das ist die maximale Nutzdateigröße, nicht automatisch der Plattenplatz inklusive Verwaltung.</td></tr><tr><td>Doppelt/dreifach indirekt</td><td><code>doppelt indirekt → Adressen_pro_Block² Datenblöcke</code><br><code>dreifach indirekt → Adressen_pro_Block³ Datenblöcke</code></td><td>Immer erst Datenblockanzahl berechnen, dann mal Blockgröße.</td></tr><tr><td>Plattenplatzverbrauch</td><td><code>Datenblöcke + I-Node-Block + benötigte indirekte Blöcke</code></td><td>Bei Aufgaben wie „How many bytes does the file take on disk?“ Verwaltungsblöcke mitzählen, wenn sie nicht ausdrücklich ignoriert werden.</td></tr></tbody></table></div>
+  <div class="diagram">
+    <h4>Beispielgraph: I-Node mit direkter und indirekter Adressierung</h4>
+    <svg viewBox="0 0 760 330" role="img" aria-label="I-Node Baum mit direkten und indirekten Blockadressen">
+      <defs><marker id="arrow-inode" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker></defs>
+      <rect class="node-hot" x="60" y="115" width="130" height="84" rx="10"/>
+      <text class="label" x="125" y="144" text-anchor="middle">I-Node</text>
+      <text class="small-label" x="125" y="164" text-anchor="middle">Attribute</text>
+      <text class="small-label" x="125" y="182" text-anchor="middle">Blockzeiger</text>
+      <rect class="node-good" x="300" y="40" width="120" height="44" rx="8"/><text class="small-label" x="360" y="67" text-anchor="middle">direkte Datenblöcke</text>
+      <rect class="node-good" x="455" y="40" width="120" height="44" rx="8"/><text class="small-label" x="515" y="67" text-anchor="middle">Datenblock</text>
+      <rect class="node-good" x="610" y="40" width="120" height="44" rx="8"/><text class="small-label" x="670" y="67" text-anchor="middle">Datenblock</text>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M190 135 C235 92 265 65 300 62"/>
+      <rect class="node-mid" x="300" y="142" width="130" height="54" rx="8"/><text class="small-label" x="365" y="164" text-anchor="middle">einfach indirekt</text><text class="small-label" x="365" y="182" text-anchor="middle">Zeigerblock</text>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M190 157 L300 169"/>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M430 169 C470 130 505 110 545 100"/>
+      <rect class="node-good" x="545" y="115" width="120" height="44" rx="8"/><text class="small-label" x="605" y="142" text-anchor="middle">Datenblöcke</text>
+      <rect class="node-mid" x="300" y="250" width="130" height="54" rx="8"/><text class="small-label" x="365" y="272" text-anchor="middle">doppelt indirekt</text><text class="small-label" x="365" y="290" text-anchor="middle">Zeigerblock</text>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M190 190 C235 230 265 270 300 277"/>
+      <rect class="node-mid" x="500" y="250" width="130" height="54" rx="8"/><text class="small-label" x="565" y="272" text-anchor="middle">Zeigerblock</text><text class="small-label" x="565" y="290" text-anchor="middle">auf Datenblöcke</text>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M430 277 L500 277"/>
+      <path class="edge" marker-end="url(#arrow-inode)" d="M630 277 C665 240 690 205 705 168"/>
+      <text class="small-label" x="690" y="148" text-anchor="middle">viele Datenblöcke</text>
+    </svg>
+    <p>Für die maximale Dateigröße zählen nur die erreichbaren Datenblöcke. Für belegten Plattenplatz kommen I-Node und benötigte Zeigerblöcke dazu.</p>
+  </div>
+  <h3>10.7 Journaling, log-basierte Dateisysteme, VFS</h3>
+  <ul><li><strong>Journaling</strong>: Geplante Änderungen werden zuerst in ein Journal geschrieben und danach ausgeführt. Nach einem Absturz kann das Journal erneut ausgeführt oder zurückgerollt werden; einzelne Schritte sollten idempotent sein, Ziel ist Atomizität.</li><li><strong>Log-basiertes Dateisystem</strong>: schreibt gepufferte Änderungen sequenziell als Segmente an das Log-Ende; eine I-Node-Map findet aktuelle I-Nodes, ein Cleaner räumt alte Segmente auf.</li><li><strong>Virtuelles Dateisystem</strong>: einheitliche Schnittstelle für verschiedene konkrete Dateisysteme. Windows trennt oft über Laufwerksbuchstaben, UNIX/Linux integriert Dateisysteme in einen gemeinsamen Verzeichnisbaum; VFS vermittelt auch entfernte Dateisysteme wie NFS.</li></ul>
+  <aside class="callout danger"><strong>Falle:</strong> Cluster vergrößern die maximal adressierbare Partition, aber sie verschwenden bei kleinen Dateien Platz. Das ist interne Fragmentierung.</aside>
+</section>
+
+<section id="io">
+  <h2>11. E/A-Organisation - Notfallwissen für alte Klausuren</h2>
+  <p>Die bereitgestellten Folien fokussieren stark auf OS-Kernthemen, aber alte Klausuren enthalten E/A-Fragen. Du brauchst zumindest die Standardantworten.</p>
+  <h3>11.1 Drei Formen der E/A-Organisation</h3>
+  <div class="table-wrap"><table class=""><thead><tr><th>Form</th><th>Prinzip</th><th>Bewertung</th></tr></thead><tbody><tr><td>Programmed I/O / Polling</td><td>CPU fragt Gerätestatus aktiv ab und überträgt Daten selbst.</td><td>Einfach, aber CPU-Zeit wird verschwendet.</td></tr><tr><td>Interrupt-gesteuerte E/A</td><td>Gerät meldet Ereignis per Interrupt; CPU reagiert mit ISR.</td><td>Besser als Polling, aber CPU ist weiterhin an Datenbewegung beteiligt.</td></tr><tr><td>DMA</td><td>Direct Memory Access: Controller überträgt Daten zwischen Gerät und Hauptspeicher weitgehend ohne CPU.</td><td>Gut für große Datenmengen; CPU initialisiert nur Auftrag und wird am Ende unterbrochen.</td></tr></tbody></table></div>
+  <h3>11.2 Memory-mapped vs. Port-mapped I/O</h3>
+  <ul><li><strong>Memory-mapped I/O</strong>: Geräteregister liegen im normalen Adressraum; normale Lade-/Speicherbefehle greifen darauf zu. Vorteil: normale Instruktionen/Adressierungsarten; Nachteil: Adressraum wird belegt, Cache/Schutz muss korrekt behandelt werden.</li><li><strong>Port-mapped I/O</strong>: eigener I/O-Adressraum mit speziellen Befehlen. Vorteil: separater Adressraum, klare Trennung; Nachteil: spezielle Instruktionen, weniger flexibel.</li></ul>
+  <h3>11.3 DMA</h3>
+  <ul><li>DMA = Direct Memory Access.</li><li>CPU programmiert DMA-Controller, z.B. Quell-/Zieladresse, Richtung, Anzahl Bytes/Blöcke, Gerät/Kanal, ggf. Betriebsmodus.</li><li>DMA-Controller führt Transfer aus; CPU kann währenddessen anderes tun.</li><li>Am Ende meldet DMA-Controller Abschluss per Interrupt.</li><li>Cycle Stealing: DMA-Controller entzieht der CPU kurzzeitig Buszyklen, um Daten zu übertragen.</li></ul>
+</section>
+
+<section id="antworten">
+  <h2>12. Klausur-Antwortmuster und typische Fallen</h2>
+  <div class="klausurbox"><strong>Kurzantworten trainieren:</strong> Für Prozess, Thread, Kontextwechsel, Interrupt, DMA, Monitor/Semaphore, TLB und Thrashing gibt es einen <a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a>. Wenn du bei einer Aufgabe danebenliegst, schreibe den Fehler direkt ins <a href="fehlerlog.html">Fehlerlog</a>, sonst machst du ihn in drei Tagen wieder.</div>
+  <div class="grid">
+    <div class="card">
+      <h3>Wenn eine Definition gefragt ist</h3>
+      <ul><li>Erster Satz: klare Definition.</li><li>Zweiter Satz: 1-2 zentrale Eigenschaften.</li><li>Dritter Satz: Beispiel oder Abgrenzung, falls Punkte hoch sind.</li></ul>
+    </div>
+    <div class="card">
+      <h3>Wenn eine Rechnung gefragt ist</h3>
+      <ul><li>Immer Zweierpotenzen sauber angeben: 1 KiB = 2^10 Byte, 1 MiB = 2^20 Byte.</li><li>Bei Speicheraufgaben erst Pagegröße in 2^k umwandeln.</li><li>Bei Hex-Adressen Offsetstellen anhand Pagegröße bestimmen.</li><li>Bei Dateisystemen immer runden: belegter Platz = ganze Blöcke/Cluster.</li><li>Rechenweg hinschreiben, nicht nur Ergebnis.</li></ul>
+    </div>
+  </div>
+  <h3>Fallenliste</h3>
+  <ul><li>Ready und Blocked verwechseln: Blocked ist nicht lauffähig.</li><li>Verdrängung falsch definieren: Blockieren ist keine Verdrängung.</li><li>RMS nach Rechenzeit statt Periode sortieren: falsch.</li><li>RMS-Garantiegrenze als notwendige Grenze behandeln: falsch.</li><li>EDF mit relativer statt absoluter Deadline anwenden: häufiger Fehler.</li><li>Semaphore automatisch als Mutex ansehen: falsch; Initialwert und Verwendung entscheiden.</li><li>Allgemeine Semaphore als immer nichtnegativ beschreiben, obwohl die Vorlesungsnotation negative Werte für wartende Prozesse nutzt.</li><li>Lock-Variable ohne atomaren Test-and-Set als sicher ansehen: falsch.</li><li>Deadlock nur wegen Warten behaupten: falsch; du brauchst zyklische Wartebeziehung.</li><li>Bei Semaphor-Code nicht mitschreiben, welche Semaphore ein Prozess gerade hält.</li><li>Seitennummer und Offset bei Hexadressen falsch splitten: Pagegröße bestimmt Offsetbits.</li><li>Bei Array-Rahmen-Aufgaben nur <code>ceil(Länge/Pagegröße)</code> rechnen und den Start-Offset vergessen.</li><li>Bei Cache-Aufgaben nicht prüfen, ob die Miss-Zeit den Cache-Zugriff bereits enthält.</li><li>Bei Cacheblocks die räumliche Lokalität vergessen: Ein Miss lädt mehr als nur ein Byte.</li><li>FAT-Cluster-Vorteil nennen, aber Nachteil interne Fragmentierung vergessen.</li><li>Bei verketteten Listen ohne Tabelle den Zeigerplatz im Datenblock vergessen.</li><li>Bei I-Nodes Zeigerblöcke als Datenblöcke zählen: falsch, wenn nach Dateigröße/Nutzdaten gefragt ist.</li><li>Bei I-Node-Plattenplatz Verwaltungsblöcke vergessen: falsch, wenn nach belegtem Platz auf der Platte gefragt ist.</li></ul>
+  <h3>80/20-Lernreihenfolge</h3>
+  <ol><li>Scheduling-Zeitdiagramme: EDF, RMS, SJF/SRT, Round Robin.</li><li>RMS-Rechnungen: U, Garantiegrenze, Prioritäten.</li><li>Semaphore/Deadlock-Aufgaben: Graph zeichnen, gehaltene Semaphore markieren, Zyklen begründen.</li><li>Paging-Rechnungen: Adresse splitten, Arrays über Rahmen, Seitentabelle, Page Faults.</li><li>FIFO/LRU/Clock per Hand üben.</li><li>Cache-Mini-Aufgaben: Misses, Hits, Hit-Rate, mittlere Zugriffszeit.</li><li>FAT/I-Node-Rechnungen und Blockverbrauch.</li><li>Prozess-/Thread-/IPC-Theorie auswendig in kurzen Klausursätzen.</li><li>E/A-Notfallwissen am Ende.</li></ol>
+</section>
+
+<section id="glossar">
+  <h2>13. Mini-Glossar für schnelle Wiederholung</h2>
+  <div class="table-wrap"><table class=""><thead><tr><th>Begriff</th><th>Kurzdefinition</th></tr></thead><tbody><tr><td>PCB</td><td>Prozesskontrollblock; speichert Verwaltungsdaten und Rechenzustand eines Prozesses.</td></tr><tr><td>Dispatcher</td><td>Teil des Betriebssystems, der nach Schedulerentscheidung den ausgewählten Prozess tatsächlich startet/fortsetzt.</td></tr><tr><td>Ready Queue</td><td>Liste lauffähiger Prozesse, die auf CPU warten.</td></tr><tr><td>Blocked Queue</td><td>Liste wartender Prozesse, die auf ein Ereignis warten.</td></tr><tr><td>Preemption</td><td>Verdrängung eines laufenden Prozesses durch den Scheduler.</td></tr><tr><td>Starvation</td><td>Ein Prozess bekommt sehr lange oder nie die benötigte Ressource/CPU.</td></tr><tr><td>Race Condition</td><td>Ergebnis hängt vom zeitlichen Ablauf nebenläufiger Operationen ab.</td></tr><tr><td>Critical Section</td><td>Codebereich mit exklusiv zu schützender gemeinsamer Ressource.</td></tr><tr><td>Semaphore</td><td>Synchronisationszähler mit atomarem wait/signal; je nach Modell können wartende Prozesse über negative Zählerwerte sichtbar werden.</td></tr><tr><td>Monitor</td><td>Synchronisationskonstrukt mit automatisch exklusivem Eintritt in Monitorprozeduren.</td></tr><tr><td>Deadlock</td><td>Zyklische Wartebeziehung, in der keiner weiterkommt.</td></tr><tr><td>Page</td><td>Virtuelle Speicherseite.</td></tr><tr><td>Frame/Kachel/Rahmen</td><td>Physischer Speicherrahmen gleicher Größe wie eine Page.</td></tr><tr><td>Segmentierung</td><td>Aufteilung des Adressraums in logische Segmente, z.B. Code, Daten und Stack; oft mit Paging kombiniert.</td></tr><tr><td>Page Fault</td><td>Zugriff auf Seite, die nicht im Hauptspeicher liegt.</td></tr><tr><td>TLB</td><td>Cache für virtuelle-zu-physische Adressumsetzungen.</td></tr><tr><td>Thrashing</td><td>System verbringt zu viel Zeit mit Paging statt Nutzarbeit.</td></tr><tr><td>FAT</td><td>File Allocation Table; zentrale Tabelle für Block-/Clusterverkettung.</td></tr><tr><td>I-Node</td><td>Indexknoten mit Dateimetadaten und Blockadressen.</td></tr><tr><td>Journaling</td><td>Protokolliert Dateisystemänderungen vorab zur Konsistenz nach Absturz.</td></tr><tr><td>Signal</td><td>Asynchrone einfache Nachricht an einen Prozess; Handler sollte kurz bleiben.</td></tr><tr><td>DMA</td><td>Direct Memory Access; Controller überträgt Daten ohne dauernde CPU-Beteiligung.</td></tr></tbody></table></div>
+</section>
+
+<section id="checkliste">
+  <h2>14. Letzte Checkliste vor der Klausur</h2>
+  <ul class="checklist">
+    <li>Kannst du ein Scheduling-Zeitdiagramm ohne Nachdenken strukturiert abarbeiten?</li>
+    <li>Kannst du RMS-Prioritäten und RMS-Garantie sauber berechnen?</li>
+    <li>Kannst du bei Semaphore-Code sagen, ob ein kritischer Abschnitt wirklich geschützt wird?</li>
+    <li>Kannst du bei Semaphor-Code markieren, welche Semaphore ein Prozess hält und worauf er wartet?</li>
+    <li>Kannst du den <a href="synchronisation_trainer.html">Synchronisations-Trainer</a> ohne Musterlösung lösen?</li>
+    <li>Kannst du Deadlocks mit Graph und Coffman-Bedingungen begründen?</li>
+    <li>Kannst du eine 32-Bit-Adresse bei gegebener Pagegröße in Seitennummer und Offset zerlegen?</li>
+    <li>Kannst du berechnen, über wie viele Rahmen ein Array ab einer gegebenen Startadresse läuft?</li>
+    <li>Kannst du Cache-Misses, Hits und mittlere Zugriffszeit für ein sequentielles Byte-Array berechnen?</li>
+    <li>Kannst du FIFO/LRU/Clock mit Page-Fault-Markierungen ausfüllen?</li>
+    <li>Kannst du FAT-/I-Node-Aufgaben mit Blockgröße und Rundung rechnen?</li>
+    <li>Kannst du bei verketteten Listen ohne Tabelle den Zeigerplatz pro Block abziehen?</li>
+    <li>Kannst du bei I-Node-Aufgaben unterscheiden: maximale Nutzdateigröße oder belegter Plattenplatz inklusive Verwaltungsblöcke?</li>
+    <li>Kannst du Prozess, Thread, Kontextwechsel, Interrupt, DMA in 2-3 Klausursätzen erklären?</li>
+    <li>Kannst du deine häufigsten Fehler im <a href="fehlerlog.html">Fehlerlog</a> benennen und vermeiden?</li>
+    <li>Kannst du den <a href="mini_klausur_trainer.html">Mini-Klausurmodus</a> ohne Musterlösung sauber bestehen?</li>
+  </ul>
+  <aside class="callout danger"><strong>Brutale Wahrheit:</strong> Wenn du diese Checkliste nicht aktiv rechnen kannst, bringt weiteres Lesen wenig. Dann musst du Aufgaben machen. Betriebssysteme wird nicht durch Markieren bestanden, sondern durch saubere kleine Rechen- und Begründungsschritte.</aside>
+</section>
+
+<section id="quellen">
+  <h2>Quellenbasis aus der ZIP</h2>
+  <p class="muted">Diese HTML wurde aus den bereitgestellten Betriebssysteme-Folien, Klausuren und Übungsfragen aufgebaut. Die Quellenliste ist zur Orientierung im Dokument enthalten.</p>
+  <ul class="source-list"><li>Aufgabe zu Dateisystemen.pdf</li><li>Betriebssysteme_Übungsfragen_1-1.pdf</li><li>Klausur_BS_SS_2011.pdf</li><li>Klausur-BS-SS-07.pdf</li><li>Klausur-BS-SS-08.pdf</li><li>Klausur-BS-SS-09.pdf</li><li>OS_1_Einfuehrung.pdf</li><li>OS_10_Dateisysteme.pdf</li><li>OS_2_Grundlagen.pdf</li><li>OS_3_Prozesse.pdf</li><li>OS_4_Scheduling.pdf</li><li>OS_5_Threads_deutsch.pdf</li><li>OS_6_Synchronisation.pdf</li><li>OS_7_Kommunikation.pdf</li><li>OS_8_Deadlocks.pdf</li><li>OS_9_Speicherverwaltung.pdf</li><li>prüfung_OS_SS21_english.pdf</li><li>prüfung_OS_WiSe201516-1.pdf</li><li>prüfung_OS_WS1920.pdf</li><li>Übungsfragen Betriebssysteme_2.pdf</li></ul>
+</section>
+
+</main>
+</div>
+</body>
+</html>

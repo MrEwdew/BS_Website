@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speicher-Trainer - Betriebssysteme</title>
+<style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #152033;
+  --muted: #5d6678;
+  --line: #d9deea;
+  --accent: #1f5eff;
+  --accent2: #0f766e;
+  --hot: #b42318;
+  --mid: #925200;
+  --code: #f0f3f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef3ff 0, var(--bg) 260px);
+  line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 24px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.back {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 11px;
+}
+.small-label { color: var(--muted); font-size: 13px; }
+.hero, .panel, .sheet {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(21,32,51,.07);
+}
+.hero { padding: 26px 28px; margin-bottom: 18px; }
+.hero h1 { margin: 0; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; }
+.hero p { color: var(--muted); max-width: 900px; margin: 12px 0 0; font-size: 17px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+button, select, input {
+  border: 1px solid #b6c3e0;
+  background: #fff;
+  color: #1d2939;
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+}
+button { cursor: pointer; }
+button:hover { background: #eef3ff; }
+button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.secondary { background: #f8fafc; }
+select, input { width: 100%; }
+label { display: block; color: var(--muted); font-size: 13px; margin: 10px 0 6px; }
+.layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.panel, .sheet { padding: 18px; min-width: 0; }
+.panel h2, .sheet h2 { margin: 0 0 12px; font-size: 21px; }
+.panel h3, .sheet h3 { margin: 18px 0 8px; font-size: 16px; }
+.button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.button-row.three { grid-template-columns: repeat(3, 1fr); }
+.result {
+  min-height: 48px;
+  border-left: 5px solid var(--line);
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 13px;
+  margin-top: 12px;
+}
+.result.good { border-left-color: var(--accent2); background: #ecfdf8; }
+.result.bad { border-left-color: var(--hot); background: #fff3f1; }
+.note {
+  border: 1px dashed #b6c3e0;
+  background: #fbfdff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  color: #344054;
+  font-size: 14px;
+}
+.note strong { color: #20315f; }
+.mode { display: none; }
+.mode.active { display: block; }
+.facts {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 12px 0 16px;
+}
+.facts table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.facts th, .facts td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+.facts tr:last-child th, .facts tr:last-child td { border-bottom: 0; }
+.facts th { width: 210px; background: #f1f5ff; color: #26324a; }
+code { font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 6px; }
+.address-visual {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fbfcff;
+  padding: 16px;
+  margin: 14px 0;
+}
+.address-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, .62fr);
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #98a2b3;
+  border-radius: 12px;
+  background: #fff;
+}
+.addr-part {
+  padding: 14px;
+  min-width: 0;
+}
+.addr-part.page { background: #eef3ff; }
+.addr-part.offset { background: #ecfdf8; }
+.addr-sep {
+  width: 1px;
+  background: #98a2b3;
+}
+.addr-part strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #344054; }
+.addr-part span { display: block; margin-top: 7px; font: 700 22px "Cascadia Mono", Consolas, monospace; overflow-wrap: anywhere; }
+.formula-list {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+.formula-list div {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+.answer-grid {
+  display: grid;
+  gap: 10px;
+}
+.answer-grid input.bad, .replacement-table input.bad, .replacement-table select.bad { border-color: var(--hot); background: #fff3f1; }
+.answer-grid input.ok, .replacement-table input.ok, .replacement-table select.ok { border-color: var(--accent2); background: #ecfdf8; }
+.solution {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 14px;
+  background: #fff;
+}
+.solution.locked { color: var(--muted); background: #fbfdff; }
+.replacement-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #f8fafc;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 650;
+}
+.exam-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #999;
+  background: #fff;
+  padding: 12px;
+  margin: 12px 0;
+}
+.replacement-table {
+  border-collapse: collapse;
+  min-width: 820px;
+  width: 100%;
+  font-family: "Times New Roman", Times, serif;
+  color: #000;
+}
+.replacement-table th, .replacement-table td {
+  border: 1px solid #777;
+  min-width: 58px;
+  height: 42px;
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+.replacement-table th {
+  background: #fff;
+  font-weight: 700;
+}
+.replacement-table .row-head {
+  min-width: 110px;
+  text-align: left;
+  padding-left: 8px;
+}
+.replacement-table input,
+.replacement-table select {
+  border-radius: 0;
+  border: 1px solid #aaa;
+  padding: 3px;
+  text-align: center;
+  font: 15px "Times New Roman", Times, serif;
+}
+.replacement-table .fault { font-weight: 700; color: var(--hot); }
+.replacement-table .hit { color: var(--accent2); }
+.solution-table td { font-size: 14px; }
+.clock-bits { display: block; color: #555; font-size: 11px; margin-top: 2px; }
+.step-note { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+@media (max-width: 980px) {
+  .wrap { padding: 14px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .button-row.three { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#speicher">Zur Zusammenfassung</a>
+    <span class="small-label">Betriebssysteme · Speicherverwaltung · Paging</span>
+  </div>
+
+  <header class="hero">
+    <h1>Speicher-Trainer</h1>
+    <p>Trainiere die zwei klausurrelevanten Bewegungen: Adressen und Größen sauber berechnen, danach Page-Replacement-Tabellen ohne Verrutschen ausfüllen.</p>
+    <div class="tabs">
+      <button type="button" id="addressModeBtn" class="active">Adressrechnung</button>
+      <button type="button" id="replacementModeBtn">Page Replacement</button>
+    </div>
+  </header>
+
+  <section id="addressMode" class="mode active">
+    <div class="layout">
+      <aside class="panel">
+        <h2>Adressrechnung</h2>
+        <label for="addressExample">Aufgabentyp</label>
+        <select id="addressExample"></select>
+        <div class="button-row">
+          <button type="button" id="nextAddress">Nächste Aufgabe</button>
+          <button type="button" id="showAddressSolution" class="secondary">Lösung anzeigen</button>
+        </div>
+        <h3>Deine Antwort</h3>
+        <div id="addressAnswers" class="answer-grid"></div>
+        <button type="button" id="checkAddress">Antwort prüfen</button>
+        <div id="addressResult" class="result">Wähle eine Aufgabe und rechne zuerst selbst.</div>
+        <div class="note"><strong>Klausurfalle:</strong> Das Offset wird nicht übersetzt. Die Seitennummer wird über die Seitentabelle auf einen Rahmen abgebildet; das Offset bleibt gleich.</div>
+      </aside>
+
+      <main class="sheet">
+        <h2 id="addressTitle"></h2>
+        <p id="addressPrompt"></p>
+        <div class="facts" id="addressFacts"></div>
+        <div class="address-visual" id="addressVisual"></div>
+        <div class="formula-list" id="addressSteps"></div>
+        <div id="addressSolution" class="solution locked">Musterlösung ist ausgeblendet.</div>
+      </main>
+    </div>
+  </section>
+
+  <section id="replacementMode" class="mode">
+    <div class="layout">
+      <aside class="panel">
+        <h2>Page Replacement</h2>
+        <label for="replacementExample">Klausurraster</label>
+        <select id="replacementExample"></select>
+        <div class="button-row">
+          <button type="button" id="nextReplacement">Nächstes Beispiel</button>
+          <button type="button" id="clearReplacement" class="secondary">Raster leeren</button>
+        </div>
+        <div class="button-row">
+          <button type="button" id="revealStep" class="secondary">Nächsten Schritt zeigen</button>
+          <button type="button" id="showReplacementSolution" class="secondary">Musterlösung</button>
+        </div>
+        <button type="button" id="checkReplacement">Tabelle prüfen</button>
+        <div id="replacementResult" class="result">Fülle die Rahmen nach jedem Zugriff aus und markiere Page Faults.</div>
+        <div class="note"><strong>Tabellenregel:</strong> Jede Spalte zeigt den Zustand nach dem Zugriff auf die Referenz oben. Bei Clock markiert die Lösung zusätzlich Use-Bits und Zeigerposition.</div>
+      </aside>
+
+      <main class="sheet">
+        <h2 id="replacementTitle"></h2>
+        <p id="replacementPrompt"></p>
+        <div id="replacementMeta" class="replacement-meta"></div>
+        <div class="exam-table-wrap" id="replacementTableWrap"></div>
+        <p id="replacementStepNote" class="step-note"></p>
+        <div id="replacementSolution" class="solution locked">Musterlösung ist ausgeblendet.</div>
+      </main>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const addressExamples = [
+  {
+    title: "Adresse zerlegen: 32 Bit, 4 KiB Pages",
+    prompt: "Zerlege die virtuelle Adresse in Seitennummer und Offset. Gib Hex-Werte ohne führendes 0x ein.",
+    facts: [
+      ["virtuelle Adresse", "0x4B30A568"],
+      ["Pagegröße", "4 KiB = 4096 Byte = 2^12"],
+      ["Adressbreite", "32 Bit"]
+    ],
+    visual: { pageLabel: "Seitennummer", pageValue: "0x4B30A", offsetLabel: "Offset", offsetValue: "0x568" },
+    fields: [
+      { id: "offsetBits", label: "Offset-Bits", answer: "12" },
+      { id: "pageNumber", label: "Seitennummer (hex)", answer: "4B30A", kind: "hex" },
+      { id: "offset", label: "Offset (hex)", answer: "568", kind: "hex" },
+      { id: "pageRange", label: "Page-Bereich", answer: "0x4B30A000-0x4B30AFFF", kind: "range" }
+    ],
+    steps: [
+      "4 KiB = 4096 = 2^12, also gehören 12 Bit zum Offset.",
+      "12 Bit sind 3 Hex-Ziffern. Die letzten drei Hex-Ziffern der Adresse sind daher das Offset.",
+      "0x4B30A568 wird zu Seitennummer 0x4B30A und Offset 0x568.",
+      "Die Page reicht von 0x4B30A000 bis 0x4B30AFFF."
+    ]
+  },
+  {
+    title: "Seitentabellengröße berechnen",
+    prompt: "Berechne, wie viele virtuelle Seiten existieren und wie groß eine einstufige Seitentabelle wäre.",
+    facts: [
+      ["virtueller Adressraum", "32 Bit"],
+      ["Pagegröße", "4 KiB = 2^12 Byte"],
+      ["Größe pro Seitentabelleneintrag", "4 Byte"]
+    ],
+    visual: { pageLabel: "Seitennummer-Bits", pageValue: "20 Bit", offsetLabel: "Offset-Bits", offsetValue: "12 Bit" },
+    fields: [
+      { id: "pageCount", label: "Anzahl virtueller Seiten", answer: "1048576" },
+      { id: "tableBytes", label: "Seitentabelle in Byte", answer: "4194304" },
+      { id: "tableMiB", label: "Seitentabelle in MiB", answer: "4" }
+    ],
+    steps: [
+      "Offset-Bits: log2(4096) = 12.",
+      "Seitennummer-Bits: 32 - 12 = 20.",
+      "Virtuelle Seiten: 2^20 = 1.048.576.",
+      "Seitentabelle: 1.048.576 Einträge * 4 Byte = 4.194.304 Byte = 4 MiB."
+    ]
+  },
+  {
+    title: "Physische Rahmenanzahl",
+    prompt: "Berechne, wie viele Frames/Kacheln der physische Speicher bei gegebener Pagegröße enthält.",
+    facts: [
+      ["physischer Speicher", "512 MiB"],
+      ["Page-/Framegröße", "4 KiB"],
+      ["Hinweis", "1 MiB = 2^20 Byte, 1 KiB = 2^10 Byte"]
+    ],
+    visual: { pageLabel: "physischer Speicher", pageValue: "2^29 Byte", offsetLabel: "Framegröße", offsetValue: "2^12 Byte" },
+    fields: [
+      { id: "frames", label: "Anzahl Frames", answer: "131072" },
+      { id: "frameBits", label: "Frame-Nummer-Bits", answer: "17" }
+    ],
+    steps: [
+      "512 MiB = 512 * 2^20 = 2^9 * 2^20 = 2^29 Byte.",
+      "4 KiB = 2^12 Byte.",
+      "Frames: 2^29 / 2^12 = 2^17 = 131.072.",
+      "Für 131.072 Frames braucht man 17 Bit Rahmennummer."
+    ]
+  },
+  {
+    title: "Array über mehrere Pages",
+    prompt: "Ein Byte-Array beginnt an einer nicht pagebündigen Adresse. Berechne, über wie viele Pages es läuft.",
+    facts: [
+      ["Startadresse", "0x2FF0"],
+      ["Arraylänge", "6000 Byte"],
+      ["Pagegröße", "4096 Byte"]
+    ],
+    visual: { pageLabel: "Start-Offset", pageValue: "0xFF0 = 4080", offsetLabel: "belegte Bytes", offsetValue: "6000" },
+    fields: [
+      { id: "startOffset", label: "Start-Offset dezimal", answer: "4080" },
+      { id: "pageCount", label: "Benötigte Pages", answer: "3" },
+      { id: "firstPage", label: "erste Seitennummer (hex)", answer: "2", kind: "hex" },
+      { id: "lastPage", label: "letzte Seitennummer (hex)", answer: "4", kind: "hex" }
+    ],
+    steps: [
+      "Bei 4096 Byte Pagegröße sind die letzten 12 Bit Offset. 0x2FF0 hat Offset 0xFF0 = 4080.",
+      "Man rechnet mit Offset + Länge - 1: 4080 + 6000 - 1 = 10079.",
+      "floor(10079 / 4096) + 1 = 2 + 1 = 3 Pages.",
+      "Das Array startet auf Page 0x2 und endet auf Page 0x4."
+    ]
+  },
+  {
+    title: "Seitentabelle anwenden: physische Adresse",
+    prompt: "Zerlege die virtuelle Adresse und bilde sie mit der Seitentabelle auf eine physische Adresse ab.",
+    facts: [
+      ["virtuelle Adresse", "0x2A7"],
+      ["Pagegröße", "256 Byte = 2^8"],
+      ["Seitentabelle", "Page 0x0→Frame 0x3, Page 0x1→Frame 0x7, Page 0x2→Frame 0x9"]
+    ],
+    visual: { pageLabel: "Page", pageValue: "0x2", offsetLabel: "Offset", offsetValue: "0xA7" },
+    fields: [
+      { id: "page", label: "Seitennummer (hex)", answer: "2", kind: "hex" },
+      { id: "offset", label: "Offset (hex)", answer: "A7", kind: "hex" },
+      { id: "frame", label: "Rahmennummer (hex)", answer: "9", kind: "hex" },
+      { id: "physical", label: "physische Adresse (hex)", answer: "9A7", kind: "hex" }
+    ],
+    steps: [
+      "256 Byte = 2^8, also sind 8 Bit bzw. 2 Hex-Ziffern Offset.",
+      "0x2A7 zerfällt in Page 0x2 und Offset 0xA7.",
+      "Die Seitentabelle sagt: Page 0x2 liegt in Frame 0x9.",
+      "Physische Adresse: Frame 0x9 plus unverändertes Offset 0xA7 = 0x9A7."
+    ]
+  },
+  {
+    title: "TLB: effektive Zugriffszeit",
+    prompt: "Berechne die mittlere Speicherzugriffszeit mit TLB. Bei einem TLB-Miss muss zusätzlich die Seitentabelle im Speicher gelesen werden.",
+    facts: [
+      ["TLB-Zugriff", "10 ns"],
+      ["Hauptspeicherzugriff", "100 ns"],
+      ["TLB-Hit-Rate", "90 %"],
+      ["Seitentabelle", "einstufig, ein zusätzlicher Speicherzugriff bei TLB-Miss"]
+    ],
+    visual: { pageLabel: "Hit", pageValue: "10 + 100", offsetLabel: "Miss", offsetValue: "10 + 100 + 100" },
+    fields: [
+      { id: "hitTime", label: "Zeit bei TLB-Hit (ns)", answer: "110" },
+      { id: "missTime", label: "Zeit bei TLB-Miss (ns)", answer: "210" },
+      { id: "avgTime", label: "mittlere Zugriffszeit (ns)", answer: "120" }
+    ],
+    steps: [
+      "Bei einem TLB-Hit: TLB nachschlagen und Daten aus dem Speicher holen: 10 ns + 100 ns = 110 ns.",
+      "Bei einem TLB-Miss: TLB nachschlagen, Seitentabelle im Speicher lesen, Daten aus dem Speicher holen: 10 + 100 + 100 = 210 ns.",
+      "Mittelwert: 0,9 * 110 + 0,1 * 210 = 99 + 21 = 120 ns.",
+      "Klausurfalle: Prüfen, ob die Aufgabe den Seitentabellenzugriff bei Miss separat mitzählt."
+    ]
+  },
+  {
+    title: "Mehrstufige Seitentabelle",
+    prompt: "Berechne, wie viel Speicher tatsächlich für Seitentabellen benötigt wird, wenn nur wenige zweite Ebenen angelegt sind.",
+    facts: [
+      ["virtueller Adressraum", "32 Bit"],
+      ["Pagegröße", "4 KiB = 2^12 Byte"],
+      ["Aufteilung", "10 Bit Level 1, 10 Bit Level 2, 12 Bit Offset"],
+      ["Eintrag", "4 Byte"],
+      ["tatsächlich angelegt", "1 Level-1-Tabelle + 3 Level-2-Tabellen"]
+    ],
+    visual: { pageLabel: "VPN", pageValue: "20 Bit = 10 + 10", offsetLabel: "Offset", offsetValue: "12 Bit" },
+    fields: [
+      { id: "offsetBits", label: "Offset-Bits", answer: "12" },
+      { id: "vpnBits", label: "Seitennummer-Bits", answer: "20" },
+      { id: "entriesPerTable", label: "Einträge pro Level-2-Tabelle", answer: "1024" },
+      { id: "oneTableBytes", label: "Größe einer Tabelle (Byte)", answer: "4096" },
+      { id: "allocatedBytes", label: "tatsächlich belegter Tabellenspeicher (Byte)", answer: "16384" },
+      { id: "allocatedKiB", label: "tatsächlich belegter Tabellenspeicher (KiB)", answer: "16" }
+    ],
+    steps: [
+      "4 KiB = 2^12 Byte, also sind 12 Bit Offset.",
+      "Bei 32 Bit bleiben 20 Bit virtuelle Seitennummer.",
+      "10 Bit pro Tabellenebene ergeben 2^10 = 1024 Einträge je Tabelle.",
+      "Eine Tabelle belegt 1024 * 4 Byte = 4096 Byte = 4 KiB.",
+      "Angelegt sind 1 Level-1-Tabelle und 3 Level-2-Tabellen: 4 Tabellen * 4096 Byte = 16384 Byte = 16 KiB."
+    ]
+  },
+  {
+    title: "Working Set und Thrashing",
+    prompt: "Prüfe, ob die aktiven Working Sets in die vorhandenen Frames passen.",
+    facts: [
+      ["Prozess P1", "Working Set 8 Frames"],
+      ["Prozess P2", "Working Set 12 Frames"],
+      ["Prozess P3", "Working Set 6 Frames"],
+      ["verfügbare Frames", "20"]
+    ],
+    visual: { pageLabel: "Summe Working Sets", pageValue: "8 + 12 + 6", offsetLabel: "Frames", offsetValue: "20 verfügbar" },
+    fields: [
+      { id: "sumWs", label: "Summe der Working Sets", answer: "26" },
+      { id: "missingFrames", label: "fehlende Frames", answer: "6" },
+      { id: "thrashing", label: "Thrashing-Warnung? (ja/nein)", answer: "ja" },
+      { id: "bestFix", label: "Sinnvolle Gegenmaßnahme", answer: "multiprogramminggrad senken" }
+    ],
+    steps: [
+      "P1, P2 und P3 benötigen zusammen 8 + 12 + 6 = 26 Frames.",
+      "Verfügbar sind nur 20 Frames, es fehlen also 6 Frames.",
+      "Wenn die Working Sets nicht in den Speicher passen, steigt die Page-Fault-Rate stark: Thrashing-Gefahr.",
+      "Typische Gegenmaßnahme: Multiprogramming-Grad senken oder mehr Frames zuteilen."
+    ]
+  },
+  {
+    title: "Page-Fault-Ablauf",
+    prompt: "Ordne die wichtigsten Schritte eines Page Faults ein und beantworte die Kontrollfragen.",
+    facts: [
+      ["Auslöser", "Prozess greift auf virtuelle Seite mit Present-Bit 0 zu"],
+      ["Opferseite", "geändert / Dirty-Bit gesetzt"],
+      ["Ziel", "fehlende Seite laden und Prozess später fortsetzen"]
+    ],
+    visual: { pageLabel: "Trap", pageValue: "Present=0", offsetLabel: "I/O", offsetValue: "Seite laden" },
+    fields: [
+      { id: "blocksProcess", label: "Prozess wird blockiert? (ja/nein)", answer: "ja" },
+      { id: "writeVictim", label: "Dirty-Opferseite zurückschreiben? (ja/nein)", answer: "ja" },
+      { id: "updateTable", label: "Seitentabelle aktualisieren? (ja/nein)", answer: "ja" },
+      { id: "resume", label: "Instruktion später erneut ausführen? (ja/nein)", answer: "ja" }
+    ],
+    steps: [
+      "Hardware erkennt Present-Bit 0 und löst einen Page-Fault-Trap aus.",
+      "Das Betriebssystem blockiert den Prozess und wählt einen freien Rahmen oder eine Opferseite.",
+      "Ist die Opferseite dirty, muss sie zuerst auf Sekundärspeicher geschrieben werden.",
+      "Danach wird die benötigte Seite geladen, die Seitentabelle aktualisiert und die fehlgeschlagene Instruktion später erneut ausgeführt."
+    ]
+  }
+];
+
+const replacementExamples = [
+  {
+    title: "FIFO: klassischer Referenzstring",
+    strategy: "FIFO",
+    frames: 3,
+    refs: [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2],
+    prompt: "Fülle die Tabelle nach FIFO aus. Ersetze immer die Seite, die am längsten im Speicher liegt."
+  },
+  {
+    title: "LRU: letzte Nutzung sauber verfolgen",
+    strategy: "LRU",
+    frames: 3,
+    refs: [1, 2, 3, 2, 4, 1, 5, 2, 1, 2, 3, 4],
+    prompt: "Fülle die Tabelle nach LRU aus. Bei jedem Treffer wird die letzte Nutzung aktualisiert."
+  },
+  {
+    title: "Clock: Use-Bits und Zeiger",
+    strategy: "CLOCK",
+    frames: 3,
+    refs: [2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2],
+    prompt: "Fülle die Rahmenzustände aus. Die Musterlösung zeigt zusätzlich Use-Bits und die Zeigerposition nach jedem Schritt."
+  }
+];
+
+let addressIndex = 0;
+let addressSolutionVisible = false;
+let replacementIndex = 0;
+let replacementSolutionVisible = false;
+let revealedSteps = 0;
+
+function normalizeValue(value, kind) {
+  const raw = value.trim();
+  if (kind === "hex") return raw.toUpperCase().replace(/^0X/, "").replace(/\s+/g, "");
+  if (kind === "range") return raw.toUpperCase().replace(/0X/g, "").replace(/\s+/g, "");
+  return raw.replace(/[\.\s']/g, "").replace(",", ".").trim().toLowerCase();
+}
+
+function formatNullable(value) {
+  return value === null || value === undefined ? "" : String(value);
+}
+
+function renderMode(mode) {
+  const addressActive = mode === "address";
+  $("addressMode").classList.toggle("active", addressActive);
+  $("replacementMode").classList.toggle("active", !addressActive);
+  $("addressModeBtn").classList.toggle("active", addressActive);
+  $("replacementModeBtn").classList.toggle("active", !addressActive);
+}
+
+function renderAddressSelect() {
+  $("addressExample").innerHTML = addressExamples.map((ex, index) => `<option value="${index}">${ex.title}</option>`).join("");
+  $("addressExample").value = String(addressIndex);
+}
+
+function renderAddress() {
+  const ex = addressExamples[addressIndex];
+  $("showAddressSolution").textContent = addressSolutionVisible ? "Lösung ausblenden" : "Lösung anzeigen";
+  renderAddressSelect();
+  $("addressTitle").textContent = ex.title;
+  $("addressPrompt").textContent = ex.prompt;
+  $("addressFacts").innerHTML = `<table><tbody>${ex.facts.map(row => `<tr><th>${row[0]}</th><td>${row[1]}</td></tr>`).join("")}</tbody></table>`;
+  $("addressVisual").innerHTML = `
+    <div class="address-line">
+      <div class="addr-part page"><strong>${ex.visual.pageLabel}</strong><span>${addressSolutionVisible ? ex.visual.pageValue : "?"}</span></div>
+      <div class="addr-sep"></div>
+      <div class="addr-part offset"><strong>${ex.visual.offsetLabel}</strong><span>${addressSolutionVisible ? ex.visual.offsetValue : "?"}</span></div>
+    </div>`;
+  $("addressSteps").innerHTML = ex.steps.map((step, index) =>
+    `<div><strong>${index + 1}.</strong> ${addressSolutionVisible ? step : "..."}</div>`
+  ).join("");
+  $("addressAnswers").innerHTML = ex.fields.map(field =>
+    `<div><label for="addr_${field.id}">${field.label}</label><input id="addr_${field.id}" autocomplete="off" data-field="${field.id}" placeholder="${field.kind === "hex" ? "Hex-Wert" : field.kind === "range" ? "0x...-0x..." : "Zahl"}"></div>`
+  ).join("");
+  renderAddressSolution();
+  $("addressResult").className = "result";
+  $("addressResult").textContent = "Rechne zuerst selbst und prüfe dann deine Antwort.";
+}
+
+function renderAddressSolution() {
+  const ex = addressExamples[addressIndex];
+  $("addressSolution").className = `solution ${addressSolutionVisible ? "" : "locked"}`;
+  $("addressSolution").innerHTML = addressSolutionVisible
+    ? `<strong>Musterlösung:</strong><ul>${ex.fields.map(field => `<li>${field.label}: <code>${field.answer}</code></li>`).join("")}</ul>`
+    : "Musterlösung ist ausgeblendet.";
+}
+
+function checkAddress() {
+  const ex = addressExamples[addressIndex];
+  let wrong = 0;
+  const misses = [];
+  ex.fields.forEach(field => {
+    const input = $(`addr_${field.id}`);
+    const actual = normalizeValue(input.value, field.kind);
+    const expected = normalizeValue(field.answer, field.kind);
+    const ok = actual === expected;
+    input.classList.toggle("ok", ok);
+    input.classList.toggle("bad", !ok);
+    if (!ok) {
+      wrong += 1;
+      misses.push(`${field.label}: erwartet ${field.answer}`);
+    }
+  });
+  $("addressResult").className = `result ${wrong ? "bad" : "good"}`;
+  $("addressResult").innerHTML = wrong
+    ? `<strong>Noch nicht.</strong><br>${misses.slice(0, 3).join("<br>")}`
+    : "<strong>Richtig.</strong> Rechenweg und Endwerte passen.";
+}
+
+function simulateReplacement(ex) {
+  const frames = Array(ex.frames).fill(null);
+  const useBits = Array(ex.frames).fill(0);
+  const fifoQueue = [];
+  const lastUsed = new Map();
+  let pointer = 0;
+  const steps = [];
+
+  ex.refs.forEach((ref, stepIndex) => {
+    let fault = false;
+    let victim = null;
+    const hitIndex = frames.indexOf(ref);
+
+    if (hitIndex !== -1) {
+      if (ex.strategy === "LRU") lastUsed.set(ref, stepIndex);
+      if (ex.strategy === "CLOCK") useBits[hitIndex] = 1;
+    } else {
+      fault = true;
+      if (ex.strategy === "FIFO") {
+        const free = frames.indexOf(null);
+        if (free !== -1) {
+          frames[free] = ref;
+          fifoQueue.push(free);
+        } else {
+          const victimIndex = fifoQueue.shift();
+          victim = frames[victimIndex];
+          frames[victimIndex] = ref;
+          fifoQueue.push(victimIndex);
+        }
+      }
+
+      if (ex.strategy === "LRU") {
+        const free = frames.indexOf(null);
+        if (free !== -1) {
+          frames[free] = ref;
+        } else {
+          let victimIndex = 0;
+          let oldest = Infinity;
+          frames.forEach((page, index) => {
+            const usedAt = lastUsed.get(page);
+            if (usedAt < oldest) {
+              oldest = usedAt;
+              victimIndex = index;
+            }
+          });
+          victim = frames[victimIndex];
+          frames[victimIndex] = ref;
+        }
+        lastUsed.set(ref, stepIndex);
+      }
+
+      if (ex.strategy === "CLOCK") {
+        while (true) {
+          if (frames[pointer] === null) {
+            frames[pointer] = ref;
+            useBits[pointer] = 1;
+            pointer = (pointer + 1) % ex.frames;
+            break;
+          }
+          if (useBits[pointer] === 0) {
+            victim = frames[pointer];
+            frames[pointer] = ref;
+            useBits[pointer] = 1;
+            pointer = (pointer + 1) % ex.frames;
+            break;
+          }
+          useBits[pointer] = 0;
+          pointer = (pointer + 1) % ex.frames;
+        }
+      }
+    }
+
+    steps.push({
+      ref,
+      frames: [...frames],
+      useBits: [...useBits],
+      pointer,
+      fault,
+      victim
+    });
+  });
+
+  return steps;
+}
+
+function currentReplacement() {
+  return replacementExamples[replacementIndex];
+}
+
+function currentReplacementSteps() {
+  return simulateReplacement(currentReplacement());
+}
+
+function renderReplacementSelect() {
+  $("replacementExample").innerHTML = replacementExamples.map((ex, index) => `<option value="${index}">${ex.title}</option>`).join("");
+  $("replacementExample").value = String(replacementIndex);
+}
+
+function renderReplacement() {
+  const ex = currentReplacement();
+  const steps = currentReplacementSteps();
+  $("showReplacementSolution").textContent = replacementSolutionVisible ? "Lösung ausblenden" : "Musterlösung";
+  renderReplacementSelect();
+  $("replacementTitle").textContent = ex.title;
+  $("replacementPrompt").textContent = ex.prompt;
+  const faults = steps.filter(step => step.fault).length;
+  $("replacementMeta").innerHTML = `
+    <span class="tag">Verfahren: ${ex.strategy}</span>
+    <span class="tag">Rahmen: ${ex.frames}</span>
+    <span class="tag">Referenzen: ${ex.refs.join(" ")}</span>
+    <span class="tag">Page Faults in Lösung: ${faults}</span>`;
+  $("replacementTableWrap").innerHTML = buildReplacementInputTable(ex, steps);
+  renderReplacementSolution();
+  $("replacementStepNote").textContent = revealedSteps
+    ? `${revealedSteps} von ${steps.length} Schritten wurden in dein Raster übernommen.`
+    : "Trage pro Spalte den Rahmenzustand nach dem Zugriff ein.";
+  $("replacementResult").className = "result";
+  $("replacementResult").textContent = "Fülle die Rahmen nach jedem Zugriff aus und markiere Page Faults.";
+}
+
+function renderReplacementSolution() {
+  const ex = currentReplacement();
+  const steps = currentReplacementSteps();
+  $("replacementSolution").className = `solution ${replacementSolutionVisible ? "" : "locked"}`;
+  $("replacementSolution").innerHTML = replacementSolutionVisible
+    ? `<strong>Musterlösung:</strong>${buildReplacementSolutionTable(ex, steps)}`
+    : "Musterlösung ist ausgeblendet.";
+}
+
+function buildReplacementInputTable(ex, steps) {
+  const head = `<tr><th class="row-head">Referenz</th>${ex.refs.map(ref => `<th>${ref}</th>`).join("")}</tr>`;
+  const frameRows = Array.from({ length: ex.frames }, (_, frameIndex) => {
+    const cells = steps.map((_, stepIndex) =>
+      `<td><input id="rp_${frameIndex}_${stepIndex}" inputmode="numeric" autocomplete="off" aria-label="Frame ${frameIndex + 1}, Schritt ${stepIndex + 1}"></td>`
+    ).join("");
+    return `<tr><th class="row-head">Frame ${frameIndex + 1}</th>${cells}</tr>`;
+  }).join("");
+  const faultRow = `<tr><th class="row-head">Fault?</th>${steps.map((_, stepIndex) =>
+    `<td><select id="fault_${stepIndex}" aria-label="Fault Schritt ${stepIndex + 1}"><option value=""></option><option value="F">F</option><option value="H">H</option></select></td>`
+  ).join("")}</tr>`;
+  return `<table class="replacement-table">${head}${frameRows}${faultRow}</table>`;
+}
+
+function buildReplacementSolutionTable(ex, steps) {
+  const head = `<tr><th class="row-head">Referenz</th>${ex.refs.map(ref => `<th>${ref}</th>`).join("")}</tr>`;
+  const frameRows = Array.from({ length: ex.frames }, (_, frameIndex) => {
+    const cells = steps.map(step => {
+      const value = formatNullable(step.frames[frameIndex]);
+      const bit = ex.strategy === "CLOCK" && value !== "" ? `<span class="clock-bits">U=${step.useBits[frameIndex]}</span>` : "";
+      return `<td>${value}${bit}</td>`;
+    }).join("");
+    return `<tr><th class="row-head">Frame ${frameIndex + 1}</th>${cells}</tr>`;
+  }).join("");
+  const faultRow = `<tr><th class="row-head">Fault?</th>${steps.map(step =>
+    `<td class="${step.fault ? "fault" : "hit"}">${step.fault ? "F" : "H"}</td>`
+  ).join("")}</tr>`;
+  const victimRow = `<tr><th class="row-head">Opfer</th>${steps.map(step => `<td>${step.victim ?? ""}</td>`).join("")}</tr>`;
+  const pointerRow = ex.strategy === "CLOCK"
+    ? `<tr><th class="row-head">Clock-Zeiger</th>${steps.map(step => `<td>F${step.pointer + 1}</td>`).join("")}</tr>`
+    : "";
+  return `<div class="exam-table-wrap"><table class="replacement-table solution-table">${head}${frameRows}${faultRow}${victimRow}${pointerRow}</table></div>`;
+}
+
+function clearReplacementInputs() {
+  const ex = currentReplacement();
+  ex.refs.forEach((_, stepIndex) => {
+    for (let frameIndex = 0; frameIndex < ex.frames; frameIndex += 1) {
+      const input = $(`rp_${frameIndex}_${stepIndex}`);
+      input.value = "";
+      input.classList.remove("ok", "bad");
+    }
+    const fault = $(`fault_${stepIndex}`);
+    fault.value = "";
+    fault.classList.remove("ok", "bad");
+  });
+  revealedSteps = 0;
+  $("replacementStepNote").textContent = "Raster geleert.";
+  $("replacementResult").className = "result";
+  $("replacementResult").textContent = "Fülle die Rahmen nach jedem Zugriff aus und markiere Page Faults.";
+}
+
+function revealNextReplacementStep() {
+  const ex = currentReplacement();
+  const steps = currentReplacementSteps();
+  if (revealedSteps >= steps.length) return;
+  const step = steps[revealedSteps];
+  for (let frameIndex = 0; frameIndex < ex.frames; frameIndex += 1) {
+    $(`rp_${frameIndex}_${revealedSteps}`).value = formatNullable(step.frames[frameIndex]);
+  }
+  $(`fault_${revealedSteps}`).value = step.fault ? "F" : "H";
+  revealedSteps += 1;
+  $("replacementStepNote").textContent = `${revealedSteps} von ${steps.length} Schritten wurden in dein Raster übernommen.`;
+}
+
+function checkReplacement() {
+  const ex = currentReplacement();
+  const steps = currentReplacementSteps();
+  let errors = 0;
+  const examples = [];
+  steps.forEach((step, stepIndex) => {
+    for (let frameIndex = 0; frameIndex < ex.frames; frameIndex += 1) {
+      const input = $(`rp_${frameIndex}_${stepIndex}`);
+      const expected = formatNullable(step.frames[frameIndex]);
+      const actual = input.value.trim();
+      const ok = actual === expected;
+      input.classList.toggle("ok", ok);
+      input.classList.toggle("bad", !ok);
+      if (!ok) {
+        errors += 1;
+        if (examples.length < 3) examples.push(`Spalte ${stepIndex + 1}, Frame ${frameIndex + 1}: erwartet ${expected || "leer"}`);
+      }
+    }
+    const fault = $(`fault_${stepIndex}`);
+    const expectedFault = step.fault ? "F" : "H";
+    const okFault = fault.value === expectedFault;
+    fault.classList.toggle("ok", okFault);
+    fault.classList.toggle("bad", !okFault);
+    if (!okFault) {
+      errors += 1;
+      if (examples.length < 3) examples.push(`Spalte ${stepIndex + 1}, Fault-Zeile: erwartet ${expectedFault}`);
+    }
+  });
+
+  const faults = steps.filter(step => step.fault).length;
+  $("replacementResult").className = `result ${errors ? "bad" : "good"}`;
+  $("replacementResult").innerHTML = errors
+    ? `<strong>Noch nicht.</strong> ${errors} Abweichung(en).<br>${examples.join("<br>")}`
+    : `<strong>Tabelle stimmt.</strong> ${faults} Page Faults, ${steps.length - faults} Hits.`;
+}
+
+function nextAddress() {
+  addressIndex = (addressIndex + 1) % addressExamples.length;
+  addressSolutionVisible = false;
+  renderAddress();
+}
+
+function nextReplacement() {
+  replacementIndex = (replacementIndex + 1) % replacementExamples.length;
+  replacementSolutionVisible = false;
+  revealedSteps = 0;
+  renderReplacement();
+}
+
+$("addressModeBtn").addEventListener("click", () => renderMode("address"));
+$("replacementModeBtn").addEventListener("click", () => renderMode("replacement"));
+$("addressExample").addEventListener("change", (event) => {
+  addressIndex = Number(event.target.value);
+  addressSolutionVisible = false;
+  renderAddress();
+});
+$("nextAddress").addEventListener("click", nextAddress);
+$("showAddressSolution").addEventListener("click", () => {
+  addressSolutionVisible = !addressSolutionVisible;
+  $("showAddressSolution").textContent = addressSolutionVisible ? "Lösung ausblenden" : "Lösung anzeigen";
+  renderAddressSolution();
+});
+$("checkAddress").addEventListener("click", checkAddress);
+
+$("replacementExample").addEventListener("change", (event) => {
+  replacementIndex = Number(event.target.value);
+  replacementSolutionVisible = false;
+  revealedSteps = 0;
+  renderReplacement();
+});
+$("nextReplacement").addEventListener("click", nextReplacement);
+$("clearReplacement").addEventListener("click", clearReplacementInputs);
+$("revealStep").addEventListener("click", revealNextReplacementStep);
+$("showReplacementSolution").addEventListener("click", () => {
+  replacementSolutionVisible = !replacementSolutionVisible;
+  $("showReplacementSolution").textContent = replacementSolutionVisible ? "Lösung ausblenden" : "Musterlösung";
+  renderReplacementSolution();
+});
+$("checkReplacement").addEventListener("click", checkReplacement);
+
+renderAddress();
+renderReplacement();
+</script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheduling-Trainer - Betriebssysteme</title>
+<style>
+:root {
+  --bg: #f4f4f4;
+  --paper: #fff;
+  --ink: #000;
+  --line: #888;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.25;
+}
+a { color: #000; }
+.wrap { max-width: 1260px; margin: 0 auto; padding: 22px; }
+.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; font-family: Arial, sans-serif; }
+.topbar a, .topbar button {
+  border: 1px solid #999;
+  background: #fff;
+  color: #000;
+  padding: 7px 10px;
+  text-decoration: none;
+  font: 14px Arial, sans-serif;
+}
+.sheet {
+  background: var(--paper);
+  border: 1px solid #999;
+  padding: 28px 34px;
+  min-width: 0;
+}
+.layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 18px; align-items: start; }
+.panel {
+  background: #fff;
+  border: 1px solid #999;
+  padding: 16px;
+  min-width: 0;
+}
+h1 { margin: 0 0 10px; font-size: 24px; }
+h2 { margin: 0 0 12px; font-size: 18px; }
+h3 { margin: 18px 0 8px; font-size: 16px; }
+p { margin: 8px 0; }
+label { display: block; margin: 10px 0 4px; font-weight: 700; }
+select, input, button {
+  width: 100%;
+  border: 1px solid #777;
+  background: #fff;
+  color: #000;
+  padding: 6px;
+  font: 15px "Times New Roman", Times, serif;
+}
+button { cursor: pointer; margin-top: 8px; }
+button:hover { background: #eee; }
+.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.entry-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.entry-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.entry-row label { margin-top: 8px; }
+.entry-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.entry-list {
+  border: 1px solid #999;
+  min-height: 46px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 7px;
+  margin-top: 10px;
+  font-size: 14px;
+  background: #fff;
+}
+.entry-list div { margin: 2px 0; }
+.entry-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.entry-item button {
+  width: auto;
+  margin: 0;
+  padding: 1px 6px;
+  font-size: 12px;
+}
+.answer-sheet {
+  border: 1px solid #999;
+  margin-top: 16px;
+  padding: 9px;
+  background: #fff;
+}
+.answer-sheet h3 {
+  margin-top: 0;
+}
+.answer-row {
+  display: grid;
+  grid-template-columns: 24px 86px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  margin: 7px 0;
+}
+.answer-row label {
+  grid-column: 2;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.1;
+}
+.answer-row select,
+.answer-row input {
+  grid-column: 3;
+  min-width: 0;
+  padding: 4px;
+  font-size: 14px;
+}
+.answer-letter {
+  grid-column: 1;
+  font-weight: 700;
+}
+.answer-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 8px;
+}
+.exam-table { border-collapse: collapse; table-layout: fixed; width: min(680px, 100%); margin: 12px 0 18px; }
+.exam-table th, .exam-table td { border: 1px solid #777; padding: 3px 8px; text-align: left; overflow-wrap: anywhere; }
+.question-list { margin: 12px 0 0; padding-left: 22px; }
+.question-list li { margin: 7px 0; }
+.plot-scroll { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+.chart-wrap { width: 780px; max-width: none; }
+svg { display: block; width: 100%; height: auto; }
+.axis { stroke: #000; stroke-width: 1.8; marker-end: url(#arrow); }
+.grid { stroke: #000; stroke-width: 1; stroke-dasharray: 1 3; }
+.tick { stroke: #000; stroke-width: 1.4; }
+.task-label { font: 700 17px "Times New Roman", Times, serif; fill: #000; }
+.tiny { font: 11px "Times New Roman", Times, serif; fill: #000; }
+.small { font: 14px "Times New Roman", Times, serif; fill: #000; }
+.bar { stroke: #000; stroke-width: 1.5; }
+.bar-text { font: 700 13px "Times New Roman", Times, serif; fill: #000; }
+.deadline { stroke: #000; stroke-width: 1; stroke-dasharray: 4 4; }
+.mark { font: 700 18px "Times New Roman", Times, serif; fill: #000; }
+.solution {
+  border: 1px solid #999;
+  padding: 10px;
+  margin-top: 14px;
+  background: #fff;
+}
+.result {
+  min-height: 42px;
+  border: 1px solid #999;
+  padding: 9px;
+  margin-top: 12px;
+  background: #fff;
+}
+.result.good { background: #f3fff3; }
+.result.bad { background: #fff4f4; }
+.note { font-family: Arial, sans-serif; font-size: 13px; color: #333; margin-top: 10px; }
+@media (max-width: 900px) {
+  .wrap { padding: 12px; }
+  .layout { grid-template-columns: 1fr; }
+  .sheet { padding: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#scheduling">Zurück zur Zusammenfassung</a>
+    <button type="button" id="printBtn">Drucken</button>
+  </div>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>Scheduling-Trainer</h2>
+      <label for="exampleSelect">Klausurbeispiel</label>
+      <select id="exampleSelect"></select>
+
+      <div class="buttons">
+        <button type="button" id="blankBtn">Eigenes Raster</button>
+        <button type="button" id="solutionBtn">Musterlösung</button>
+      </div>
+      <button type="button" id="nextBtn">Nächstes Beispiel</button>
+
+      <h3>Zeitdiagramm ausfüllen</h3>
+      <div class="entry-row three">
+        <div>
+          <label for="entryTask">Task</label>
+          <select id="entryTask"></select>
+        </div>
+        <div>
+          <label for="entryStart">von</label>
+          <input id="entryStart" type="number" min="0" step="1" placeholder="0">
+        </div>
+        <div>
+          <label for="entryEnd">bis</label>
+          <input id="entryEnd" type="number" min="1" step="1" placeholder="5">
+        </div>
+      </div>
+      <button type="button" id="addSegmentBtn">CPU-Abschnitt eintragen</button>
+
+      <div class="entry-row">
+        <div>
+          <label for="vTime">V bei t=</label>
+          <input id="vTime" type="number" min="0" step="1" placeholder="5">
+        </div>
+        <div>
+          <label for="missTaskEntry">x bei Task</label>
+          <select id="missTaskEntry"></select>
+        </div>
+      </div>
+      <div class="entry-actions">
+        <button type="button" id="addVBtn">V setzen</button>
+        <button type="button" id="addMissBtn">x setzen</button>
+      </div>
+      <div class="entry-actions">
+        <button type="button" id="undoEntryBtn">Letzten löschen</button>
+        <button type="button" id="clearEntriesBtn">Alles löschen</button>
+      </div>
+      <button type="button" id="checkDiagramBtn">Zeitdiagramm prüfen</button>
+      <div id="entryList" class="entry-list">Noch keine Einträge.</div>
+
+      <div class="answer-sheet">
+        <h3>Kontrollfragen b-e</h3>
+        <div class="answer-row">
+          <div class="answer-letter">b)</div>
+          <label for="preemptionAnswer">Verdrängungen</label>
+          <select id="preemptionAnswer">
+            <option value="">Bitte wählen</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+
+        <div class="answer-row">
+          <div class="answer-letter">c)</div>
+          <label for="missAnswer">Deadline-Verletzung</label>
+          <select id="missAnswer">
+            <option value="">Bitte wählen</option>
+            <option value="keine">keine</option>
+            <option value="T1">T1</option>
+            <option value="T2">T2</option>
+            <option value="T3">T3</option>
+            <option value="T4">T4</option>
+            <option value="T1,T2">T1,T2</option>
+          </select>
+        </div>
+
+        <div class="answer-row">
+          <div class="answer-letter">d)</div>
+          <label for="rmsAnswer">RMS-Priorität</label>
+          <input id="rmsAnswer" placeholder="z.B. T4 > T3 > T1 > T2">
+        </div>
+
+        <div class="answer-row">
+          <div class="answer-letter">e)</div>
+          <label for="rmsGuaranteeAnswer">RMS-Garantie T1/T2</label>
+          <select id="rmsGuaranteeAnswer">
+            <option value="">Bitte wählen</option>
+            <option value="ja">ja</option>
+            <option value="nein">nein</option>
+          </select>
+        </div>
+
+        <div class="answer-actions">
+          <button type="button" id="checkBtn">b-e prüfen</button>
+        </div>
+      </div>
+      <div id="result" class="result">Wähle ein Beispiel und prüfe deine Antworten.</div>
+
+      <p class="note">Im Klausurstil bedeutet: erst leer zeichnen, dann CPU-Abschnitte, V-Markierungen und Deadline-Verletzungen eintragen.</p>
+    </aside>
+
+    <main class="sheet">
+      <h1 id="title"></h1>
+      <p id="intro"></p>
+      <table class="exam-table" id="taskTable"></table>
+
+      <ol class="question-list" type="a">
+        <li>Zeichnen Sie im Zeitdiagramm die Schedulingfolge während der angegebenen Zeit.</li>
+        <li>Kennzeichnen Sie Verdrängungen mit <strong>V</strong>.</li>
+        <li>Prüfen Sie, ob alle Deadlines eingehalten werden.</li>
+        <li>Falls die Tasks periodisch wären: Sortieren Sie die RMS-Prioritäten.</li>
+        <li>Nur für die ersten beiden Tasks: Leiten Sie rechnerisch ab, ob RMS garantiert.</li>
+      </ol>
+
+      <p><strong>Verwenden Sie ggf. Hilfspapier !</strong></p>
+      <div class="plot-scroll">
+        <div class="chart-wrap">
+          <svg id="chart" role="img" aria-label="Scheduling-Zeitdiagramm"></svg>
+        </div>
+      </div>
+
+      <div class="solution" id="solutionBox"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const examples = [
+  {
+    id: "bs08",
+    title: "Klausurbeispiel nach BS-SS-08: EDF + RMS vollständig",
+    intro: "Vier Echtzeittasks werden nach EDF verwaltet. Die Unterpunkte a bis e entsprechen dem typischen alten Klausuraufbau.",
+    horizon: 20,
+    tasks: [
+      { id: "T1", a: 0, c: 7, dText: "A+13", absD: 13, period: 13 },
+      { id: "T2", a: 2, c: 6, dText: "A+18", absD: 20, period: 18 },
+      { id: "T3", a: 5, c: 4, dText: "A+5", absD: 10, period: 5 },
+      { id: "T4", a: 8, c: 3, dText: "A+4", absD: 12, period: 4 }
+    ],
+    segments: [
+      { task: "T1", start: 0, end: 5 },
+      { task: "T3", start: 5, end: 9 },
+      { task: "T4", start: 9, end: 12 },
+      { task: "T1", start: 12, end: 14 },
+      { task: "T2", start: 14, end: 20 }
+    ],
+    preemptions: [{ time: 5, text: "T3 verdrängt T1" }],
+    misses: [{ task: "T1", time: 13, text: "T1 erst bei 14 fertig" }],
+    rmsOrder: ["T4", "T3", "T1", "T2"],
+    rmsGuarantee: "ja",
+    rmsGuaranteeText: "ja; der einfache Auslastungstest reicht nicht, aber die Antwortzeitprüfung ergibt R1=7≤13 und R2=13≤18.",
+    utilization: "U = 7/13 + 6/18 ≈ 0,872; RMS-Grenze für n=2: 2(√2-1) ≈ 0,828. Der einfache Garantietest reicht nicht, eine exakte Antwortzeitprüfung zeigt für T1/T2 aber: R1=7≤13 und R2=13≤18."
+  },
+  {
+    id: "fresh",
+    title: "Neues Klausurbeispiel: EDF mit einer Verdrängung und einem Miss",
+    intro: "Eigenes Beispiel im alten Klausurformat, damit die Hauptseite nicht eine halbe Originalaufgabe nachspielt.",
+    horizon: 15,
+    tasks: [
+      { id: "T1", a: 0, c: 6, dText: "A+9", absD: 9, period: 9 },
+      { id: "T2", a: 2, c: 4, dText: "A+12", absD: 14, period: 12 },
+      { id: "T3", a: 4, c: 2, dText: "A+3", absD: 7, period: 3 },
+      { id: "T4", a: 6, c: 3, dText: "A+6", absD: 12, period: 6 }
+    ],
+    segments: [
+      { task: "T1", start: 0, end: 4 },
+      { task: "T3", start: 4, end: 6 },
+      { task: "T1", start: 6, end: 8 },
+      { task: "T4", start: 8, end: 11 },
+      { task: "T2", start: 11, end: 15 }
+    ],
+    preemptions: [{ time: 4, text: "T3 verdrängt T1" }],
+    misses: [{ task: "T2", time: 14, text: "T2 erst bei 15 fertig" }],
+    rmsOrder: ["T3", "T4", "T1", "T2"],
+    rmsGuarantee: "nein",
+    rmsGuaranteeText: "nein; schon für T1/T2 liegt die Auslastung bei 6/9+4/12=1, und die Antwortzeit von T2 läuft auf 16>12.",
+    utilization: "Bei periodischer Deutung nach relativer Deadline: T3, T4, T1, T2. Für T1/T2 ist RMS nicht garantiert: R1=6≤9, aber R2=16>12."
+  }
+];
+
+let currentIndex = 0;
+let showSolution = false;
+let userSegments = [];
+let userPreemptions = [];
+let userMisses = [];
+
+const $ = (id) => document.getElementById(id);
+
+function normalizeList(value) {
+  return value.toUpperCase().replace(/\s+/g, "").replace(/[;>]+/g, ",");
+}
+
+function resetUserEntries() {
+  userSegments = [];
+  userPreemptions = [];
+  userMisses = [];
+}
+
+function current() {
+  return examples[currentIndex];
+}
+
+function renderSelect() {
+  $("exampleSelect").innerHTML = examples.map((ex, index) =>
+    `<option value="${index}">${ex.title}</option>`
+  ).join("");
+  $("exampleSelect").value = String(currentIndex);
+}
+
+function renderTaskControls(ex) {
+  const options = ex.tasks.map(t => `<option value="${t.id}">${t.id}</option>`).join("");
+  $("entryTask").innerHTML = options;
+  $("missTaskEntry").innerHTML = options;
+  $("entryStart").max = String(ex.horizon);
+  $("entryEnd").max = String(ex.horizon);
+  $("vTime").max = String(ex.horizon);
+}
+
+function renderTable(ex) {
+  $("taskTable").innerHTML = `
+    <thead><tr><th>Task</th><th>Anforderungszeit (A)</th><th>Ausführungsdauer</th><th>Deadline</th><th>absolute Deadline</th></tr></thead>
+    <tbody>
+      ${ex.tasks.map(t => `<tr><td>Task ${t.id}</td><td>${t.a}</td><td>${t.c}</td><td>${t.dText}</td><td>${t.absD}</td></tr>`).join("")}
+    </tbody>`;
+}
+
+function renderChart(ex) {
+  const unit = 30;
+  const x0 = 70;
+  const yAxis = 360;
+  const rowY = { T1: 100, T2: 155, T3: 210, T4: 265 };
+  const xEnd = x0 + unit * ex.horizon;
+  const width = xEnd + 90;
+  const vertical = Array.from({ length: ex.horizon + 1 }, (_, t) => {
+    const x = x0 + t * unit;
+    return `<line x1="${x}" y1="58" x2="${x}" y2="${yAxis}"/>`;
+  }).join("");
+  const ticks = Array.from({ length: ex.horizon + 1 }, (_, t) => {
+    const x = x0 + t * unit;
+    return `<line x1="${x}" y1="${yAxis}" x2="${x}" y2="${yAxis + 13}"/>`;
+  }).join("");
+  const labels = Array.from({ length: ex.horizon + 1 }, (_, t) => {
+    const x = x0 + t * unit;
+    return `<text x="${x}" y="${yAxis + 29}" text-anchor="middle">${t}</text>`;
+  }).join("");
+  const activeSegments = showSolution ? ex.segments : userSegments;
+  const activePreemptions = showSolution ? ex.preemptions : userPreemptions;
+  const activeMisses = showSolution ? ex.misses : userMisses;
+  const deadlineLines = showSolution ? ex.tasks.map(t => {
+    const x = x0 + t.absD * unit;
+    return `<line class="deadline" x1="${x}" y1="58" x2="${x}" y2="${yAxis - 10}"/><text class="tiny" x="${x}" y="50" text-anchor="middle">D${t.id.slice(1)}=${t.absD}</text>`;
+  }).join("") : "";
+  const bars = activeSegments.map(s => {
+    const y = rowY[s.task] - 12;
+    const x = x0 + s.start * unit;
+    const w = (s.end - s.start) * unit;
+    return `<rect class="bar" x="${x}" y="${y}" width="${w}" height="24" fill="url(#hatch)"/><text class="bar-text" x="${x + w / 2}" y="${y + 16}" text-anchor="middle">${s.task}</text>`;
+  }).join("");
+  const preemptions = activePreemptions.map(p => {
+    const x = x0 + p.time * unit;
+    const label = p.text ? `<text class="small" x="${x + 12}" y="80">${p.text}</text>` : "";
+    return `<text class="mark" x="${x}" y="80" text-anchor="middle">V</text>${label}`;
+  }).join("");
+  const misses = activeMisses.map(m => {
+    const x = x0 + m.time * unit;
+    const y = rowY[m.task] - 18;
+    const label = showSolution && m.text ? `<text class="small" x="${x + 12}" y="${y}">${m.text}</text>` : "";
+    return `<text class="mark" x="${x}" y="${y}" text-anchor="middle">x</text>${label}`;
+  }).join("");
+
+  $("chart").setAttribute("viewBox", `0 0 ${width} 430`);
+  $("chart").innerHTML = `
+    <defs>
+      <marker id="arrow" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#000"/></marker>
+      <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 6 L6 0" stroke="#888" stroke-width="1"/></pattern>
+    </defs>
+    <g class="grid">
+      ${vertical}
+      <line x1="${x0}" y1="100" x2="${xEnd + 20}" y2="100"/><line x1="${x0}" y1="155" x2="${xEnd + 20}" y2="155"/>
+      <line x1="${x0}" y1="210" x2="${xEnd + 20}" y2="210"/><line x1="${x0}" y1="265" x2="${xEnd + 20}" y2="265"/>
+    </g>
+    <line class="axis" x1="${x0}" y1="${yAxis}" x2="${xEnd + 45}" y2="${yAxis}"/>
+    <line class="axis" x1="${x0}" y1="${yAxis}" x2="${x0}" y2="44"/>
+    <text class="task-label" x="38" y="105">T1</text><text class="task-label" x="38" y="160">T2</text>
+    <text class="task-label" x="38" y="215">T3</text><text class="task-label" x="38" y="270">T4</text>
+    <g class="tick">${ticks}</g>
+    <g class="tiny">${labels}</g>
+    ${deadlineLines}
+    ${bars}
+    ${preemptions}
+    ${misses}`;
+}
+
+function renderSolution(ex) {
+  const segments = ex.segments.map(s => `${s.task}: ${s.start}-${s.end}`).join(", ");
+  const miss = ex.misses.length ? ex.misses.map(m => m.task).join(", ") : "keine";
+  $("solutionBox").innerHTML = showSolution ? `
+    <strong>Musterlösung:</strong>
+    <p>CPU-Abschnitte: ${segments}.</p>
+    <p>Verdrängungen: ${ex.preemptions.length ? ex.preemptions.map(p => `V bei t=${p.time}`).join(", ") : "keine"}.</p>
+    <p>Deadline-Verletzungen: ${miss}.</p>
+    <p>RMS-Priorität: ${ex.rmsOrder.join(" > ")}.</p>
+    <p>RMS-Garantie für T1/T2: ${ex.rmsGuaranteeText}</p>
+    <p>${ex.utilization}</p>
+  ` : "<strong>Eigenes Raster:</strong> Musterlösung ist ausgeblendet. Deine Einträge erscheinen direkt im Zeitdiagramm.";
+}
+
+function renderEntryList() {
+  const parts = [];
+  userSegments.forEach((s, index) => parts.push(`<div class="entry-item"><span>CPU: ${s.task} ${formatTime(s.start)}-${formatTime(s.end)}</span><button type="button" data-entry-type="segment" data-entry-index="${index}">löschen</button></div>`));
+  userPreemptions.forEach((p, index) => parts.push(`<div class="entry-item"><span>V bei t=${formatTime(p.time)}</span><button type="button" data-entry-type="preemption" data-entry-index="${index}">löschen</button></div>`));
+  userMisses.forEach((m, index) => parts.push(`<div class="entry-item"><span>x bei ${m.task}</span><button type="button" data-entry-type="miss" data-entry-index="${index}">löschen</button></div>`));
+  $("entryList").innerHTML = parts.length ? parts.join("") : "Noch keine Einträge.";
+}
+
+function render() {
+  const ex = current();
+  $("title").textContent = ex.title;
+  $("intro").textContent = ex.intro;
+  renderSelect();
+  renderTaskControls(ex);
+  renderTable(ex);
+  renderChart(ex);
+  renderSolution(ex);
+  renderEntryList();
+  $("result").className = "result";
+  $("result").textContent = showSolution ? "Musterlösung wird angezeigt." : "Trage zuerst eigene CPU-Abschnitte ein oder prüfe b-e separat.";
+}
+
+function segmentKey(s) {
+  return `${s.start}-${s.end}-${s.task}`;
+}
+
+function normalizedSegments(list) {
+  return [...list].sort((a, b) => a.start - b.start || a.end - b.end || a.task.localeCompare(b.task)).map(segmentKey);
+}
+
+function sameList(a, b) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function formatTime(value) {
+  return Number.isInteger(value) ? String(value) : String(value).replace(".", ",");
+}
+
+function readTime(id) {
+  const raw = $(id).value.trim();
+  if (!raw) return null;
+  const value = Number(raw.replace(",", "."));
+  return Number.isFinite(value) ? value : null;
+}
+
+function setResult(kind, text) {
+  $("result").className = kind ? `result ${kind}` : "result";
+  $("result").textContent = text;
+}
+
+function hasCpuOverlap(start, end) {
+  return userSegments.find(s => start < s.end && end > s.start);
+}
+
+function diagramCheck() {
+  const ex = current();
+  const segmentOk = sameList(normalizedSegments(userSegments), normalizedSegments(ex.segments));
+  const expectedV = ex.preemptions.map(p => p.time).sort((a, b) => a - b);
+  const actualV = userPreemptions.map(p => p.time).sort((a, b) => a - b);
+  const vOk = sameList(actualV, expectedV);
+  const expectedX = ex.misses.map(m => m.task).sort();
+  const actualX = userMisses.map(m => m.task).sort();
+  const xOk = sameList(actualX, expectedX);
+  return { segmentOk, vOk, xOk, ok: segmentOk && vOk && xOk };
+}
+
+function checkDiagramOnly() {
+  showSolution = false;
+  renderChart(current());
+  renderEntryList();
+  const ex = current();
+  const check = diagramCheck();
+  const expectedSegments = ex.segments.map(s => `${s.task} ${s.start}-${s.end}`).join(", ");
+  const actualSegments = userSegments.length ? normalizedSegments(userSegments).join(", ") : "keine";
+  $("result").className = `result ${check.ok ? "good" : "bad"}`;
+  $("result").innerHTML = check.ok
+    ? "<strong>Aufgabe a stimmt.</strong> CPU-Abschnitte, V-Markierungen und x-Markierungen passen."
+    : `<strong>Aufgabe a noch nicht.</strong><br>CPU-Abschnitte: ${check.segmentOk ? "richtig" : "abweichend"}<br>V-Markierungen: ${check.vOk ? "richtig" : "abweichend"}<br>x-Markierungen: ${check.xOk ? "richtig" : "abweichend"}<br><br>Erwartete CPU-Abschnitte: ${expectedSegments}.<br>Deine Abschnitte: ${actualSegments}.`;
+}
+
+function checkAnswers() {
+  const ex = current();
+  const preemptionOk = $("preemptionAnswer").value === String(ex.preemptions.length);
+  const missValue = $("missAnswer").value || "";
+  const expectedMiss = ex.misses.length ? ex.misses.map(m => m.task).join(",") : "keine";
+  const missOk = normalizeList(missValue) === normalizeList(expectedMiss);
+  const rmsOk = normalizeList($("rmsAnswer").value) === normalizeList(ex.rmsOrder.join(","));
+  const rmsGuaranteeOk = $("rmsGuaranteeAnswer").value === ex.rmsGuarantee;
+  const ok = preemptionOk && missOk && rmsOk && rmsGuaranteeOk;
+  $("result").className = `result ${ok ? "good" : "bad"}`;
+  $("result").innerHTML = ok
+    ? "<strong>b-e richtig.</strong> Verdrängung, Deadline-Check, RMS-Reihenfolge und RMS-Garantie passen."
+    : `<strong>b-e noch nicht.</strong><br>Erwartet: ${ex.preemptions.length} Verdrängung(en), Deadline-Miss: ${expectedMiss}, RMS: ${ex.rmsOrder.join(" > ")}, RMS-Garantie T1/T2: ${ex.rmsGuarantee}.`;
+}
+
+function addSegment() {
+  const ex = current();
+  const task = $("entryTask").value;
+  const start = readTime("entryStart");
+  const end = readTime("entryEnd");
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > ex.horizon || start >= end) {
+    setResult("bad", `Ungültiger Abschnitt. Trage von und bis ein, nutze 0 bis ${ex.horizon}, und achte auf von < bis.`);
+    return;
+  }
+  const duplicate = userSegments.find(s => s.task === task && s.start === start && s.end === end);
+  if (duplicate) {
+    setResult("bad", `Diesen Abschnitt hast du schon eingetragen: ${task} ${formatTime(start)}-${formatTime(end)}.`);
+    return;
+  }
+  const overlap = hasCpuOverlap(start, end);
+  if (overlap) {
+    setResult("bad", `Dieser CPU-Zeitraum überschneidet sich mit ${overlap.task} ${formatTime(overlap.start)}-${formatTime(overlap.end)}. Auf einem Prozessor darf zur gleichen Zeit nur ein Task laufen.`);
+    return;
+  }
+  userSegments.push({ task, start, end });
+  showSolution = false;
+  renderChart(ex);
+  renderSolution(ex);
+  renderEntryList();
+  $("entryStart").value = end < ex.horizon ? String(end) : "";
+  $("entryEnd").value = end < ex.horizon ? String(Math.min(ex.horizon, end + 1)) : "";
+  setResult("", `Eingetragen: ${task} ${formatTime(start)}-${formatTime(end)}.`);
+}
+
+function addPreemption() {
+  const ex = current();
+  const time = readTime("vTime");
+  if (!Number.isFinite(time) || time < 0 || time > ex.horizon) {
+    setResult("bad", `Ungültige V-Zeit. Trage eine Zeit von 0 bis ${ex.horizon} ein.`);
+    return;
+  }
+  if (userPreemptions.some(p => p.time === time)) {
+    setResult("bad", `V bei t=${formatTime(time)} ist schon eingetragen.`);
+    return;
+  }
+  userPreemptions.push({ time, text: "" });
+  showSolution = false;
+  renderChart(ex);
+  renderSolution(ex);
+  renderEntryList();
+  setResult("", `Eingetragen: V bei t=${formatTime(time)}.`);
+}
+
+function addMiss() {
+  const ex = current();
+  const task = $("missTaskEntry").value;
+  const found = ex.tasks.find(t => t.id === task);
+  if (!found) return;
+  userMisses = userMisses.filter(m => m.task !== task);
+  userMisses.push({ task, time: found.absD, text: "" });
+  showSolution = false;
+  renderChart(ex);
+  renderSolution(ex);
+  renderEntryList();
+  setResult("", `Eingetragen: x bei ${task}.`);
+}
+
+function undoEntry() {
+  if (userMisses.length) userMisses.pop();
+  else if (userPreemptions.length) userPreemptions.pop();
+  else if (userSegments.length) userSegments.pop();
+  showSolution = false;
+  render();
+}
+
+function clearEntries() {
+  resetUserEntries();
+  showSolution = false;
+  render();
+}
+
+function deleteEntry(type, index) {
+  if (type === "segment") userSegments.splice(index, 1);
+  if (type === "preemption") userPreemptions.splice(index, 1);
+  if (type === "miss") userMisses.splice(index, 1);
+  showSolution = false;
+  renderChart(current());
+  renderSolution(current());
+  renderEntryList();
+  setResult("", "Eintrag gelöscht.");
+}
+
+function resetAnswerControls() {
+  $("preemptionAnswer").value = "";
+  $("missAnswer").value = "";
+  $("rmsAnswer").value = "";
+  $("rmsGuaranteeAnswer").value = "";
+}
+
+$("exampleSelect").addEventListener("change", (event) => {
+  currentIndex = Number(event.target.value);
+  resetUserEntries();
+  resetAnswerControls();
+  showSolution = false;
+  render();
+});
+$("blankBtn").addEventListener("click", () => { showSolution = false; render(); });
+$("solutionBtn").addEventListener("click", () => { showSolution = true; render(); });
+$("nextBtn").addEventListener("click", () => {
+  currentIndex = (currentIndex + 1) % examples.length;
+  resetUserEntries();
+  resetAnswerControls();
+  showSolution = false;
+  render();
+});
+$("addSegmentBtn").addEventListener("click", addSegment);
+$("addVBtn").addEventListener("click", addPreemption);
+$("addMissBtn").addEventListener("click", addMiss);
+$("undoEntryBtn").addEventListener("click", undoEntry);
+$("clearEntriesBtn").addEventListener("click", clearEntries);
+$("checkDiagramBtn").addEventListener("click", checkDiagramOnly);
+$("checkBtn").addEventListener("click", checkAnswers);
+$("printBtn").addEventListener("click", () => window.print());
+$("entryList").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-entry-type]");
+  if (!button) return;
+  deleteEntry(button.dataset.entryType, Number(button.dataset.entryIndex));
+});
+
+render();
+</script>
+</body>
+</html>

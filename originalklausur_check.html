@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Originalklausur-Check - Betriebssysteme</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#f5f6fa;--paper:#fff;--ink:#151b2d;--muted:#5d6678;--line:#d8deea;--accent:#1f5eff;--good:#0f766e;--hot:#b42318;--mid:#925200;--code:#eef2f8}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#eef3ff 0,var(--bg) 260px);line-height:1.55}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1260px;margin:0 auto;padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.back{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px}.small-label{color:var(--muted);font-size:13px}
+.hero,.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 32px rgba(21,32,51,.07)}.hero{padding:26px 28px;margin-bottom:18px}.hero h1{margin:0;font-size:clamp(30px,5vw,52px);line-height:1.05}.hero p{color:var(--muted);max-width:920px;margin:12px 0 0;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:18px}.card h2{margin:0 0 10px;font-size:21px}.card h3{margin:18px 0 8px;font-size:16px}.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.tag{border:1px solid var(--line);border-radius:999px;padding:4px 9px;background:#f8fafc;font-size:13px;font-weight:650}.tag.good{background:#ecfdf8;border-color:#a9ded4;color:#07594f}.tag.warn{background:#fff8eb;border-color:#f2d6a8;color:#704000}.tag.hot{background:#fff3f1;border-color:#f3b5ad;color:#8a1f14}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;text-align:left}th{background:#f1f5ff;color:#26324a}.todo{border-left:5px solid var(--mid);background:#fff8eb;border-radius:12px;padding:12px 14px;margin-top:14px}.done{border-left:5px solid var(--good);background:#ecfdf8;border-radius:12px;padding:12px 14px;margin-top:14px}code{font-family:"Cascadia Mono",Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:6px}
+@media(max-width:900px){.wrap{padding:14px}.topbar{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="index.html">Zur Startseite</a>
+    <div class="small-label">Betriebssysteme · Originalklausuren · Realitätscheck</div>
+  </div>
+  <header class="hero">
+    <h1>Originalklausur-Check</h1>
+    <p>Diese Seite gleicht die vorhandenen Klausur-/Übungsdateien gegen das Lernpaket ab. Ziel: nicht noch mehr lesen, sondern wissen, womit du echte Aufgaben trainierst.</p>
+  </header>
+
+  <section class="card">
+    <h2>Abdeckung auf einen Blick</h2>
+    <table>
+      <thead><tr><th>Originaltyp</th><th>Gefunden in</th><th>Trainieren mit</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>EDF/RMS-Zeitdiagramme</td><td>SS08, SS09, SS2011, Übungsfragen</td><td><a href="scheduling_trainer.html">Scheduling-Trainer</a>, <a href="mini_klausur_trainer.html">Mini-Klausurmodus</a></td><td>aktiv abgedeckt</td></tr>
+        <tr><td>Deadlock-Ressourcengraphen</td><td>SS09, SS21, Deadlock-Folien</td><td><a href="deadlock_trainer.html">Deadlock-Trainer</a></td><td>aktiv abgedeckt</td></tr>
+        <tr><td>Semaphore-Code / Barrieren</td><td>SS09, WS19/20, SS21, Synchronisationsfolien</td><td><a href="synchronisation_trainer.html">Synchronisations-Trainer</a></td><td>neu aktiv abgedeckt</td></tr>
+        <tr><td>Speicher: Paging, Page Replacement, TLB</td><td>OS_9, SS21, Übungsfragen</td><td><a href="speicher_trainer.html">Speicher-Trainer</a></td><td>aktiv abgedeckt</td></tr>
+        <tr><td>Dateisysteme: FAT/I-Node</td><td>Aufgabe zu Dateisystemen, WS15/16, WS19/20, SS21, SS2011</td><td><a href="dateisystem_trainer.html">Dateisystem-Trainer</a></td><td>aktiv abgedeckt</td></tr>
+        <tr><td>Kurztheorie: Prozesse, Threads, DMA, Interrupts</td><td>SS07, SS08, Übungsfragen, Folien</td><td><a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a></td><td>neu aktiv abgedeckt</td></tr>
+      </tbody>
+    </table>
+    <div class="done"><strong>Fazit:</strong> Die Haupttypen aus den Originaldateien sind inzwischen einem aktiven Übungsmodul zugeordnet. Der verbleibende Realitätscheck ist: echte PDFs mit Timer bearbeiten und Fehler im Fehlerlog eintragen.</div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Klausur-BS-SS-07</h2>
+      <div class="tagrow"><span class="tag">DMA</span><span class="tag">RMS</span><span class="tag">Scheduling</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>DMA in drei Sätzen erklären; DMA-Controller-Parameter nennen; RMS-Zeitdiagramm.</td></tr>
+        <tr><th>Training</th><td><a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a> für DMA, <a href="scheduling_trainer.html">Scheduling-Trainer</a> für RMS.</td></tr>
+        <tr><th>Falle</th><td>DMA nicht nur ausschreiben, sondern Prinzip + CPU-Entlastung + Abschlussinterrupt nennen.</td></tr>
+      </tbody></table>
+    </section>
+    <section class="card">
+      <h2>Klausur-BS-SS-08</h2>
+      <div class="tagrow"><span class="tag">Threads</span><span class="tag">Prozesswechsel</span><span class="tag">EDF</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>Threads vs. Prozesse, Benutzerthreads vs. Kernelthreads, Prozesswechsel, EDF-Zeitdiagramm.</td></tr>
+        <tr><th>Training</th><td><a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a>, <a href="scheduling_trainer.html">Scheduling-Trainer</a>.</td></tr>
+        <tr><th>Falle</th><td>Bei Prozesswechsel Register/PC/Stack/PCB und Dispatcher nennen, nicht nur “CPU wechselt”.</td></tr>
+      </tbody></table>
+    </section>
+    <section class="card">
+      <h2>Klausur-BS-SS-09</h2>
+      <div class="tagrow"><span class="tag">Scheduling</span><span class="tag">Semaphore</span><span class="tag">Deadlock</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>Verdrängung erklären, Schedulingverfahren nennen, drei Prozesse mit binären Semaphoren analysieren.</td></tr>
+        <tr><th>Training</th><td><a href="scheduling_trainer.html">Scheduling-Trainer</a>, <a href="synchronisation_trainer.html">Synchronisations-Trainer</a>, <a href="deadlock_trainer.html">Deadlock-Trainer</a>.</td></tr>
+        <tr><th>Falle</th><td>Semaphore-Zustände mitschreiben: hält Sx, wartet auf Sy. Ohne diese Tabelle übersieht man Zyklen.</td></tr>
+      </tbody></table>
+    </section>
+    <section class="card">
+      <h2>Klausur_BS_SS_2011</h2>
+      <div class="tagrow"><span class="tag">I-Node</span><span class="tag">Scheduling</span><span class="tag">Prozesse</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>I-Node maximale Dateigröße, Prozesse gleichzeitig in Zuständen, Schedulingverfahren erkennen.</td></tr>
+        <tr><th>Training</th><td><a href="dateisystem_trainer.html">Dateisystem-Trainer</a>, <a href="kurzantwort_trainer.html">Kurzantwort-Trainer</a>.</td></tr>
+        <tr><th>Falle</th><td>I-Node: Nutzdateigröße und Plattenverbrauch inklusive Verwaltungsblöcke strikt trennen.</td></tr>
+      </tbody></table>
+    </section>
+    <section class="card">
+      <h2>prüfung_OS_WS1920</h2>
+      <div class="tagrow"><span class="tag">Barriere</span><span class="tag">Semaphore</span><span class="tag">FAT/I-Node</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>Barriere/Semaphore-Code, Betriebsmittel mit S1/S2/S3, Dateisystem A/B-Vergleich.</td></tr>
+        <tr><th>Training</th><td><a href="synchronisation_trainer.html">Synchronisations-Trainer</a>, <a href="dateisystem_trainer.html">Dateisystem-Trainer</a>.</td></tr>
+        <tr><th>Falle</th><td>Bei verketteter Liste ohne FAT Zeigerplatz im Datenblock abziehen.</td></tr>
+      </tbody></table>
+    </section>
+    <section class="card">
+      <h2>prüfung_OS_SS21_english</h2>
+      <div class="tagrow"><span class="tag">Deadlock</span><span class="tag">Semaphore</span><span class="tag">I-Node</span><span class="tag">Paging</span></div>
+      <table><tbody>
+        <tr><th>Typische Aufgabe</th><td>Ressourcengraph, Semaphor-/Barrierelogik, I-Node mit Verwaltungsblöcken, Paging-Fragen.</td></tr>
+        <tr><th>Training</th><td><a href="deadlock_trainer.html">Deadlock-Trainer</a>, <a href="synchronisation_trainer.html">Synchronisations-Trainer</a>, <a href="speicher_trainer.html">Speicher-Trainer</a>.</td></tr>
+        <tr><th>Falle</th><td>Englische Aufgabenstellung genau lesen: “space required on disk” heißt häufig Verwaltungsblöcke mitzählen.</td></tr>
+      </tbody></table>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>So benutzt du diese Seite</h2>
+    <ol>
+      <li>Eine Originalklausur mit Timer bearbeiten.</li>
+      <li>Jede Aufgabe einem Modul oben zuordnen.</li>
+      <li>Fehler nicht nur korrigieren, sondern im <a href="fehlerlog.html">Fehlerlog</a> mit Ursache notieren.</li>
+      <li>Danach genau den passenden Einzeltrainer öffnen, nicht wahllos weiter lesen.</li>
+    </ol>
+    <div class="todo"><strong>Merksatz:</strong> Trainer bauen Fähigkeiten auf. Originalklausuren prüfen, ob du sie unter echter Themenmischung abrufen kannst.</div>
+  </section>
+</div>
+</body>
+</html>

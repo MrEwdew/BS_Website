@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini-Klausurmodus - Betriebssysteme</title>
+<link rel="icon" href="data:,">
+<style>
+:root {
+  --bg: #f5f6fa;
+  --paper: #fff;
+  --ink: #151b2d;
+  --muted: #5d6678;
+  --line: #d8deea;
+  --accent: #1f5eff;
+  --good: #0f766e;
+  --hot: #b42318;
+  --mid: #925200;
+  --soft: #f8fafc;
+  --code: #eef2f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef3ff 0, var(--bg) 260px);
+  line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1340px; margin: 0 auto; padding: 24px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.back {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 11px;
+}
+.small-label { color: var(--muted); font-size: 13px; }
+.hero, .panel, .paper {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(21, 32, 51, .07);
+}
+.hero { padding: 26px 28px; margin-bottom: 18px; }
+.hero h1 { margin: 0; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; }
+.hero p { color: var(--muted); max-width: 940px; margin: 12px 0 0; font-size: 17px; }
+.layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.panel, .paper { padding: 18px; min-width: 0; }
+.panel { position: sticky; top: 14px; }
+.panel h2, .paper h2 { margin: 0 0 12px; font-size: 21px; }
+.panel h3 { margin: 18px 0 8px; font-size: 16px; }
+button, select, input {
+  border: 1px solid #b6c3e0;
+  background: #fff;
+  color: #1d2939;
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+}
+button { cursor: pointer; width: 100%; }
+button:hover { background: #eef3ff; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.primary:hover { background: #174bd4; }
+button.secondary { background: #f8fafc; }
+select, input { width: 100%; }
+label { display: block; color: var(--muted); font-size: 13px; margin: 10px 0 6px; }
+.button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.button-row.single { grid-template-columns: 1fr; }
+.status {
+  border-left: 5px solid var(--line);
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 13px;
+  margin-top: 12px;
+}
+.status.good { border-left-color: var(--good); background: #ecfdf8; }
+.status.warn { border-left-color: var(--mid); background: #fff8eb; }
+.status.bad { border-left-color: var(--hot); background: #fff3f1; }
+.meter {
+  height: 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.meter span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+.link-list { display: grid; gap: 6px; margin-top: 8px; }
+.link-list a {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+}
+.hint {
+  border: 1px dashed #b6c3e0;
+  background: #fbfdff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  color: #344054;
+  font-size: 14px;
+}
+.hint strong { color: #20315f; }
+.paper {
+  color: #000;
+  font-family: "Times New Roman", Times, serif;
+  border-radius: 6px;
+  box-shadow: 0 8px 26px rgba(21, 32, 51, .05);
+}
+.exam-head {
+  border-bottom: 2px solid #000;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+}
+.exam-head h2 { font: 700 25px "Times New Roman", Times, serif; margin: 0 0 8px; }
+.exam-head p { margin: 6px 0; font-size: 16px; }
+.question {
+  border: 1px solid #777;
+  background: #fff;
+  padding: 16px;
+  margin: 16px 0;
+  page-break-inside: avoid;
+}
+.question-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.question h3 { margin: 0; font: 700 18px "Times New Roman", Times, serif; }
+.topic { color: #333; font-size: 14px; white-space: nowrap; }
+.prompt { margin: 8px 0 10px; font-size: 16px; }
+.facts {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0 12px;
+  font-size: 15px;
+}
+.facts th, .facts td {
+  border: 1px solid #777;
+  padding: 5px 7px;
+  text-align: left;
+  vertical-align: top;
+}
+.facts th { background: #fff; font-weight: 700; width: 34%; }
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin-top: 10px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+.answer-grid .wide { grid-column: 1 / -1; }
+.answer-grid label { color: #283044; font-size: 13px; margin: 0 0 5px; }
+.answer-grid input, .answer-grid select {
+  border-radius: 4px;
+  border: 1px solid #999;
+  padding: 8px 9px;
+  font-size: 15px;
+}
+.answer-grid input.ok, .answer-grid select.ok { border-color: var(--good); background: #ecfdf8; }
+.answer-grid input.bad, .answer-grid select.bad { border-color: var(--hot); background: #fff3f1; }
+.question-result {
+  display: none;
+  border-left: 4px solid var(--line);
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 9px 10px;
+  margin-top: 12px;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+}
+.question-result.visible { display: block; }
+.question-result.good { border-left-color: var(--good); background: #ecfdf8; }
+.question-result.bad { border-left-color: var(--hot); background: #fff3f1; }
+.solution {
+  display: none;
+  border: 1px solid #999;
+  background: #fff;
+  padding: 10px 12px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+.solution.visible { display: block; }
+.solution strong { display: block; margin-bottom: 5px; }
+.solution ol { margin: 6px 0 0 22px; padding: 0; }
+.solution li { margin: 4px 0; }
+.topic-summary { margin-top: 10px; display: grid; gap: 7px; }
+.topic-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+.topic-row.bad { border-color: #f3b5ad; background: #fff8f6; }
+.topic-row.good { border-color: #a9ded4; background: #f1fffb; }
+code {
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  background: var(--code);
+  padding: 1px 5px;
+  border-radius: 6px;
+}
+@media (max-width: 980px) {
+  .wrap { padding: 14px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .panel { position: static; }
+  .button-row { grid-template-columns: 1fr; }
+  .answer-grid { grid-template-columns: 1fr; }
+  .question-head { display: block; }
+  .topic { display: block; margin-top: 6px; white-space: normal; }
+  .paper, .question { padding: 14px; }
+}
+@media print {
+  body { background: #fff; }
+  .wrap { max-width: none; padding: 0; }
+  .topbar, .hero, .panel { display: none; }
+  .layout { display: block; }
+  .paper, .question { box-shadow: none; border-color: #000; }
+  .answer-grid input, .answer-grid select { border: 1px solid #000; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#prioritaeten">Zur Zusammenfassung</a>
+    <div class="small-label">Betriebssysteme · gemischter Prüfungsmodus</div>
+  </div>
+
+  <header class="hero">
+    <h1>Mini-Klausurmodus</h1>
+    <p>Ein gemischter Prüfungsbogen aus den wichtigsten Rechen- und Begründungstypen. Erst selbst bearbeiten, dann abgeben und die Musterlösung gezielt nacharbeiten.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>Prüfung</h2>
+      <label for="examSelect">Aufgabensatz</label>
+      <select id="examSelect"></select>
+      <div class="button-row">
+        <button type="button" id="submitExam" class="primary">Abgeben</button>
+        <button type="button" id="toggleSolutions" class="secondary">Lösungen anzeigen</button>
+      </div>
+      <div class="button-row">
+        <button type="button" id="resetExam" class="secondary">Zurücksetzen</button>
+        <button type="button" id="printExam" class="secondary">Drucken</button>
+      </div>
+      <div id="progressBox" class="status">
+        <strong>Fortschritt</strong>
+        <div id="progressText">0 von 0 Antwortfeldern ausgefüllt.</div>
+        <div class="meter" aria-hidden="true"><span id="progressBar"></span></div>
+      </div>
+      <div id="scoreBox" class="status">
+        Gib den Bogen ab, um Punkte und Themenhinweise zu sehen.
+      </div>
+      <div id="topicSummary" class="topic-summary"></div>
+      <div class="hint"><strong>Prüfungsmodus:</strong> Lösungen sind absichtlich versteckt. Wenn du sie vorher öffnest, nutze den Bogen danach eher zur Nacharbeit als zur Selbsteinschätzung.</div>
+      <h3>Einzeltrainer</h3>
+      <div class="link-list">
+        <a href="scheduling_trainer.html">Scheduling-Trainer</a>
+        <a href="deadlock_trainer.html">Deadlock-Trainer</a>
+        <a href="speicher_trainer.html">Speicher-Trainer</a>
+        <a href="dateisystem_trainer.html">Dateisystem-Trainer</a>
+      </div>
+    </aside>
+
+    <main class="paper">
+      <div class="exam-head">
+        <h2 id="examTitle"></h2>
+        <p id="examIntro"></p>
+        <p><strong>Bearbeitung:</strong> Rechne zuerst ohne Musterlösung. Zahlen dürfen als Dezimalzahl oder mit passender Einheit eingetragen werden, sofern eindeutig.</p>
+      </div>
+      <div id="questions"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const exams = [
+  {
+    title: "Gemischte Mini-Klausur A",
+    selectTitle: "Mini-Klausur A: Hauptthemen",
+    intro: "10 Aufgaben, ca. 35-45 Minuten. Der Satz deckt Scheduling, Deadlocks/Synchronisation, Speicher, Dateisysteme, Cache, Prozesse und E/A ab.",
+    questions: [
+      {
+        id: "edf",
+        topic: "Scheduling",
+        title: "EDF-Zeitdiagramm",
+        prompt: "Vier Echtzeittasks werden nach EDF verwaltet. Trage die CPU-Abschnitte der Musterlösung und die Verdrängung ein.",
+        facts: [
+          ["T1", "A=0, C=7, Deadline A+13 → absolute Deadline 13"],
+          ["T2", "A=2, C=6, Deadline A+18 → absolute Deadline 20"],
+          ["T3", "A=5, C=4, Deadline A+5 → absolute Deadline 10"],
+          ["T4", "A=8, C=3, Deadline A+4 → absolute Deadline 12"]
+        ],
+        fields: [
+          { id: "s0", label: "CPU 0-5", type: "select", answer: "T1", options: taskOptions(), points: 1 },
+          { id: "s1", label: "CPU 5-9", type: "select", answer: "T3", options: taskOptions(), points: 1 },
+          { id: "s2", label: "CPU 9-12", type: "select", answer: "T4", options: taskOptions(), points: 1 },
+          { id: "s3", label: "CPU 12-14", type: "select", answer: "T1", options: taskOptions(), points: 1 },
+          { id: "s4", label: "CPU 14-20", type: "select", answer: "T2", options: taskOptions(), points: 1 },
+          { id: "preempt", label: "Verdrängung bei t =", answer: "5", points: 1 },
+          { id: "miss", label: "Welche Deadline wird verletzt?", type: "select", answer: "T1", options: [["", "Bitte wählen"], ["keine", "keine"], ["T1", "T1"], ["T2", "T2"], ["T3", "T3"], ["T4", "T4"]], points: 1 }
+        ],
+        solution: [
+          "t=0 bis 5 läuft T1. Bei t=5 kommt T3 mit absoluter Deadline 10 und verdrängt T1, dessen Deadline 13 ist.",
+          "Danach läuft T3 von 5 bis 9, dann T4 von 9 bis 12.",
+          "T1 läuft von 12 bis 14 fertig und verletzt damit seine Deadline 13.",
+          "T2 läuft anschließend von 14 bis 20 und hält seine Deadline 20 ein."
+        ]
+      },
+      {
+        id: "rms",
+        topic: "Scheduling",
+        title: "RMS-Prioritäten und Garantie",
+        prompt: "Bestimme RMS-Prioritäten und prüfe die hinreichende Garantiegrenze.",
+        facts: [
+          ["T1", "C=1, P=4"],
+          ["T2", "C=2, P=5"],
+          ["T3", "C=1, P=10"],
+          ["Grenze für n=3", "3·(2^(1/3)-1) ≈ 0,779"]
+        ],
+        fields: [
+          { id: "prio", label: "RMS-Priorität hoch → niedrig", answer: "T1>T2>T3", kind: "order", points: 1 },
+          { id: "u", label: "Auslastung U", answer: "0.75", accept: ["75", "75%"], points: 1 },
+          { id: "bound", label: "Garantiegrenze ca.", answer: "0.779", accept: ["0.78", "77.9", "77,9%"], tolerance: 0.002, points: 1 },
+          { id: "guarantee", label: "RMS garantiert?", type: "select", answer: "ja", options: yesNoOptions(), points: 1 }
+        ],
+        solution: [
+          "RMS sortiert nach kleinster Periode: T1 vor T2 vor T3.",
+          "U = 1/4 + 2/5 + 1/10 = 0,25 + 0,4 + 0,1 = 0,75.",
+          "Für n=3 ist die hinreichende Grenze ungefähr 0,779.",
+          "Da 0,75 < 0,779, ist die Einhaltung durch RMS garantiert."
+        ]
+      },
+      {
+        id: "deadlock",
+        topic: "Deadlocks",
+        title: "Ressourcengraph",
+        prompt: "Es gibt je eine Instanz von B1 und B2. P1 hält B1 und wartet auf B2; P2 hält B2 und wartet auf B1.",
+        facts: [
+          ["P1", "belegt B1, wartet auf B2"],
+          ["P2", "belegt B2, wartet auf B1"],
+          ["Instanzen", "B1 und B2 je genau einmal vorhanden"]
+        ],
+        fields: [
+          { id: "dead", label: "Liegt ein Deadlock vor?", type: "select", answer: "ja", options: yesNoOptions(), points: 1 },
+          { id: "edge1", label: "Wait-for-Kante 1", answer: "P1->P2", kind: "edge", accept: ["P1>P2"], points: 1 },
+          { id: "edge2", label: "Wait-for-Kante 2", answer: "P2->P1", kind: "edge", accept: ["P2>P1"], points: 1 },
+          { id: "reason", label: "Begründung", type: "select", answer: "zyklus", options: [["", "Bitte wählen"], ["zyklus", "zyklische Wartebeziehung"], ["nurwarten", "nur weil ein Prozess wartet"], ["mehrinstanzen", "nur wegen mehreren Instanzen"]], points: 1 }
+        ],
+        solution: [
+          "P1 wartet auf B2, das P2 hält: Kante P1 → P2.",
+          "P2 wartet auf B1, das P1 hält: Kante P2 → P1.",
+          "Bei je einer Instanz pro Ressource beweist dieser Zyklus einen Deadlock."
+        ]
+      },
+      {
+        id: "sync",
+        topic: "Synchronisation",
+        title: "Semaphore und Race Conditions",
+        prompt: "Ergänze die Standardaussagen zu Mutex-Semaphoren und Race Conditions.",
+        facts: [
+          ["Mutex-Semaphor", "schützt einen kritischen Abschnitt"],
+          ["Operationen", "wait/P vor dem Abschnitt, signal/V danach"],
+          ["Race Condition", "Ablauf hängt vom zeitlichen Ineinandergreifen ab"]
+        ],
+        fields: [
+          { id: "init", label: "Initialwert eines binären Mutex-Semaphores", answer: "1", points: 1 },
+          { id: "before", label: "Operation vor kritischem Abschnitt", type: "select", answer: "wait", options: [["", "Bitte wählen"], ["wait", "wait / P"], ["signal", "signal / V"], ["fork", "fork"]], points: 1 },
+          { id: "after", label: "Operation nach kritischem Abschnitt", type: "select", answer: "signal", options: [["", "Bitte wählen"], ["wait", "wait / P"], ["signal", "signal / V"], ["exec", "exec"]], points: 1 },
+          { id: "race", label: "Race Condition bedeutet", type: "select", answer: "timing", options: [["", "Bitte wählen"], ["timing", "Ergebnis hängt vom zeitlichen Ablauf ab"], ["deadlock", "immer Deadlock"], ["single", "nur ein Thread läuft"]], points: 1 }
+        ],
+        solution: [
+          "Ein Mutex-Semaphor startet typischerweise mit 1.",
+          "Vor dem kritischen Abschnitt steht wait/P, danach signal/V.",
+          "Eine Race Condition liegt vor, wenn das Ergebnis vom zeitlichen Ablauf nebenläufiger Operationen abhängt."
+        ]
+      },
+      {
+        id: "address",
+        topic: "Speicherverwaltung",
+        title: "Adressrechnung",
+        prompt: "Zerlege die virtuelle Adresse bei 4-KiB-Pages.",
+        facts: [
+          ["Virtuelle Adresse", "0x4B30A568"],
+          ["Pagegröße", "4 KiB = 2^12 Byte"],
+          ["Aufgabe", "Seitennummer und Offset bestimmen"]
+        ],
+        fields: [
+          { id: "offsetBits", label: "Offset-Bits", answer: "12", points: 1 },
+          { id: "page", label: "Seitennummer hex", answer: "4B30A", kind: "hex", points: 1 },
+          { id: "offset", label: "Offset hex", answer: "568", kind: "hex", points: 1 },
+          { id: "range", label: "Page-Bereich", answer: "4B30A000-4B30AFFF", kind: "range", accept: ["0x4B30A000-0x4B30AFFF"], points: 1 }
+        ],
+        solution: [
+          "4 KiB = 2^12, also gehören 12 Bit zum Offset.",
+          "12 Bit entsprechen 3 Hex-Ziffern.",
+          "0x4B30A568 wird zu Seitennummer 0x4B30A und Offset 0x568.",
+          "Die Page reicht von 0x4B30A000 bis 0x4B30AFFF."
+        ]
+      },
+      {
+        id: "replacement",
+        topic: "Speicherverwaltung",
+        title: "Page Replacement FIFO",
+        prompt: "Drei Frames sind anfangs leer. Bearbeite die Referenzen 7, 0, 1, 2, 0, 3 mit FIFO.",
+        facts: [
+          ["Frames", "3"],
+          ["Referenzen", "7 0 1 2 0 3"],
+          ["Strategie", "FIFO: älteste geladene Seite wird ersetzt"]
+        ],
+        fields: [
+          { id: "faults", label: "Page Faults", answer: "5", points: 1 },
+          { id: "hits", label: "Hits", answer: "1", points: 1 },
+          { id: "victim", label: "Erstes Opfer bei Ersetzung", answer: "7", points: 1 },
+          { id: "f1", label: "Endzustand Frame 1", answer: "2", points: 1 },
+          { id: "f2", label: "Endzustand Frame 2", answer: "3", points: 1 },
+          { id: "f3", label: "Endzustand Frame 3", answer: "1", points: 1 }
+        ],
+        solution: [
+          "7, 0 und 1 erzeugen drei Faults und füllen die Frames.",
+          "2 ist ein Fault und ersetzt nach FIFO die 7.",
+          "0 ist danach ein Hit.",
+          "3 ist ein Fault und ersetzt die 0.",
+          "Endzustand: [2, 3, 1], insgesamt 5 Faults und 1 Hit."
+        ]
+      },
+      {
+        id: "fat",
+        topic: "Dateisysteme",
+        title: "FAT und Cluster",
+        prompt: "Ein FAT-Dateisystem nutzt 16-Bit-Einträge, Blockgröße 512 Byte. Danach werden Cluster aus 2^3 Blöcken verwendet. Datei: 652 Byte.",
+        facts: [
+          ["FAT-Einträge", "2^16"],
+          ["Blockgröße", "512 Byte"],
+          ["Cluster", "2^3 Blöcke = 4096 Byte"],
+          ["Dateigröße", "652 Byte"]
+        ],
+        fields: [
+          { id: "max1", label: "Max. Partition ohne Cluster (MiB)", answer: "32", accept: ["33554432"], points: 1 },
+          { id: "max2", label: "Max. Partition mit Cluster (MiB)", answer: "256", accept: ["268435456"], points: 1 },
+          { id: "space1", label: "652-Byte-Datei ohne Cluster belegt", answer: "1024", points: 1 },
+          { id: "space2", label: "652-Byte-Datei mit Cluster belegt", answer: "4096", points: 1 }
+        ],
+        solution: [
+          "Ohne Cluster: 2^16 × 512 Byte = 32 MiB.",
+          "Clustergröße: 2^3 × 512 = 4096 Byte.",
+          "Mit Clustern: 2^16 × 4096 Byte = 256 MiB.",
+          "652 Byte brauchen ohne Cluster 2 Blöcke = 1024 Byte, mit Cluster 1 Cluster = 4096 Byte."
+        ]
+      },
+      {
+        id: "inode",
+        topic: "Dateisysteme",
+        title: "I-Node-Dateigröße",
+        prompt: "Ein I-Node enthält 8 direkte Blockadressen und 4 Adressen auf einfach indirekte Zeigerblöcke. Jeder Zeigerblock enthält 128 Datenblockadressen. Blockgröße: 512 Byte.",
+        facts: [
+          ["Direkt", "8 Datenblöcke"],
+          ["Einfach indirekt", "4 × 128 Datenblöcke"],
+          ["Blockgröße", "512 Byte"]
+        ],
+        fields: [
+          { id: "blocks", label: "Erreichbare Datenblöcke", answer: "520", points: 1 },
+          { id: "bytes", label: "Maximale Dateigröße in Byte", answer: "266240", points: 1 },
+          { id: "kib", label: "Maximale Dateigröße in KiB", answer: "260", points: 1 }
+        ],
+        solution: [
+          "Direkt erreichbar: 8 Datenblöcke.",
+          "Indirekt erreichbar: 4 × 128 = 512 Datenblöcke.",
+          "Insgesamt 520 Datenblöcke.",
+          "520 × 512 Byte = 266240 Byte = 260 KiB."
+        ]
+      },
+      {
+        id: "cache",
+        topic: "Speicherverwaltung",
+        title: "Cacheblock-Aufgabe",
+        prompt: "Ein Programm liest 200 Bytes sequentiell ab Adresse 0. Cacheblockgröße 64 Byte, Cache anfangs leer.",
+        facts: [
+          ["Zugriffe", "200 Byte sequentiell"],
+          ["Cacheblock", "64 Byte"],
+          ["Start", "Cold Cache"]
+        ],
+        fields: [
+          { id: "misses", label: "Misses", answer: "4", points: 1 },
+          { id: "hits", label: "Hits", answer: "196", points: 1 },
+          { id: "rate", label: "Hit-Rate in Prozent", answer: "98", accept: ["98%"], points: 1 }
+        ],
+        solution: [
+          "Die 200 Bytes liegen in den Blöcken 0-63, 64-127, 128-191 und 192-255.",
+          "Jeder dieser vier Blöcke erzeugt beim ersten Zugriff einen Miss.",
+          "Alle anderen 196 Bytezugriffe sind Hits.",
+          "Hit-Rate: 196 / 200 = 98 %."
+        ]
+      },
+      {
+        id: "basics",
+        topic: "Prozesse / E/A",
+        title: "Kurztheorie Prozesse und E/A",
+        prompt: "Kreuzen bzw. wählen Sie die präziseste Klausuraussage.",
+        facts: [
+          ["Ready", "Prozess ist lauffähig, wartet aber auf CPU"],
+          ["Blocked", "Prozess wartet auf Ereignis, z.B. E/A"],
+          ["DMA", "Controller überträgt Daten weitgehend ohne CPU"]
+        ],
+        fields: [
+          { id: "ready", label: "Ready bedeutet", type: "select", answer: "cpu", options: [["", "Bitte wählen"], ["cpu", "lauffähig, wartet auf CPU"], ["event", "wartet auf Ereignis"], ["done", "Prozess beendet"]], points: 1 },
+          { id: "blocked", label: "Blocked bedeutet", type: "select", answer: "event", options: [["", "Bitte wählen"], ["cpu", "wartet nur auf CPU"], ["event", "wartet auf Ereignis"], ["running", "läuft gerade"]], points: 1 },
+          { id: "dma", label: "DMA-Ende meldet sich typischerweise per", type: "select", answer: "interrupt", options: [["", "Bitte wählen"], ["interrupt", "Interrupt"], ["polling", "Endlosschleife im Userprogramm"], ["fork", "fork"]], points: 1 },
+          { id: "context", label: "Beim Kontextwechsel wird vor allem", type: "select", answer: "state", options: [["", "Bitte wählen"], ["state", "Rechenzustand gesichert/geladen"], ["delete", "der alte Prozess gelöscht"], ["format", "das Dateisystem formatiert"]], points: 1 }
+        ],
+        solution: [
+          "Ready heißt: Der Prozess könnte laufen, wartet aber auf Zuteilung der CPU.",
+          "Blocked heißt: Der Prozess wartet auf ein Ereignis und ist aktuell nicht lauffähig.",
+          "DMA entlastet die CPU beim Datentransfer; Abschluss wird typischerweise per Interrupt gemeldet.",
+          "Beim Kontextwechsel werden Register/Program Counter/Stack Pointer bzw. der Rechenzustand gesichert und geladen."
+        ]
+      }
+    ]
+  }
+];
+
+const state = {
+  examIndex: 0,
+  submitted: false,
+  solutionsVisible: false,
+  answers: {}
+};
+
+function taskOptions() {
+  return [["", "Bitte wählen"], ["T1", "T1"], ["T2", "T2"], ["T3", "T3"], ["T4", "T4"], ["idle", "idle"]];
+}
+
+function yesNoOptions() {
+  return [["", "Bitte wählen"], ["ja", "Ja"], ["nein", "Nein"]];
+}
+
+function currentExam() {
+  return exams[state.examIndex];
+}
+
+function fieldKey(questionId, fieldId) {
+  return `${questionId}:${fieldId}`;
+}
+
+function escapeAttr(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+}
+
+function normalize(value, kind) {
+  let text = String(value ?? "").trim();
+  if (kind === "hex") return text.replace(/^0x/i, "").toUpperCase();
+  if (kind === "range") return text.replace(/\s+/g, "").replace(/0x/gi, "").toUpperCase();
+  if (kind === "edge") return text.replace(/\s+/g, "").replace(/→/g, "->").replace(/>/g, "->").toUpperCase();
+  if (kind === "order") return text.replace(/\s+/g, "").replace(/,/g, ">").replace(/;/g, ">").replace(/-/g, ">").toUpperCase();
+  return text.toLowerCase().replace(/\s+/g, "").replace(/,/g, ".").replace(/%/g, "").replace(/mib|kib|byte|bytes|blöcke|bloecke|block/g, "");
+}
+
+function numericValue(value) {
+  let raw = String(value ?? "").trim().toLowerCase().replace(",", ".");
+  raw = raw.replace(/[\s']/g, "");
+  if (/^\d{1,3}(\.\d{3})+($|[^0-9])/.test(raw)) raw = raw.replace(/\./g, "");
+  const match = raw.match(/-?\d+(\.\d+)?/);
+  return match ? Number(match[0]) : NaN;
+}
+
+function valueMatches(actualRaw, field) {
+  if (field.type === "select") return actualRaw === field.answer;
+  const actualNumber = numericValue(actualRaw);
+  const expectedNumber = numericValue(field.answer);
+  if (Number.isFinite(actualNumber) && Number.isFinite(expectedNumber)) {
+    const tolerance = field.tolerance ?? 0.0001;
+    if (Math.abs(actualNumber - expectedNumber) <= tolerance) return true;
+  }
+  const actual = normalize(actualRaw, field.kind);
+  const expected = normalize(field.answer, field.kind);
+  const accepted = (field.accept ?? []).map(item => normalize(item, field.kind));
+  return actual === expected || accepted.includes(actual);
+}
+
+function totalFields() {
+  return currentExam().questions.flatMap(question => question.fields).length;
+}
+
+function totalPoints() {
+  return currentExam().questions.flatMap(question => question.fields).reduce((sum, field) => sum + (field.points ?? 1), 0);
+}
+
+function renderExamSelect() {
+  $("examSelect").innerHTML = exams.map((exam, index) => `<option value="${index}" ${index === state.examIndex ? "selected" : ""}>${exam.selectTitle}</option>`).join("");
+}
+
+function renderExam() {
+  const exam = currentExam();
+  renderExamSelect();
+  $("examTitle").textContent = exam.title;
+  $("examIntro").textContent = exam.intro;
+  $("questions").innerHTML = exam.questions.map((question, index) => renderQuestion(question, index)).join("");
+  bindInputs();
+  refreshProgress();
+  if (state.submitted) applyResults();
+  refreshSolutions();
+}
+
+function renderQuestion(question, index) {
+  return `
+    <section class="question" id="q_${question.id}">
+      <div class="question-head">
+        <h3>Aufgabe ${index + 1}: ${question.title}</h3>
+        <span class="topic">${question.topic} · ${question.fields.reduce((sum, field) => sum + (field.points ?? 1), 0)} Punkte</span>
+      </div>
+      <p class="prompt">${question.prompt}</p>
+      <table class="facts"><tbody>${question.facts.map(row => `<tr><th>${row[0]}</th><td>${row[1]}</td></tr>`).join("")}</tbody></table>
+      <div class="answer-grid">${question.fields.map(field => renderField(question, field)).join("")}</div>
+      <div class="question-result" id="result_${question.id}"></div>
+      <div class="solution" id="solution_${question.id}">
+        <strong>Musterlösung:</strong>
+        <ol>${question.solution.map(step => `<li>${step}</li>`).join("")}</ol>
+      </div>
+    </section>`;
+}
+
+function renderField(question, field) {
+  const id = `${question.id}_${field.id}`;
+  const key = fieldKey(question.id, field.id);
+  const value = state.answers[key] ?? "";
+  const wide = field.wide ? "wide" : "";
+  if (field.type === "select") {
+    return `<div class="${wide}"><label for="${id}">${field.label}</label><select id="${id}" data-question="${question.id}" data-field="${field.id}">${field.options.map(([optionValue, label]) => `<option value="${optionValue}" ${value === optionValue ? "selected" : ""}>${label}</option>`).join("")}</select></div>`;
+  }
+  return `<div class="${wide}"><label for="${id}">${field.label}</label><input id="${id}" data-question="${question.id}" data-field="${field.id}" autocomplete="off" value="${escapeAttr(value)}" placeholder="Antwort"></div>`;
+}
+
+function bindInputs() {
+  document.querySelectorAll("[data-question][data-field]").forEach(input => {
+    input.addEventListener("input", updateAnswer);
+    input.addEventListener("change", updateAnswer);
+  });
+}
+
+function updateAnswer(event) {
+  const questionId = event.target.dataset.question;
+  const fieldId = event.target.dataset.field;
+  state.answers[fieldKey(questionId, fieldId)] = event.target.value;
+  if (state.submitted) applyResults();
+  refreshProgress();
+}
+
+function refreshProgress() {
+  const fields = currentExam().questions.flatMap(question => question.fields.map(field => ({ question, field })));
+  const answered = fields.filter(({ question, field }) => String(state.answers[fieldKey(question.id, field.id)] ?? "").trim() !== "").length;
+  const total = fields.length;
+  $("progressText").textContent = `${answered} von ${total} Antwortfeldern ausgefüllt.`;
+  $("progressBar").style.width = total ? `${Math.round(answered / total * 100)}%` : "0";
+}
+
+function gradeExam() {
+  const topicMap = new Map();
+  let score = 0;
+  let max = 0;
+  const questionScores = new Map();
+  currentExam().questions.forEach(question => {
+    let qScore = 0;
+    let qMax = 0;
+    question.fields.forEach(field => {
+      const points = field.points ?? 1;
+      const actual = state.answers[fieldKey(question.id, field.id)] ?? "";
+      const ok = valueMatches(actual, field);
+      qMax += points;
+      max += points;
+      if (ok) {
+        qScore += points;
+        score += points;
+      }
+      const topic = topicMap.get(question.topic) ?? { score: 0, max: 0 };
+      topic.max += points;
+      if (ok) topic.score += points;
+      topicMap.set(question.topic, topic);
+    });
+    questionScores.set(question.id, { score: qScore, max: qMax });
+  });
+  return { score, max, questionScores, topicMap };
+}
+
+function applyResults() {
+  const grade = gradeExam();
+  currentExam().questions.forEach(question => {
+    const result = grade.questionScores.get(question.id);
+    const resultBox = $(`result_${question.id}`);
+    const good = result.score === result.max;
+    resultBox.className = `question-result visible ${good ? "good" : "bad"}`;
+    resultBox.innerHTML = good
+      ? `<strong>Vollständig richtig.</strong> ${result.score}/${result.max} Punkte.`
+      : `<strong>Nacharbeiten.</strong> ${result.score}/${result.max} Punkte. Prüfe die rot markierten Felder.`;
+    question.fields.forEach(field => {
+      const input = $(`${question.id}_${field.id}`);
+      const ok = valueMatches(state.answers[fieldKey(question.id, field.id)] ?? "", field);
+      input.classList.toggle("ok", ok);
+      input.classList.toggle("bad", !ok);
+    });
+  });
+  const percent = grade.max ? Math.round(grade.score / grade.max * 100) : 0;
+  $("scoreBox").className = `status ${percent >= 80 ? "good" : percent >= 55 ? "warn" : "bad"}`;
+  $("scoreBox").innerHTML = `<strong>Ergebnis:</strong> ${grade.score}/${grade.max} Punkte (${percent} %). ${resultSentence(percent)}`;
+  renderTopicSummary(grade.topicMap);
+}
+
+function resultSentence(percent) {
+  if (percent === 100) return "Sehr stark. Jetzt höchstens noch einmal unter Zeitdruck wiederholen.";
+  if (percent >= 80) return "Solide Klausurbasis. Jetzt gezielt die roten Themen glätten.";
+  if (percent >= 55) return "Brauchbar, aber noch nicht sicher. Die schwachen Themen nochmal einzeln trainieren.";
+  return "Noch nicht klausursicher. Erst die Einzeltrainer für die roten Themen durcharbeiten.";
+}
+
+function renderTopicSummary(topicMap) {
+  $("topicSummary").innerHTML = [...topicMap.entries()].map(([topic, result]) => {
+    const pct = result.max ? Math.round(result.score / result.max * 100) : 0;
+    return `<div class="topic-row ${pct >= 75 ? "good" : "bad"}"><span>${topic}</span><strong>${result.score}/${result.max}</strong></div>`;
+  }).join("");
+}
+
+function refreshSolutions() {
+  currentExam().questions.forEach(question => {
+    $(`solution_${question.id}`).classList.toggle("visible", state.solutionsVisible);
+  });
+  $("toggleSolutions").textContent = state.solutionsVisible ? "Lösungen ausblenden" : "Lösungen anzeigen";
+}
+
+function submitExam() {
+  state.submitted = true;
+  state.solutionsVisible = true;
+  applyResults();
+  refreshSolutions();
+}
+
+function resetExam() {
+  state.submitted = false;
+  state.solutionsVisible = false;
+  state.answers = {};
+  $("scoreBox").className = "status";
+  $("scoreBox").textContent = "Gib den Bogen ab, um Punkte und Themenhinweise zu sehen.";
+  $("topicSummary").innerHTML = "";
+  renderExam();
+}
+
+$("examSelect").addEventListener("change", event => {
+  state.examIndex = Number(event.target.value);
+  state.submitted = false;
+  state.solutionsVisible = false;
+  state.answers = {};
+  $("scoreBox").className = "status";
+  $("scoreBox").textContent = "Gib den Bogen ab, um Punkte und Themenhinweise zu sehen.";
+  $("topicSummary").innerHTML = "";
+  renderExam();
+});
+$("submitExam").addEventListener("click", submitExam);
+$("toggleSolutions").addEventListener("click", () => {
+  state.solutionsVisible = !state.solutionsVisible;
+  refreshSolutions();
+});
+$("resetExam").addEventListener("click", resetExam);
+$("printExam").addEventListener("click", () => window.print());
+
+renderExam();
+</script>
+</body>
+</html>

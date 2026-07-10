@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurzantwort-Trainer - Betriebssysteme</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#f5f6fa;--paper:#fff;--ink:#151b2d;--muted:#5d6678;--line:#d8deea;--accent:#1f5eff;--good:#0f766e;--hot:#b42318;--mid:#925200;--code:#eef2f8}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#eef3ff 0,var(--bg) 260px);line-height:1.5}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1240px;margin:0 auto;padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.back{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px}.small-label{color:var(--muted);font-size:13px}
+.hero,.panel,.sheet{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 32px rgba(21,32,51,.07)}.hero{padding:26px 28px;margin-bottom:18px}.hero h1{margin:0;font-size:clamp(30px,5vw,52px);line-height:1.05}.hero p{color:var(--muted);max-width:900px;margin:12px 0 0;font-size:17px}
+.layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}.panel,.sheet{padding:18px;min-width:0}.panel h2,.sheet h2{margin:0 0 12px;font-size:21px}.panel h3{margin:18px 0 8px;font-size:16px}
+button,select,textarea{border:1px solid #b6c3e0;background:#fff;color:#1d2939;border-radius:10px;padding:9px 11px;font:inherit}button{cursor:pointer}button:hover{background:#eef3ff}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button.secondary{background:#f8fafc}select,textarea{width:100%}textarea{min-height:190px;resize:vertical;line-height:1.45}label{display:block;color:var(--muted);font-size:13px;margin:10px 0 6px}.button-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.result{border-left:5px solid var(--line);background:#f8fafc;border-radius:12px;padding:12px 13px;margin-top:12px}.result.good{border-left-color:var(--good);background:#ecfdf8}.result.warn{border-left-color:var(--mid);background:#fff8eb}.result.bad{border-left-color:var(--hot);background:#fff3f1}
+.note{border:1px dashed #b6c3e0;background:#fbfdff;border-radius:14px;padding:12px 14px;margin-top:14px;color:#344054;font-size:14px}.note strong{color:#20315f}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}.tag{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 9px;background:#f8fafc;color:#344054;font-size:13px;font-weight:650}
+.prompt{border:1px solid var(--line);border-radius:16px;background:#fbfcff;padding:16px;margin:14px 0}.prompt h3{margin:0 0 8px}.checklist{display:grid;gap:8px;margin:14px 0}.criterion{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#fff}.criterion.ok{border-color:#a9ded4;background:#f1fffb}.criterion.bad{border-color:#f3b5ad;background:#fff8f6}.mark{font-weight:800;color:var(--muted)}.criterion.ok .mark{color:var(--good)}.criterion.bad .mark{color:var(--hot)}
+.sample{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;margin-top:14px}.sample.locked{color:var(--muted);background:#fbfdff}.sample p{margin:8px 0}.sample ul{margin:8px 0 0 20px}
+code{font-family:"Cascadia Mono","SFMono-Regular",Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:6px}
+@media(max-width:920px){.wrap{padding:14px}.topbar{align-items:flex-start;flex-direction:column}.layout{grid-template-columns:minmax(0,1fr)}.button-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#antworten">Zur Zusammenfassung</a>
+    <div class="small-label">Betriebssysteme · Theorie · Kurzantworten</div>
+  </div>
+  <header class="hero">
+    <h1>Kurzantwort-Trainer</h1>
+    <p>Formuliere 2-4 saubere Klausursätze. Die Prüfung ist bewusst nur ein Raster: Entscheidend ist, ob deine Antwort die zentralen Punkte klar trifft.</p>
+  </header>
+  <div class="layout">
+    <aside class="panel">
+      <h2>Frage</h2>
+      <label for="questionSelect">Thema auswählen</label>
+      <select id="questionSelect"></select>
+      <div class="button-row">
+        <button id="nextQuestion" type="button">Nächste Frage</button>
+        <button id="toggleSample" type="button" class="secondary">Muster anzeigen</button>
+      </div>
+      <button id="checkAnswer" type="button" class="primary" style="width:100%;margin-top:10px">Antwort prüfen</button>
+      <button id="clearAnswer" type="button" class="secondary" style="width:100%;margin-top:8px">Antwort löschen</button>
+      <div id="result" class="result">Schreibe deine Antwort und prüfe sie danach.</div>
+      <div class="note"><strong>Wichtig:</strong> Das Tool bewertet Stichworte, nicht Stil. Wenn du die Musterantwort verstanden in eigenen Worten triffst, ist das Ziel erreicht.</div>
+    </aside>
+    <main class="sheet">
+      <h2 id="title"></h2>
+      <div id="tags" class="tags"></div>
+      <div class="prompt">
+        <h3>Klausurfrage</h3>
+        <p id="prompt"></p>
+      </div>
+      <label for="answer">Deine 2-4 Klausursätze</label>
+      <textarea id="answer" placeholder="Antwort hier formulieren..."></textarea>
+      <h3>Checkliste</h3>
+      <div id="criteria" class="checklist"></div>
+      <div id="sample" class="sample locked">Musterantwort ist ausgeblendet.</div>
+    </main>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const questions = [
+  {
+    title:"Prozess",
+    tags:["Prozesse","Grundbegriff"],
+    prompt:"Was ist ein Prozess? Nenne die wichtigsten Bestandteile aus Betriebssystemsicht.",
+    criteria:[
+      ["aktive Programmausführung",["programm in ausführung","aktive ablaufinstanz","prozess ist ein programm"]],
+      ["eigener Adressraum/Ressourcen",["adressraum","ressourcen","offene dateien"]],
+      ["PCB/Rechenzustand",["pcb","prozesskontrollblock","register","program counter","rechenzustand"]]
+    ],
+    sample:"Ein Prozess ist ein Programm in Ausführung. Das Betriebssystem verwaltet für ihn einen eigenen Adressraum, Ressourcen wie offene Dateien und Verwaltungsdaten im PCB. Zum fortsetzbaren Rechenzustand gehören insbesondere Register, Program Counter und Stack Pointer."
+  },
+  {
+    title:"Thread vs. Prozess",
+    tags:["Threads","Abgrenzung"],
+    prompt:"Was sind Vor- und Nachteile von Threads gegenüber Prozessen?",
+    criteria:[
+      ["Threads teilen Adressraum/Ressourcen",["teilen","adressraum","ressourcen","gemeinsamer speicher"]],
+      ["geringerer Aufwand",["weniger overhead","schneller","leichtgewicht","kontextwechsel"]],
+      ["Risiko durch fehlende Isolation",["isolation","race","synchronisation","fehler betrifft"]]
+    ],
+    sample:"Threads sind leichtgewichtige Ausführungspfade innerhalb eines Prozesses und teilen dessen Adressraum und Ressourcen. Dadurch sind Kommunikation und Erzeugung oft günstiger als bei Prozessen. Der Nachteil ist die geringere Isolation: Fehler und Race Conditions können leichter den ganzen Prozess betreffen."
+  },
+  {
+    title:"Context Switch",
+    tags:["Prozesse","Scheduling"],
+    prompt:"Was passiert bei einem Prozesswechsel von P1 zu P2?",
+    criteria:[
+      ["Zustand von P1 sichern",["p1","sichern","speichern","register"]],
+      ["Zustand von P2 laden",["p2","laden","wiederherstellen","register"]],
+      ["Scheduler/Dispatcher und Fortsetzung",["scheduler","dispatcher","program counter","fortsetzen"]]
+    ],
+    sample:"Beim Prozesswechsel wird der Rechenzustand von P1, etwa Register, Program Counter und Stack Pointer, im PCB gesichert. Danach lädt das Betriebssystem den gespeicherten Zustand von P2. Der Dispatcher übergibt die CPU an P2, sodass P2 an seiner gespeicherten Stelle weiterläuft."
+  },
+  {
+    title:"Interrupt und ISR",
+    tags:["Hardware","E/A"],
+    prompt:"Was ist ein Interrupt und was macht eine Interrupt-Service-Routine?",
+    criteria:[
+      ["asynchrone Unterbrechung/Ereignis",["interrupt","unterbrechung","asynchron","ereignis"]],
+      ["CPU springt in Behandlungscode",["isr","service routine","behandelt","handler"]],
+      ["Rückkehr/Fortsetzung",["fortsetzen","zurück","zustand","speichern"]]
+    ],
+    sample:"Ein Interrupt ist eine Unterbrechung des laufenden Programms durch Hardware oder ein Ereignis. Die CPU sichert den nötigen Zustand und führt eine Interrupt-Service-Routine aus, die das Ereignis behandelt. Danach kann das unterbrochene Programm fortgesetzt werden."
+  },
+  {
+    title:"DMA",
+    tags:["E/A","DMA"],
+    prompt:"Wofür steht DMA und was ist das Prinzip?",
+    criteria:[
+      ["Direct Memory Access",["direct memory access","dma"]],
+      ["Controller überträgt ohne dauernde CPU",["controller","ohne cpu","entlastet","direkt"]],
+      ["CPU initialisiert Parameter/Interrupt am Ende",["quelle","ziel","anzahl","richtung","interrupt","abschluss"]]
+    ],
+    sample:"DMA steht für Direct Memory Access. Ein DMA-Controller überträgt Daten zwischen Gerät und Hauptspeicher weitgehend ohne dauernde CPU-Beteiligung. Die CPU initialisiert Parameter wie Quelle, Ziel, Richtung und Länge; am Ende meldet der Controller den Abschluss typischerweise per Interrupt."
+  },
+  {
+    title:"Monitor vs. Semaphore",
+    tags:["Synchronisation","Theorie"],
+    prompt:"Was unterscheidet einen Monitor von Semaphoren?",
+    criteria:[
+      ["Monitor kapselt Daten/Prozeduren",["monitor","kapselt","prozeduren","objekt"]],
+      ["automatische Exklusion",["automatisch","exklusiv","gegenseitiger ausschluss"]],
+      ["Semaphore sind explizite wait/signal-Zähler",["semaphore","wait","signal","zähler"]]
+    ],
+    sample:"Ein Monitor kapselt gemeinsame Daten zusammen mit Prozeduren und sorgt dafür, dass nur ein Thread gleichzeitig im Monitor aktiv ist. Die Exklusion ist also strukturell vorgegeben. Semaphore sind dagegen explizite Synchronisationszähler, die mit wait und signal korrekt verwendet werden müssen."
+  },
+  {
+    title:"TLB",
+    tags:["Speicher","Paging"],
+    prompt:"Was ist ein TLB und warum verbessert er die Speicherzugriffszeit?",
+    criteria:[
+      ["Cache für Adressübersetzungen",["tlb","translation lookaside","cache","adressübersetzung"]],
+      ["virtuelle Seite zu Frame",["virtuell","seite","frame","rahmen"]],
+      ["spart Seitentabellenzugriffe",["seitentabelle","zugriff","schneller","hit"]]
+    ],
+    sample:"Ein TLB ist ein Cache für virtuelle-zu-physische Adressübersetzungen. Er speichert Zuordnungen von virtuellen Seiten zu physischen Frames. Bei einem TLB-Hit muss die Seitentabelle nicht erneut im Speicher nachgeschlagen werden, wodurch Speicherzugriffe schneller werden."
+  },
+  {
+    title:"Thrashing / Working Set",
+    tags:["Speicher","Virtueller Speicher"],
+    prompt:"Was ist Thrashing und was hat es mit dem Working Set zu tun?",
+    criteria:[
+      ["sehr viele Page Faults",["thrashing","page faults","seitenfehler"]],
+      ["zu wenige Rahmen/Working Set passt nicht",["working set","rahmen","passt nicht","zu wenig"]],
+      ["CPU verbringt Zeit mit Paging",["paging","einlagern","auslagern","cpu"]]
+    ],
+    sample:"Thrashing liegt vor, wenn ein System fast nur noch Seiten ein- und auslagert und dadurch sehr viele Page Faults erzeugt. Ursache ist oft, dass die Working Sets der Prozesse nicht in die zugeteilten Frames passen. Gegenmaßnahmen sind weniger gleichzeitig aktive Prozesse oder mehr Frames pro Prozess."
+  },
+  {
+    title:"Polling vs. Interrupt",
+    tags:["E/A","Kurzantwort"],
+    prompt:"Vergleiche Polling und interruptgesteuerte E/A.",
+    criteria:[
+      ["Polling fragt aktiv ab",["polling","aktiv","abfragen"]],
+      ["Interrupt meldet Ereignis",["interrupt","meldet","ereignis"]],
+      ["CPU-Zeit/Reaktionsvorteil",["cpu","verschwendet","effizient","reaktionszeit"]]
+    ],
+    sample:"Beim Polling fragt die CPU den Gerätestatus aktiv und wiederholt ab, was einfach ist, aber CPU-Zeit verschwenden kann. Bei interruptgesteuerter E/A meldet das Gerät ein Ereignis per Interrupt. Dadurch muss die CPU nicht dauernd warten, sondern kann zwischenzeitlich andere Arbeit erledigen."
+  },
+  {
+    title:"Memory-mapped vs. Port-mapped I/O",
+    tags:["E/A","Adressierung"],
+    prompt:"Erkläre memory-mapped und port-mapped I/O.",
+    criteria:[
+      ["memory-mapped im normalen Adressraum",["memory-mapped","adressraum","normale befehle"]],
+      ["port-mapped eigener I/O-Adressraum",["port-mapped","port","eigener adressraum","spezielle befehle"]],
+      ["Vor-/Nachteil",["vorteil","nachteil","flexibel","adressraum","spezielle"]]
+    ],
+    sample:"Bei memory-mapped I/O liegen Gerätereigister im normalen Speicheradressraum und können mit normalen Lade-/Speicherbefehlen angesprochen werden. Bei port-mapped I/O gibt es einen separaten I/O-Adressraum mit speziellen Befehlen. Memory-mapped ist flexibler, belegt aber Adressraum und muss bei Cache/Schutz korrekt behandelt werden."
+  }
+];
+let index = 0;
+let sampleVisible = false;
+let answers = {};
+function renderSelect(){ $("questionSelect").innerHTML = questions.map((q,i)=>`<option value="${i}" ${i===index?"selected":""}>${q.title}</option>`).join(""); }
+function render(){
+  const q = questions[index];
+  renderSelect();
+  $("title").textContent = q.title;
+  $("prompt").textContent = q.prompt;
+  $("tags").innerHTML = q.tags.map(t=>`<span class="tag">${t}</span>`).join("");
+  $("answer").value = answers[index] ?? "";
+  $("criteria").innerHTML = q.criteria.map((c,i)=>`<div class="criterion" id="c_${i}"><span class="mark">□</span><span>${c[0]}</span></div>`).join("");
+  renderSample();
+  $("result").className = "result";
+  $("result").textContent = "Schreibe deine Antwort und prüfe sie danach.";
+}
+function normalize(text){return String(text??"").toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss");}
+function criterionHit(text, words){const n=normalize(text);return words.some(w=>n.includes(normalize(w)));}
+function check(){
+  const text = $("answer").value;
+  answers[index] = text;
+  const q = questions[index];
+  let hits = 0;
+  q.criteria.forEach((criterion,i)=>{
+    const ok = criterionHit(text, criterion[1]);
+    if(ok) hits += 1;
+    const row = $(`c_${i}`);
+    row.className = `criterion ${ok ? "ok" : "bad"}`;
+    row.querySelector(".mark").textContent = ok ? "✓" : "!";
+  });
+  const pct = Math.round(hits / q.criteria.length * 100);
+  $("result").className = `result ${pct >= 100 ? "good" : pct >= 60 ? "warn" : "bad"}`;
+  $("result").innerHTML = `<strong>${hits}/${q.criteria.length} Kernpunkte getroffen.</strong> ${pct >= 100 ? "Sehr gut, jetzt mit Musterantwort vergleichen." : "Vergleiche mit der Musterantwort und schärfe die fehlenden Punkte."}`;
+}
+function renderSample(){
+  $("toggleSample").textContent = sampleVisible ? "Muster ausblenden" : "Muster anzeigen";
+  $("sample").className = `sample ${sampleVisible ? "" : "locked"}`;
+  $("sample").innerHTML = sampleVisible ? `<strong>Musterantwort:</strong><p>${questions[index].sample}</p>` : "Musterantwort ist ausgeblendet.";
+}
+$("answer").addEventListener("input", e => answers[index] = e.target.value);
+$("questionSelect").addEventListener("change", e => { index = Number(e.target.value); sampleVisible = false; render(); });
+$("nextQuestion").addEventListener("click", () => { index = (index + 1) % questions.length; sampleVisible = false; render(); });
+$("toggleSample").addEventListener("click", () => { sampleVisible = !sampleVisible; renderSample(); });
+$("checkAnswer").addEventListener("click", check);
+$("clearAnswer").addEventListener("click", () => { answers[index] = ""; $("answer").value = ""; render(); });
+render();
+</script>
+</body>
+</html>

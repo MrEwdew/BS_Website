@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deadlock-Trainer - Betriebssysteme</title>
+<style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #152033;
+  --muted: #5d6678;
+  --line: #d9deea;
+  --accent: #1f5eff;
+  --accent2: #0f766e;
+  --hot: #b42318;
+  --mid: #925200;
+  --code: #f0f3f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef3ff 0, var(--bg) 260px);
+  line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 24px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.back { border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 8px 11px; }
+.hero, .panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(21,32,51,.07);
+}
+.hero { padding: 28px; margin-bottom: 18px; }
+.hero h1 { margin: 0; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; }
+.hero p { color: var(--muted); max-width: 860px; margin: 12px 0 0; font-size: 17px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.trainer-grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.panel { padding: 18px; min-width: 0; }
+.panel h2 { margin: 0 0 14px; font-size: 20px; }
+.panel h3 { margin: 18px 0 8px; font-size: 16px; }
+.scenario-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+.tag { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 8px; color: #344054; background: #f8fafc; font-size: 12px; font-weight: 650; }
+label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+select, button, textarea, input {
+  border: 1px solid #b6c3e0;
+  background: #fff;
+  color: #1d2939;
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+}
+select { width: 100%; }
+textarea { width: 100%; min-height: 118px; resize: vertical; font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; line-height: 1.45; }
+button { cursor: pointer; }
+button:hover { background: #eef3ff; }
+button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.secondary { background: #f8fafc; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 13px 0; }
+.score { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.score div { border: 1px solid var(--line); border-radius: 12px; padding: 9px; background: #fbfcff; text-align: center; }
+.score strong { display: block; font-size: 20px; }
+.state-list { margin: 10px 0 0; padding-left: 20px; }
+.state-list li { margin: 5px 0; }
+.result {
+  min-height: 48px;
+  border-left: 5px solid var(--line);
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 13px;
+  margin-top: 12px;
+}
+.result.good { border-left-color: var(--accent2); background: #ecfdf8; }
+.result.bad { border-left-color: var(--hot); background: #fff3f1; }
+.graph-panel { min-height: 620px; }
+.graph-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 8px; }
+.graph-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.graph-wrap {
+  border: 1px solid var(--line);
+  background: #fbfcff;
+  border-radius: 16px;
+  padding: 12px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.graph-wrap svg { width: 100%; min-width: 720px; height: auto; display: block; }
+.label { font: 800 22px Inter, Arial, sans-serif; fill: #152033; }
+.small-label { font: 600 14px Inter, Arial, sans-serif; fill: #475467; }
+.edge-label { font: 800 15px Inter, Arial, sans-serif; fill: #344054; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+.swatch { display: inline-block; width: 16px; height: 12px; border: 2px solid #344054; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.analysis { margin-top: 14px; border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: #fff; }
+.analysis.locked { background: #fbfdff; }
+.analysis h3 { margin-top: 0; }
+.analysis ol { margin: 8px 0 0; padding-left: 22px; }
+.analysis li { margin: 6px 0; }
+.muted { color: var(--muted); }
+details { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-top: 14px; background: #fff; }
+summary { cursor: pointer; font-weight: 750; color: #20315f; }
+.format-help { color: var(--muted); font-size: 12px; margin: 8px 0; }
+.note {
+  border: 1px dashed #b6c3e0;
+  background: #fbfdff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  color: #344054;
+}
+.note strong { color: #20315f; }
+code { font-family: "Cascadia Mono", Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 6px; }
+@media (max-width: 980px) {
+  .wrap { padding: 14px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .trainer-grid { grid-template-columns: minmax(0, 1fr); }
+  .graph-panel { min-height: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#deadlocks">Zur Zusammenfassung</a>
+    <span class="small-label">Betriebssysteme · Deadlocks · Ressourcengraphen</span>
+  </div>
+
+  <header class="hero">
+    <h1>Deadlock-Trainer</h1>
+    <p>Übe genau die Klausurform: Prozesse belegen Betriebsmittel und warten auf weitere. Entscheide, ob ein Deadlock vorliegt, und kontrolliere deine Begründung am Ressourcengraphen.</p>
+    <div class="hero-actions">
+      <button type="button" id="random-scenario">Zufallsaufgabe</button>
+      <button type="button" id="reset-score" class="secondary">Score zurücksetzen</button>
+    </div>
+  </header>
+
+  <main class="trainer-grid">
+    <section class="panel">
+      <h2>Klausurzustand</h2>
+      <label for="deadlock-scenario">Beispiel auswählen</label>
+      <select id="deadlock-scenario"></select>
+      <div class="scenario-meta" id="scenario-meta"></div>
+
+      <div class="score" aria-label="Punktestand">
+        <div><strong id="score-correct">0</strong><span class="small-label">richtig</span></div>
+        <div><strong id="score-total">0</strong><span class="small-label">geprüft</span></div>
+        <div><strong id="score-streak">0</strong><span class="small-label">Serie</span></div>
+      </div>
+
+      <h3>Aktuelle Belegung</h3>
+      <ul class="state-list" id="deadlock-state-list"></ul>
+
+      <h3>Deine Entscheidung</h3>
+      <div class="controls" role="group" aria-label="Antwort auswählen">
+        <button type="button" id="answer-deadlock">Deadlock</button>
+        <button type="button" id="answer-no-deadlock">Kein Deadlock</button>
+      </div>
+      <div class="controls">
+        <button type="button" id="check-deadlock">Antwort prüfen</button>
+        <button type="button" id="show-hint">Hinweis</button>
+        <button type="button" id="show-deadlock-solution">Lösung anzeigen</button>
+        <button type="button" id="next-deadlock">Nächstes Beispiel</button>
+      </div>
+      <div class="result" id="deadlock-result">Wähle eine Antwort und prüfe sie.</div>
+
+      <div class="note">
+        <strong>Prüfungsregel:</strong> Bei genau einer Instanz pro Betriebsmittel beweist ein Zyklus einen Deadlock. Bei mehreren Instanzen ist ein Zyklus nur ein Hinweis und muss genauer geprüft werden.
+      </div>
+
+      <details>
+        <summary>Eigenen Zustand eingeben</summary>
+        <p class="format-help">Format pro Zeile: <code>P1: hält B1, B2; wartet B3</code>. Ressourcen mit mehreren Instanzen: <code>R B1=2, B2=1</code>.</p>
+        <textarea id="custom-input">R B1=1, B2=1
+P1: hält B1; wartet B2
+P2: hält B2; wartet B1</textarea>
+        <div class="controls">
+          <button type="button" id="load-custom">Eigenen Graph laden</button>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel graph-panel">
+      <div class="graph-head">
+        <div>
+          <h2>Ressourcengraph</h2>
+          <p id="graph-caption">Schwarze Kanten zeigen Zuordnung. Rote gestrichelte Kanten zeigen Warten.</p>
+        </div>
+        <div class="controls">
+          <button type="button" id="view-resource" class="active">Ressourcen</button>
+          <button type="button" id="view-waitfor">Wait-for</button>
+        </div>
+      </div>
+      <div class="graph-wrap" id="deadlock-graph"></div>
+      <div class="legend">
+        <span><span class="swatch" style="border-radius:50%;"></span>Prozess</span>
+        <span><span class="swatch"></span>Betriebsmittel</span>
+        <span><strong>R → P</strong>: belegt</span>
+        <span><strong>P → R</strong>: wartet</span>
+      </div>
+      <div class="analysis">
+        <h3>Automatische Analyse</h3>
+        <ol id="analysis-list"></ol>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const scenarios = [
+    {
+      title: "2 Prozesse, 2 Betriebsmittel: klassischer Zyklus",
+      category: "Klassiker",
+      difficulty: "leicht",
+      resources: [{ id: "B1", instances: 1 }, { id: "B2", instances: 1 }],
+      processes: ["P1", "P2"],
+      holds: [{ p: "P1", r: "B1" }, { p: "P2", r: "B2" }],
+      waits: [{ p: "P1", r: "B2" }, { p: "P2", r: "B1" }],
+      explanation: "P1 hält B1 und wartet auf B2. P2 hält B2 und wartet auf B1. Beide Betriebsmittel haben nur eine Instanz. Der Zyklus beweist hier den Deadlock."
+    },
+    {
+      title: "Warten ohne Zyklus",
+      category: "Falle",
+      difficulty: "leicht",
+      resources: [{ id: "B1", instances: 1 }, { id: "B2", instances: 1 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "B1" }, { p: "P2", r: "B2" }],
+      waits: [{ p: "P3", r: "B1" }, { p: "P1", r: "B2" }],
+      explanation: "P3 wartet auf B1 und P1 wartet auf B2, aber P2 wartet selbst auf nichts. P2 kann B2 freigeben, danach kann P1 weiterlaufen. Also kein Deadlock."
+    },
+    {
+      title: "3 Prozesse im Kreis",
+      category: "Zyklus",
+      difficulty: "mittel",
+      resources: [{ id: "B1", instances: 1 }, { id: "B2", instances: 1 }, { id: "B3", instances: 1 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "B1" }, { p: "P2", r: "B2" }, { p: "P3", r: "B3" }],
+      waits: [{ p: "P1", r: "B2" }, { p: "P2", r: "B3" }, { p: "P3", r: "B1" }],
+      explanation: "Jeder Prozess hält ein Betriebsmittel und wartet auf das nächste. Alle Ressourcen haben nur eine Instanz. Der Zyklus ist eine echte zyklische Wartebeziehung."
+    },
+    {
+      title: "Zyklus, aber mehrere Instanzen",
+      category: "Mehrere Instanzen",
+      difficulty: "schwer",
+      resources: [{ id: "B1", instances: 2 }, { id: "B2", instances: 1 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "B1" }, { p: "P2", r: "B2" }, { p: "P3", r: "B1" }],
+      waits: [{ p: "P1", r: "B2" }, { p: "P2", r: "B1" }],
+      explanation: "Im Graphen sieht man zwar einen Zyklus. B1 hat aber zwei Instanzen, eine davon liegt bei P3, der selbst auf nichts wartet und B1 später freigeben kann. Deshalb ist der Zyklus allein kein sicherer Deadlock-Beweis."
+    },
+    {
+      title: "Drei Semaphore, falsche Sperrreihenfolge",
+      category: "Semaphor-Code",
+      difficulty: "mittel",
+      resources: [{ id: "S1", instances: 1 }, { id: "S2", instances: 1 }, { id: "S3", instances: 1 }],
+      processes: ["P1", "P2"],
+      holds: [{ p: "P1", r: "S1" }, { p: "P1", r: "S3" }, { p: "P2", r: "S2" }],
+      waits: [{ p: "P1", r: "S2" }, { p: "P2", r: "S3" }],
+      explanation: "P1 hält S3 und wartet auf S2. P2 hält S2 und wartet auf S3. S1 ist hier für den Zyklus egal. Der Deadlock entsteht durch die unterschiedliche Sperrreihenfolge."
+    },
+    {
+      title: "Ein Prozess hält viel, aber niemand wartet zyklisch",
+      category: "Falle",
+      difficulty: "mittel",
+      resources: [{ id: "B1", instances: 1 }, { id: "B2", instances: 1 }, { id: "B3", instances: 1 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "B1" }, { p: "P1", r: "B2" }],
+      waits: [{ p: "P2", r: "B1" }, { p: "P3", r: "B2" }],
+      explanation: "P2 und P3 warten zwar, aber P1 wartet auf nichts und kann seine Betriebsmittel später freigeben. Warten allein reicht nicht für einen Deadlock."
+    },
+    {
+      title: "Alle Instanzen belegt, aber ein Prozess kann fertig werden",
+      category: "Mehrere Instanzen",
+      difficulty: "schwer",
+      resources: [{ id: "A", instances: 2 }, { id: "B", instances: 2 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "A" }, { p: "P2", r: "B" }, { p: "P3", r: "A" }, { p: "P3", r: "B" }],
+      waits: [{ p: "P1", r: "B" }, { p: "P2", r: "A" }],
+      explanation: "A und B sind zunächst vollständig belegt. Trotzdem wartet P3 auf nichts und kann beide Betriebsmittel freigeben. Danach lösen sich die Wartesituationen auf."
+    },
+    {
+      title: "Zyklus, aber eine Zusatzinstanz ist frei",
+      category: "Mehrere Instanzen",
+      difficulty: "schwer",
+      resources: [{ id: "A", instances: 2 }, { id: "B", instances: 1 }],
+      processes: ["P1", "P2"],
+      holds: [{ p: "P1", r: "A" }, { p: "P2", r: "B" }],
+      waits: [{ p: "P1", r: "B" }, { p: "P2", r: "A" }],
+      explanation: "Im Wait-for-Graphen sieht man einen Zyklus. Weil aber noch eine Instanz von A frei ist, kann P2 seine Anforderung erfüllen, fertig werden und B freigeben. Deshalb ist es kein sicherer Deadlock."
+    },
+    {
+      title: "Mehrinstanz-Deadlock trotz Zusatzressourcen",
+      category: "Mehrere Instanzen",
+      difficulty: "schwer",
+      resources: [{ id: "A", instances: 2 }, { id: "B", instances: 1 }],
+      processes: ["P1", "P2", "P3"],
+      holds: [{ p: "P1", r: "A" }, { p: "P2", r: "B" }, { p: "P3", r: "A" }],
+      waits: [{ p: "P1", r: "B" }, { p: "P2", r: "A" }, { p: "P3", r: "B" }],
+      explanation: "Alle Instanzen von A und B sind vergeben. P1 und P3 brauchen B, P2 braucht A; keiner der Prozesse kann zuerst fertig werden und etwas freigeben."
+    },
+    {
+      title: "Warten auf ein freies Betriebsmittel",
+      category: "Falle",
+      difficulty: "leicht",
+      resources: [{ id: "A", instances: 1 }, { id: "B", instances: 1 }],
+      processes: ["P1", "P2"],
+      holds: [{ p: "P1", r: "A" }],
+      waits: [{ p: "P1", r: "B" }, { p: "P2", r: "A" }],
+      explanation: "B ist frei. P1 kann B bekommen, fertig werden und A freigeben. Danach kann auch P2 weiterlaufen. Es gibt also keinen Deadlock."
+    }
+  ];
+
+  const select = document.getElementById("deadlock-scenario");
+  const meta = document.getElementById("scenario-meta");
+  const stateList = document.getElementById("deadlock-state-list");
+  const graph = document.getElementById("deadlock-graph");
+  const result = document.getElementById("deadlock-result");
+  const answerDeadlock = document.getElementById("answer-deadlock");
+  const answerNoDeadlock = document.getElementById("answer-no-deadlock");
+  const check = document.getElementById("check-deadlock");
+  const showHint = document.getElementById("show-hint");
+  const show = document.getElementById("show-deadlock-solution");
+  const next = document.getElementById("next-deadlock");
+  const randomButton = document.getElementById("random-scenario");
+  const resetScore = document.getElementById("reset-score");
+  const loadCustom = document.getElementById("load-custom");
+  const customInput = document.getElementById("custom-input");
+  const viewResource = document.getElementById("view-resource");
+  const viewWaitFor = document.getElementById("view-waitfor");
+  const caption = document.getElementById("graph-caption");
+  const analysisList = document.getElementById("analysis-list");
+  const scoreCorrect = document.getElementById("score-correct");
+  const scoreTotal = document.getElementById("score-total");
+  const scoreStreak = document.getElementById("score-streak");
+  let selectedAnswer = null;
+  let customScenario = null;
+  let graphMode = "resource";
+  let scoredThisRound = false;
+  let analysisRevealed = false;
+  let hintLevel = 0;
+  const score = { correct: 0, total: 0, streak: 0 };
+
+  const escapeHtml = (value) => String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
+  function unique(values) {
+    return [...new Set(values)];
+  }
+
+  function normalizeScenario(raw) {
+    const resourcesById = new Map((raw.resources || []).map((r) => [r.id, { id: r.id, instances: Math.max(1, Number(r.instances) || 1) }]));
+    [...(raw.holds || []), ...(raw.waits || [])].forEach((edge) => {
+      if (!resourcesById.has(edge.r)) resourcesById.set(edge.r, { id: edge.r, instances: 1 });
+    });
+    const processes = unique([...(raw.processes || []), ...(raw.holds || []).map((x) => x.p), ...(raw.waits || []).map((x) => x.p)]).filter(Boolean);
+    return { ...raw, processes, resources: [...resourcesById.values()], holds: raw.holds || [], waits: raw.waits || [] };
+  }
+
+  function countBy(items, keyFn) {
+    const counts = new Map();
+    items.forEach((item) => {
+      const key = keyFn(item);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return counts;
+  }
+
+  function resourceVector(resources, entries, process) {
+    const vector = Object.fromEntries(resources.map((r) => [r.id, 0]));
+    entries.filter((edge) => edge.p === process).forEach((edge) => {
+      vector[edge.r] = (vector[edge.r] || 0) + 1;
+    });
+    return vector;
+  }
+
+  function vectorFits(request, work) {
+    return Object.keys(request).every((resource) => request[resource] <= (work[resource] || 0));
+  }
+
+  function addVector(work, allocation) {
+    Object.keys(allocation).forEach((resource) => {
+      work[resource] = (work[resource] || 0) + allocation[resource];
+    });
+  }
+
+  function findCycle(processes, waitForEdges) {
+    const graphMap = new Map(processes.map((p) => [p, []]));
+    waitForEdges.forEach((edge) => graphMap.get(edge.from)?.push(edge.to));
+    const visiting = new Set();
+    const visited = new Set();
+    const path = [];
+    let cycle = null;
+
+    function dfs(node) {
+      if (cycle) return;
+      visiting.add(node);
+      path.push(node);
+      for (const nextNode of graphMap.get(node) || []) {
+        if (visiting.has(nextNode)) {
+          const start = path.indexOf(nextNode);
+          cycle = [...path.slice(start), nextNode];
+          return;
+        }
+        if (!visited.has(nextNode)) dfs(nextNode);
+      }
+      path.pop();
+      visiting.delete(node);
+      visited.add(node);
+    }
+
+    processes.forEach((process) => {
+      if (!visited.has(process) && !cycle) dfs(process);
+    });
+    return cycle;
+  }
+
+  function analyzeScenario(rawScenario) {
+    const scenario = normalizeScenario(rawScenario);
+    const allocationCount = countBy(scenario.holds, (edge) => edge.r);
+    const available = Object.fromEntries(scenario.resources.map((r) => [r.id, r.instances - (allocationCount.get(r.id) || 0)]));
+    const waitForEdges = [];
+    scenario.waits.forEach((wait) => {
+      scenario.holds.filter((hold) => hold.r === wait.r && hold.p !== wait.p).forEach((hold) => {
+        waitForEdges.push({ from: wait.p, to: hold.p, resource: wait.r });
+      });
+    });
+    const cycle = findCycle(scenario.processes, waitForEdges);
+    const work = { ...available };
+    const finish = {};
+    const allocations = {};
+    const requests = {};
+    scenario.processes.forEach((process) => {
+      allocations[process] = resourceVector(scenario.resources, scenario.holds, process);
+      requests[process] = resourceVector(scenario.resources, scenario.waits, process);
+      const hasAllocation = Object.values(allocations[process]).some((value) => value > 0);
+      finish[process] = !hasAllocation;
+    });
+    let changed = true;
+    const releaseOrder = [];
+    while (changed) {
+      changed = false;
+      scenario.processes.forEach((process) => {
+        if (!finish[process] && vectorFits(requests[process], work)) {
+          finish[process] = true;
+          addVector(work, allocations[process]);
+          releaseOrder.push(process);
+          changed = true;
+        }
+      });
+    }
+    const deadlocked = scenario.processes.filter((process) => !finish[process]);
+    const overallocated = Object.entries(available).filter(([, value]) => value < 0).map(([resource]) => resource);
+    return {
+      scenario,
+      available,
+      waitForEdges,
+      cycle,
+      releaseOrder,
+      deadlocked,
+      overallocated,
+      deadlock: deadlocked.length > 0
+    };
+  }
+
+  function setAnswer(value) {
+    selectedAnswer = value;
+    answerDeadlock.classList.toggle("active", value === true);
+    answerNoDeadlock.classList.toggle("active", value === false);
+    result.className = "result";
+    result.textContent = value ? "Ausgewählt: Deadlock." : "Ausgewählt: Kein Deadlock.";
+  }
+
+  function currentScenario() {
+    if (select.value === "custom") return customScenario || scenarios[0];
+    const index = Number(select.value);
+    return Number.isInteger(index) && scenarios[index] ? scenarios[index] : scenarios[0];
+  }
+
+  function updateScore() {
+    scoreCorrect.textContent = String(score.correct);
+    scoreTotal.textContent = String(score.total);
+    scoreStreak.textContent = String(score.streak);
+  }
+
+  function renderState(scenario) {
+    stateList.innerHTML = scenario.processes.map((p) => {
+      const held = scenario.holds.filter((x) => x.p === p).map((x) => x.r);
+      const waits = scenario.waits.filter((x) => x.p === p).map((x) => x.r);
+      return `<li><strong>${escapeHtml(p)}</strong>: belegt ${held.length ? held.map(escapeHtml).join(", ") : "nichts"}; wartet auf ${waits.length ? waits.map(escapeHtml).join(", ") : "nichts"}.</li>`;
+    }).join("");
+  }
+
+  function renderMeta(scenario) {
+    meta.innerHTML = [
+      `<span class="tag">${escapeHtml(scenario.category || "Eigenes Beispiel")}</span>`,
+      `<span class="tag">${escapeHtml(scenario.difficulty || "frei")}</span>`,
+      `<span class="tag">${scenario.processes.length} Prozesse</span>`,
+      `<span class="tag">${scenario.resources.length} Betriebsmittel</span>`
+    ].join("");
+  }
+
+  function renderResourceGraph(scenario) {
+    const width = 1040;
+    const height = 650;
+    const processY = 150;
+    const resourceY = 465;
+    const spread = (items, y, wide = false) => {
+      const margin = items.length <= 2 ? 220 : 135;
+      const usable = width - margin * 2;
+      return new Map(items.map((item, index) => {
+        const id = typeof item === "string" ? item : item.id;
+        const x = items.length === 1 ? width / 2 : margin + (usable * index) / (items.length - 1);
+        return [id, { x, y }];
+      }));
+    };
+    const pPos = spread(scenario.processes, processY);
+    const rPos = spread(scenario.resources, resourceY, true);
+
+    const marker = `<defs>
+      <marker id="trainer-arrow" markerWidth="14" markerHeight="14" refX="12" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,10 L13,5 z" fill="#344054"/></marker>
+      <marker id="trainer-arrow-hot" markerWidth="14" markerHeight="14" refX="12" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,10 L13,5 z" fill="#b42318"/></marker>
+    </defs>`;
+    const heldEdges = scenario.holds.map((edge, index) => {
+      const from = rPos.get(edge.r);
+      const to = pPos.get(edge.p);
+      const bend = 315 + (index % 2) * 42;
+      return `<path d="M${from.x} ${from.y - 60} C${from.x} ${bend} ${to.x} ${bend} ${to.x} ${to.y + 70}" stroke="#344054" stroke-width="4.2" fill="none" marker-end="url(#trainer-arrow)"/>`;
+    }).join("");
+    const waitEdges = scenario.waits.map((edge, index) => {
+      const from = pPos.get(edge.p);
+      const to = rPos.get(edge.r);
+      const bend = 300 - (index % 2) * 46;
+      return `<path d="M${from.x} ${from.y + 70} C${from.x} ${bend} ${to.x} ${bend} ${to.x} ${to.y - 60}" stroke="#b42318" stroke-width="4.4" fill="none" marker-end="url(#trainer-arrow-hot)" stroke-dasharray="12 9"/>`;
+    }).join("");
+    const resources = scenario.resources.map((r) => {
+      const pos = rPos.get(r.id);
+      return `<rect x="${pos.x - 76}" y="${pos.y - 48}" width="152" height="96" rx="12" fill="#fff8eb" stroke="#925200" stroke-width="4"/>
+        <text x="${pos.x}" y="${pos.y - 7}" text-anchor="middle" class="label">${escapeHtml(r.id)}</text>
+        <text x="${pos.x}" y="${pos.y + 26}" text-anchor="middle" class="small-label">${r.instances} Instanz${r.instances === 1 ? "" : "en"}</text>`;
+    }).join("");
+    const processes = scenario.processes.map((p) => {
+      const pos = pPos.get(p);
+      return `<circle cx="${pos.x}" cy="${pos.y}" r="62" fill="#fff3f1" stroke="#b42318" stroke-width="4"/>
+        <text x="${pos.x}" y="${pos.y + 8}" text-anchor="middle" class="label">${escapeHtml(p)}</text>`;
+    }).join("");
+    graph.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Interaktiver Ressourcengraph">${marker}${heldEdges}${waitEdges}${resources}${processes}<text x="${width / 2}" y="610" text-anchor="middle" class="small-label">R → P bedeutet: Betriebsmittel ist belegt. P → R bedeutet: Prozess wartet.</text></svg>`;
+  }
+
+  function renderWaitForGraph(analysis) {
+    const { scenario, waitForEdges } = analysis;
+    const width = 1040;
+    const height = 610;
+    const radius = 68;
+    const centerX = width / 2;
+    const centerY = 275;
+    const positions = new Map();
+    const presets = {
+      1: [{ x: centerX, y: centerY }],
+      2: [{ x: 290, y: centerY }, { x: 750, y: centerY }],
+      3: [{ x: centerX, y: 130 }, { x: 800, y: 430 }, { x: 240, y: 430 }]
+    };
+    const fixedPositions = presets[scenario.processes.length];
+    scenario.processes.forEach((process, index) => {
+      if (fixedPositions) {
+        positions.set(process, fixedPositions[index]);
+        return;
+      }
+      const orbitX = 335;
+      const orbitY = 195;
+      const angle = -Math.PI / 2 + (2 * Math.PI * index) / Math.max(1, scenario.processes.length);
+      positions.set(process, {
+        x: centerX + Math.cos(angle) * orbitX,
+        y: centerY + Math.sin(angle) * orbitY
+      });
+    });
+    const marker = `<defs><marker id="wait-arrow" markerWidth="11" markerHeight="11" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,10 L10,5 z" fill="#b42318"/></marker></defs>`;
+    const pairCounts = new Map();
+    waitForEdges.forEach((edge) => {
+      const pairKey = [edge.from, edge.to].sort().join("|");
+      pairCounts.set(pairKey, (pairCounts.get(pairKey) || 0) + 1);
+    });
+    const pairSeen = new Map();
+    const edges = waitForEdges.map((edge, index) => {
+      const from = positions.get(edge.from);
+      const to = positions.get(edge.to);
+      if (!from || !to) return "";
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const len = Math.max(1, Math.hypot(dx, dy));
+      const sx = from.x + (dx / len) * radius;
+      const sy = from.y + (dy / len) * radius;
+      const tx = to.x - (dx / len) * radius;
+      const ty = to.y - (dy / len) * radius;
+      const pairKey = [edge.from, edge.to].sort().join("|");
+      const pairIndex = pairSeen.get(pairKey) || 0;
+      pairSeen.set(pairKey, pairIndex + 1);
+      const hasTwoWayPair = pairCounts.get(pairKey) > 1;
+      const curve = hasTwoWayPair ? (pairIndex % 2 === 0 ? 118 : -118) : 70;
+      const cx = (sx + tx) / 2 - (dy / len) * curve;
+      const cy = (sy + ty) / 2 + (dx / len) * curve;
+      const labelT = hasTwoWayPair ? 0.5 : (index % 2 === 0 ? 0.42 : 0.58);
+      const oneMinusT = 1 - labelT;
+      const lx = oneMinusT * oneMinusT * sx + 2 * oneMinusT * labelT * cx + labelT * labelT * tx;
+      const ly = oneMinusT * oneMinusT * sy + 2 * oneMinusT * labelT * cy + labelT * labelT * ty;
+      const chipWidth = Math.max(48, 24 + String(edge.resource).length * 11);
+      return `<path d="M${sx} ${sy} Q${cx} ${cy} ${tx} ${ty}" stroke="#b42318" stroke-width="3.6" fill="none" marker-end="url(#wait-arrow)"/>
+        <rect x="${lx - chipWidth / 2}" y="${ly - 18}" width="${chipWidth}" height="28" rx="7" fill="#fff8eb" stroke="#925200" stroke-width="2.2"/>
+        <text x="${lx}" y="${ly + 1}" text-anchor="middle" class="edge-label">${escapeHtml(edge.resource)}</text>`;
+    }).join("");
+    const nodes = scenario.processes.map((process) => {
+      const pos = positions.get(process);
+      const deadlocked = analysisRevealed && analysis.deadlocked.includes(process);
+      const fill = analysisRevealed ? (deadlocked ? "#fff3f1" : "#ecfdf8") : "#ffffff";
+      const stroke = analysisRevealed ? (deadlocked ? "#b42318" : "#0f766e") : "#344054";
+      return `<circle cx="${pos.x}" cy="${pos.y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="4"/><text x="${pos.x}" y="${pos.y + 8}" text-anchor="middle" class="label">${escapeHtml(process)}</text>`;
+    }).join("");
+    const empty = waitForEdges.length ? "" : `<text x="${centerX}" y="${centerY}" text-anchor="middle" class="label">Keine Wait-for-Kanten</text>`;
+    graph.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Wait-for-Graph">${marker}${edges}${nodes}${empty}<text x="${centerX}" y="570" text-anchor="middle" class="small-label">Wait-for-Graph: P → Q bedeutet, P wartet auf ein Betriebsmittel, das Q hält. Das Betriebsmittel steht als rechteckiges Label an der Kante.</text></svg>`;
+  }
+
+  function renderGraph(analysis) {
+    if (graphMode === "waitfor") {
+      caption.textContent = "Wait-for-Graph: Prozesse zeigen direkt auf Prozesse, die benötigte Betriebsmittel halten.";
+      viewResource.classList.remove("active");
+      viewWaitFor.classList.add("active");
+      renderWaitForGraph(analysis);
+    } else {
+      caption.textContent = "Schwarze Kanten zeigen Zuordnung. Rote gestrichelte Kanten zeigen Warten.";
+      viewResource.classList.add("active");
+      viewWaitFor.classList.remove("active");
+      renderResourceGraph(analysis.scenario);
+    }
+  }
+
+  function renderAnalysis(analysis) {
+    analysisList.parentElement.classList.toggle("locked", !analysisRevealed);
+    if (!analysisRevealed) {
+      const singleInstance = analysis.scenario.resources.every((resource) => resource.instances === 1);
+      const hints = [
+        "Zähle zuerst für jedes Betriebsmittel: Gesamtinstanzen minus aktuell belegte Instanzen.",
+        "Bilde den Wait-for-Graphen: P zeigt auf jeden Prozess, der ein von P angefordertes Betriebsmittel hält.",
+        singleInstance
+          ? "Hier hat jedes Betriebsmittel genau eine Instanz. Dann beweist ein Zyklus im Wait-for-Graphen einen Deadlock."
+          : "Hier gibt es mehrere Instanzen. Ein Zyklus ist nur ein Warnsignal; simuliere, ob irgendein Prozess mit den freien Instanzen fertig werden kann."
+      ];
+      const visibleHints = hints.slice(0, hintLevel).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("");
+      analysisList.innerHTML = `
+        ${visibleHints}
+        <li class="muted">Die vollständige Rechnung bleibt verdeckt, bis du deine Antwort prüfst oder die Lösung öffnest.</li>
+      `;
+      return;
+    }
+
+    const availableText = Object.entries(analysis.available)
+      .map(([resource, count]) => `${resource}: ${count}`)
+      .join(", ");
+    const waitForText = analysis.waitForEdges.length
+      ? analysis.waitForEdges.map((edge) => `${edge.from} → ${edge.to} über ${edge.resource}`).join("; ")
+      : "keine";
+    const cycleText = analysis.cycle ? analysis.cycle.join(" → ") : "kein Zyklus";
+    const releaseText = analysis.releaseOrder.length ? analysis.releaseOrder.join(", ") : "kein Prozess kann sicher fertig werden";
+    const deadlockText = analysis.deadlock
+      ? `Deadlock-Menge: ${analysis.deadlocked.join(", ")}`
+      : "Alle blockierten Prozesse können sich nach Freigaben auflösen.";
+    const overallocatedText = analysis.overallocated.length
+      ? `<li><strong>Achtung:</strong> Mehr Instanzen belegt als vorhanden bei ${analysis.overallocated.map(escapeHtml).join(", ")}. Prüfe die Eingabe.</li>`
+      : "";
+    analysisList.innerHTML = `
+      <li>Verfügbare Instanzen nach aktueller Belegung: <code>${escapeHtml(availableText || "keine")}</code>.</li>
+      <li>Wait-for-Kanten: ${escapeHtml(waitForText)}.</li>
+      <li>Zyklusprüfung: ${escapeHtml(cycleText)}.</li>
+      <li>Mehrinstanz-Check: freigebbare Prozesse in Reihenfolge: ${escapeHtml(releaseText)}.</li>
+      <li><strong>Ergebnis:</strong> ${escapeHtml(deadlockText)}</li>
+      ${overallocatedText}
+    `;
+  }
+
+  function renderScenario(index) {
+    if (index === "custom" && customScenario) {
+      select.value = "custom";
+    } else {
+      const numericIndex = Number(index);
+      select.value = String(Number.isInteger(numericIndex) && scenarios[numericIndex] ? numericIndex : 0);
+    }
+    selectedAnswer = null;
+    scoredThisRound = false;
+    analysisRevealed = false;
+    hintLevel = 0;
+    answerDeadlock.classList.remove("active");
+    answerNoDeadlock.classList.remove("active");
+    result.className = "result";
+    result.textContent = "Wähle eine Antwort und prüfe sie.";
+    const scenario = normalizeScenario(currentScenario());
+    const analysis = analyzeScenario(scenario);
+    renderMeta(scenario);
+    renderState(scenario);
+    renderGraph(analysis);
+    renderAnalysis(analysis);
+  }
+
+  function refreshCurrentView() {
+    const analysis = analyzeScenario(currentScenario());
+    renderGraph(analysis);
+    renderAnalysis(analysis);
+  }
+
+  function showSolution(forceCheck = false) {
+    const scenario = normalizeScenario(currentScenario());
+    const analysis = analyzeScenario(scenario);
+    const isCorrect = selectedAnswer === analysis.deadlock;
+    const wantsCheck = forceCheck && selectedAnswer !== null;
+    if (wantsCheck && !scoredThisRound) {
+      score.total += 1;
+      if (isCorrect) {
+        score.correct += 1;
+        score.streak += 1;
+      } else {
+        score.streak = 0;
+      }
+      scoredThisRound = true;
+      updateScore();
+    }
+    analysisRevealed = true;
+    renderGraph(analysis);
+    renderAnalysis(analysis);
+    result.className = `result ${wantsCheck ? (isCorrect ? "good" : "bad") : "good"}`;
+    const prefix = wantsCheck ? (isCorrect ? "Richtig. " : "Noch nicht. ") : "";
+    const computed = analysis.deadlock ? `Deadlock-Menge: ${analysis.deadlocked.join(", ")}` : "Kein Deadlock nach Mehrinstanz-Check";
+    result.innerHTML = `${prefix}<strong>${analysis.deadlock ? "Deadlock" : "Kein sicherer Deadlock"}.</strong> ${escapeHtml(scenario.explanation || computed)}<br><span class="small-label">${escapeHtml(computed)}</span>`;
+  }
+
+  function parseList(value) {
+    return value.split(",").map((part) => part.trim()).filter(Boolean);
+  }
+
+  function parseCustomInput() {
+    const resources = new Map();
+    const processes = [];
+    const holds = [];
+    const waits = [];
+    const lines = customInput.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    lines.forEach((line) => {
+      if (/^(r|ressourcen|resources)\b/i.test(line)) {
+        line.replace(/^(r|ressourcen|resources)\s*:?\s*/i, "").split(",").forEach((entry) => {
+          const [rawId, rawCount] = entry.split("=").map((part) => part.trim());
+          if (rawId) resources.set(rawId, { id: rawId, instances: Math.max(1, Number(rawCount) || 1) });
+        });
+        return;
+      }
+      const match = line.match(/^([^:]+):(.+)$/);
+      if (!match) return;
+      const process = match[1].trim();
+      processes.push(process);
+      match[2].split(";").forEach((segment) => {
+        const normalized = segment.trim();
+        if (/^(hält|haelt|belegt|holds?)\b/i.test(normalized)) {
+          parseList(normalized.replace(/^(hält|haelt|belegt|holds?)\s*/i, "")).forEach((resource) => {
+            holds.push({ p: process, r: resource });
+            if (!resources.has(resource)) resources.set(resource, { id: resource, instances: 1 });
+          });
+        }
+        if (/^(wartet|wartet auf|waits?)\b/i.test(normalized)) {
+          parseList(normalized.replace(/^(wartet\s*auf|wartet|waits?)\s*/i, "")).forEach((resource) => {
+            waits.push({ p: process, r: resource });
+            if (!resources.has(resource)) resources.set(resource, { id: resource, instances: 1 });
+          });
+        }
+      });
+    });
+    if (!processes.length) throw new Error("Keine Prozesszeilen erkannt. Beispiel: P1: hält B1; wartet B2");
+    return {
+      title: "Eigener Zustand",
+      category: "Eigene Eingabe",
+      difficulty: "frei",
+      resources: [...resources.values()],
+      processes: unique(processes),
+      holds,
+      waits,
+      explanation: "Eigene Eingabe: Die Entscheidung kommt aus der automatisch berechneten Analyse."
+    };
+  }
+
+  scenarios.forEach((scenario, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = scenario.title;
+    select.appendChild(option);
+  });
+  const customOption = document.createElement("option");
+  customOption.value = "custom";
+  customOption.textContent = "Eigener Zustand";
+  select.appendChild(customOption);
+  select.addEventListener("change", () => renderScenario(select.value));
+  answerDeadlock.addEventListener("click", () => setAnswer(true));
+  answerNoDeadlock.addEventListener("click", () => setAnswer(false));
+  check.addEventListener("click", () => {
+    if (selectedAnswer === null) {
+      result.className = "result bad";
+      result.textContent = "Wähle zuerst Deadlock oder Kein Deadlock.";
+      return;
+    }
+    showSolution(true);
+  });
+  showHint.addEventListener("click", () => {
+    if (analysisRevealed) return;
+    hintLevel = Math.min(3, hintLevel + 1);
+    refreshCurrentView();
+  });
+  show.addEventListener("click", () => showSolution(false));
+  next.addEventListener("click", () => {
+    const currentIndex = Number.isInteger(Number(select.value)) ? Number(select.value) : -1;
+    renderScenario((currentIndex + 1) % scenarios.length);
+  });
+  randomButton.addEventListener("click", () => {
+    let nextIndex = Math.floor(Math.random() * scenarios.length);
+    const currentIndex = Number(select.value);
+    if (scenarios.length > 1 && Number.isInteger(currentIndex) && nextIndex === currentIndex) nextIndex = (nextIndex + 1) % scenarios.length;
+    renderScenario(nextIndex);
+  });
+  resetScore.addEventListener("click", () => {
+    score.correct = 0;
+    score.total = 0;
+    score.streak = 0;
+    updateScore();
+  });
+  loadCustom.addEventListener("click", () => {
+    try {
+      customScenario = parseCustomInput();
+      select.value = "custom";
+      renderScenario("custom");
+    } catch (error) {
+      result.className = "result bad";
+      result.textContent = error.message;
+    }
+  });
+  viewResource.addEventListener("click", () => {
+    graphMode = "resource";
+    refreshCurrentView();
+  });
+  viewWaitFor.addEventListener("click", () => {
+    graphMode = "waitfor";
+    refreshCurrentView();
+  });
+  updateScore();
+  renderScenario(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dateisystem-Trainer - Betriebssysteme</title>
+<link rel="icon" href="data:,">
+<style>
+:root {
+  --bg: #f5f6fa;
+  --paper: #ffffff;
+  --ink: #151b2d;
+  --muted: #5d6678;
+  --line: #d8deea;
+  --accent: #1f5eff;
+  --good: #0f766e;
+  --hot: #b42318;
+  --mid: #925200;
+  --soft: #f8fafc;
+  --code: #eef2f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef3ff 0, var(--bg) 260px);
+  line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 24px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.back {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 11px;
+}
+.small-label { color: var(--muted); font-size: 13px; }
+.hero, .panel, .sheet {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(21, 32, 51, .07);
+}
+.hero { padding: 26px 28px; margin-bottom: 18px; }
+.hero h1 { margin: 0; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; }
+.hero p { color: var(--muted); max-width: 940px; margin: 12px 0 0; font-size: 17px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+button, select, input {
+  border: 1px solid #b6c3e0;
+  background: #fff;
+  color: #1d2939;
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+}
+button { cursor: pointer; }
+button:hover { background: #eef3ff; }
+button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.secondary { background: #f8fafc; }
+select, input { width: 100%; }
+label { display: block; color: var(--muted); font-size: 13px; margin: 10px 0 6px; }
+.layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.panel, .sheet { padding: 18px; min-width: 0; }
+.panel h2, .sheet h2 { margin: 0 0 12px; font-size: 21px; }
+.panel h3, .sheet h3 { margin: 18px 0 8px; font-size: 16px; }
+.button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.button-row.single { grid-template-columns: 1fr; }
+.mode { display: none; }
+.mode.active { display: block; }
+.answer-grid { display: grid; gap: 10px; margin-top: 10px; }
+.answer-grid input.bad, .answer-grid select.bad { border-color: var(--hot); background: #fff3f1; }
+.answer-grid input.ok, .answer-grid select.ok { border-color: var(--good); background: #ecfdf8; }
+.result {
+  min-height: 48px;
+  border-left: 5px solid var(--line);
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 13px;
+  margin-top: 12px;
+}
+.result.good { border-left-color: var(--good); background: #ecfdf8; }
+.result.bad { border-left-color: var(--hot); background: #fff3f1; }
+.note {
+  border: 1px dashed #b6c3e0;
+  background: #fbfdff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  color: #344054;
+  font-size: 14px;
+}
+.note strong { color: #20315f; }
+.facts {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 12px 0 16px;
+}
+.facts table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.facts th, .facts td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+.facts tr:last-child th, .facts tr:last-child td { border-bottom: 0; }
+.facts th { width: 230px; background: #f1f5ff; color: #26324a; }
+code { font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 6px; }
+.formula-list {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+.formula-list div {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+.solution {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 14px;
+  background: #fff;
+}
+.solution.locked { color: var(--muted); background: #fbfdff; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #f8fafc;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 650;
+}
+.visual {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fbfcff;
+  padding: 16px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.fat-bar {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(54px, 1fr));
+  border: 1px solid #98a2b3;
+  background: #fff;
+  min-width: 620px;
+}
+.fat-cell {
+  border-right: 1px solid #98a2b3;
+  min-height: 64px;
+  padding: 8px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font: 700 13px "Cascadia Mono", Consolas, monospace;
+}
+.fat-cell:last-child { border-right: 0; }
+.fat-cell.used { background: #eef3ff; }
+.fat-cell.cluster { background: #ecfdf8; }
+.chain {
+  display: flex;
+  align-items: stretch;
+  min-width: 720px;
+  gap: 8px;
+}
+.block {
+  width: 110px;
+  border: 1px solid #777;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr 28px;
+  min-height: 72px;
+  font-family: "Times New Roman", Times, serif;
+}
+.block .data { display: grid; place-items: center; padding: 8px; }
+.block .ptr { display: grid; place-items: center; border-left: 1px dashed #777; background: #fff6e7; font-weight: 700; }
+.arrow { display: grid; place-items: center; color: var(--hot); font-size: 28px; font-weight: 700; }
+.inode-svg {
+  width: 100%;
+  min-width: 760px;
+  height: auto;
+  font-family: "Times New Roman", Times, serif;
+}
+.inode-svg .box { fill: #fff; stroke: #333; stroke-width: 1.4; }
+.inode-svg .box-soft { fill: #f8fafc; stroke: #333; stroke-width: 1.4; }
+.inode-svg .edge { fill: none; stroke: #333; stroke-width: 1.4; marker-end: url(#arrow); }
+.inode-svg .txt { font-weight: 700; font-size: 17px; }
+.inode-svg .sub { font-size: 13px; }
+.exam {
+  border: 1px solid #777;
+  background: #fff;
+  padding: 18px;
+  font-family: "Times New Roman", Times, serif;
+  color: #000;
+  min-width: 720px;
+}
+.exam h3 { font-size: 19px; margin: 0 0 12px; }
+.exam table { border-collapse: collapse; margin: 10px 0 14px; width: 100%; }
+.exam th, .exam td { border: 1px solid #777; padding: 5px 7px; text-align: left; vertical-align: top; }
+.exam ol { margin: 8px 0 0 22px; padding: 0; }
+.exam li { margin: 7px 0; }
+.mini-table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+.mini-table th, .mini-table td { border: 1px solid var(--line); padding: 7px 8px; text-align: left; }
+.mini-table th { background: #f8fafc; }
+@media (max-width: 980px) {
+  .wrap { padding: 14px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .button-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html#dateien">Zur Zusammenfassung</a>
+    <div class="small-label">Betriebssysteme · Dateisysteme · FAT · I-Node</div>
+  </div>
+
+  <header class="hero">
+    <h1>Dateisystem-Trainer</h1>
+    <p>Trainiere genau die Klausurrechnungen, bei denen man sich schnell verrechnet: FAT-Grenzen, Cluster-Verbrauch, verkettete Blöcke und I-Node-Dateigrößen.</p>
+    <div class="tabs" aria-label="Trainer-Modi">
+      <button type="button" id="fatModeBtn" class="active">FAT / Cluster</button>
+      <button type="button" id="linkedModeBtn">Verkettete Liste</button>
+      <button type="button" id="inodeModeBtn">I-Node</button>
+      <button type="button" id="examModeBtn">Klausurbeispiel</button>
+    </div>
+  </header>
+
+  <section id="fatMode" class="mode active"></section>
+  <section id="linkedMode" class="mode"></section>
+  <section id="inodeMode" class="mode"></section>
+  <section id="examMode" class="mode"></section>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const trainers = {
+  fat: {
+    title: "FAT / Cluster",
+    label: "FAT-Aufgabe",
+    note: "<strong>Klausurfalle:</strong> Die FAT verwaltet ganze Blöcke oder Cluster. Für belegten Plattenplatz immer auf ganze Zuordnungseinheiten aufrunden.",
+    examples: [
+      {
+        title: "16-Bit-FAT, 512-Byte-Blöcke, Cluster i=3",
+        prompt: "Rechne das typische Dateisystem-Beispiel aus den Übungs-/Klausuraufgaben.",
+        tags: ["FAT", "Cluster", "interne Fragmentierung"],
+        facts: [
+          ["Blockgröße", "512 Byte"],
+          ["FAT-Einträge", "16 Bit → 2^16 Einträge"],
+          ["Cluster-Variante", "2^3 Blöcke pro Cluster"],
+          ["Dateigröße", "652 Byte"]
+        ],
+        visual: { type: "fat", cluster: 8, fileBlocks: 2 },
+        fields: [
+          { id: "entries", label: "Adressierbare Einträge", answer: "65536", unit: "Einträge" },
+          { id: "maxNoCluster", label: "Max. Partition ohne Cluster", answer: "32", unit: "MiB", accept: ["33554432"] },
+          { id: "clusterSize", label: "Clustergröße bei i=3", answer: "4096", unit: "Byte" },
+          { id: "maxCluster", label: "Max. Partition mit Cluster", answer: "256", unit: "MiB", accept: ["268435456"] },
+          { id: "fileNoCluster", label: "652-Byte-Datei ohne Cluster belegt", answer: "1024", unit: "Byte" },
+          { id: "fileCluster", label: "652-Byte-Datei mit Cluster belegt", answer: "4096", unit: "Byte" }
+        ],
+        steps: [
+          "16 Bit ergeben 2^16 = 65536 Einträge.",
+          "Ohne Cluster: 65536 × 512 Byte = 33554432 Byte = 32 MiB.",
+          "Bei i=3 besteht ein Cluster aus 2^3 = 8 Blöcken, also 8 × 512 = 4096 Byte.",
+          "Mit Clustern: 65536 × 4096 Byte = 268435456 Byte = 256 MiB.",
+          "Eine 652-Byte-Datei braucht ohne Cluster 2 Blöcke = 1024 Byte.",
+          "Mit 4096-Byte-Clustern braucht sie 1 Cluster = 4096 Byte."
+        ]
+      },
+      {
+        title: "FAT-Größe im Hauptspeicher",
+        prompt: "Berechne FAT-Größe und maximal adressierbare Partitionsgröße.",
+        tags: ["FAT-Speicherbedarf", "2er-Potenzen"],
+        facts: [
+          ["FAT-Einträge", "2^18"],
+          ["Eintragsgröße", "32 Bit = 4 Byte"],
+          ["Clustergröße", "4 KiB"]
+        ],
+        visual: { type: "fat", cluster: 4, fileBlocks: 0 },
+        fields: [
+          { id: "entries", label: "Anzahl FAT-Einträge", answer: "262144", unit: "Einträge" },
+          { id: "fatBytes", label: "FAT-Größe", answer: "1048576", unit: "Byte" },
+          { id: "fatMiB", label: "FAT-Größe", answer: "1", unit: "MiB" },
+          { id: "maxGiB", label: "Max. Partition", answer: "1", unit: "GiB" }
+        ],
+        steps: [
+          "2^18 = 262144 Einträge.",
+          "32 Bit pro Eintrag sind 4 Byte.",
+          "FAT-Größe: 262144 × 4 Byte = 1048576 Byte = 1 MiB.",
+          "Maximale Partition: 2^18 × 4 KiB = 2^18 × 2^12 Byte = 2^30 Byte = 1 GiB."
+        ]
+      },
+      {
+        title: "Interne Fragmentierung durch Cluster",
+        prompt: "Bestimme belegten Platz und verschwendeten Platz bei ganzer Clusterbelegung.",
+        tags: ["Cluster", "Rundung", "Fragmentierung"],
+        facts: [
+          ["Clustergröße", "4 KiB = 4096 Byte"],
+          ["Dateigrößen", "1 Byte, 513 Byte, 4096 Byte, 4097 Byte"]
+        ],
+        visual: { type: "fat", cluster: 4, fileBlocks: 4 },
+        fields: [
+          { id: "spaceA", label: "1-Byte-Datei belegt", answer: "4096", unit: "Byte" },
+          { id: "spaceB", label: "513-Byte-Datei belegt", answer: "4096", unit: "Byte" },
+          { id: "spaceC", label: "4096-Byte-Datei belegt", answer: "4096", unit: "Byte" },
+          { id: "spaceD", label: "4097-Byte-Datei belegt", answer: "8192", unit: "Byte" },
+          { id: "totalWaste", label: "Verschwendeter Platz insgesamt", answer: "11773", unit: "Byte" }
+        ],
+        steps: [
+          "Jede Datei belegt eine ganze Anzahl von Clustern.",
+          "1, 513 und 4096 Byte passen jeweils in einen 4096-Byte-Cluster.",
+          "4097 Byte brauchen zwei Cluster, also 8192 Byte.",
+          "Belegt werden 4096 + 4096 + 4096 + 8192 = 20480 Byte.",
+          "Nutzdaten: 1 + 513 + 4096 + 4097 = 8707 Byte. Verlust: 20480 - 8707 = 11773 Byte."
+        ]
+      }
+    ]
+  },
+  linked: {
+    title: "Verkettete Liste",
+    label: "Listen-Aufgabe",
+    note: "<strong>Klausurfalle:</strong> Bei der einfachen verketteten Liste liegt der Zeiger im Datenblock. Dadurch ist die Nutzlast pro Block kleiner als die Blockgröße.",
+    examples: [
+      {
+        title: "Verkettete Liste ohne Tabelle vs. FAT",
+        prompt: "Vergleiche den Plattenverbrauch für eine Datei. Das ist genau der typische Rechentrick.",
+        tags: ["Zeiger im Block", "FAT-Vergleich"],
+        facts: [
+          ["Blockgröße", "512 Byte"],
+          ["Zeiger pro Datenblock bei Liste A", "2 Byte"],
+          ["Dateigröße", "3065 Byte"],
+          ["Dateisystem B", "FAT, Zeiger stehen nicht im Datenblock"]
+        ],
+        visual: { type: "chain", blocks: 7, pointer: "2 B" },
+        fields: [
+          { id: "payload", label: "Nutzdaten pro Listenblock", answer: "510", unit: "Byte" },
+          { id: "linkedBlocks", label: "Benötigte Blöcke bei Liste A", answer: "7", unit: "Blöcke" },
+          { id: "linkedSpace", label: "Plattenplatz bei Liste A", answer: "3584", unit: "Byte" },
+          { id: "fatBlocks", label: "Benötigte Blöcke bei FAT B", answer: "6", unit: "Blöcke" },
+          { id: "fatSpace", label: "Plattenplatz bei FAT B", answer: "3072", unit: "Byte" }
+        ],
+        steps: [
+          "Bei der Liste bleiben pro Block 512 - 2 = 510 Byte Nutzdaten.",
+          "3065 / 510 = 6,009..., also braucht A 7 Blöcke.",
+          "A belegt 7 × 512 Byte = 3584 Byte auf der Platte.",
+          "Bei FAT liegen die Zeiger in der Tabelle. Der Datenblock kann 512 Byte Nutzdaten enthalten.",
+          "3065 / 512 = 5,986..., also braucht B 6 Blöcke = 3072 Byte."
+        ]
+      },
+      {
+        title: "Random Access bei Belegungsarten",
+        prompt: "Ordne die Zugriffsarten richtig ein. Hier geht es weniger um Rechnen, mehr um Begründung.",
+        tags: ["Random Access", "Begründung"],
+        facts: [
+          ["Zusammenhängend", "Startblock + Offset genügt"],
+          ["Einfache verkettete Liste", "Kette muss vom Anfang verfolgt werden"],
+          ["FAT", "Kette steht zentral in einer Tabelle"],
+          ["I-Node", "Index enthält direkte/indirekte Blockadressen"]
+        ],
+        visual: { type: "chain", blocks: 5, pointer: "next" },
+        fields: [
+          { id: "worstRandom", label: "Schlechtester Direktzugriff", type: "choice", answer: "linked", options: [["", "Bitte wählen"], ["contiguous", "zusammenhängend"], ["linked", "einfache verkettete Liste"], ["fat", "FAT"], ["inode", "I-Node"]] },
+          { id: "swapBest", label: "Für Auslagerungsdatei am besten", type: "choice", answer: "contiguous", options: [["", "Bitte wählen"], ["contiguous", "zusammenhängende Belegung"], ["linked", "verkettete Liste"], ["fat", "FAT"]] },
+          { id: "reason", label: "Grund: einfache Liste muss ...", type: "choice", answer: "walk", options: [["", "Bitte wählen"], ["walk", "die Kette bis zum Zielblock verfolgen"], ["sort", "die Blöcke sortieren"], ["journal", "erst das Journal lesen"]] }
+        ],
+        steps: [
+          "Bei zusammenhängender Belegung kann der Block direkt aus Startblock + logischem Blockindex berechnet werden.",
+          "Bei der einfachen verketteten Liste kennt man nur den nächsten Block. Für Block n muss man die Kette verfolgen.",
+          "FAT verbessert das, weil die Kette zentral in einer Tabelle liegt.",
+          "I-Nodes sind für Direktzugriff gut, weil die Blockadressen indexiert sind.",
+          "Auslagerungsdateien profitieren stark von zusammenhängender Belegung."
+        ]
+      }
+    ]
+  },
+  inode: {
+    title: "I-Node",
+    label: "I-Node-Aufgabe",
+    note: "<strong>Klausurfalle:</strong> Maximale Dateigröße zählt Nutzdatenblöcke. Plattenverbrauch zählt zusätzlich I-Node- und Zeigerblöcke, wenn die Aufgabe danach fragt.",
+    examples: [
+      {
+        title: "8 direkte + 4 einfach indirekte Einträge",
+        prompt: "Berechne die maximale Nutzdateigröße eines I-Node-Dateisystems.",
+        tags: ["I-Node", "einfach indirekt", "max. Dateigröße"],
+        facts: [
+          ["Blockgröße", "512 Byte"],
+          ["I-Node-Einträge", "8 direkte Blockadressen"],
+          ["Indirekte Einträge", "4 Adressen auf Zeigerblöcke"],
+          ["Ein Zeigerblock enthält", "128 Datenblockadressen"]
+        ],
+        visual: { type: "inode", direct: 8, single: 4, perBlock: 128 },
+        fields: [
+          { id: "directBlocks", label: "Direkt erreichbare Datenblöcke", answer: "8", unit: "Blöcke" },
+          { id: "singleBlocks", label: "Indirekt erreichbare Datenblöcke", answer: "512", unit: "Blöcke" },
+          { id: "totalBlocks", label: "Datenblöcke insgesamt", answer: "520", unit: "Blöcke" },
+          { id: "maxBytes", label: "Maximale Dateigröße", answer: "266240", unit: "Byte" },
+          { id: "maxKiB", label: "Maximale Dateigröße", answer: "260", unit: "KiB" }
+        ],
+        steps: [
+          "Direkte Einträge: 8 Datenblöcke.",
+          "Vier einfach indirekte Einträge zeigen auf vier Zeigerblöcke.",
+          "Jeder Zeigerblock adressiert 128 Datenblöcke: 4 × 128 = 512.",
+          "Insgesamt sind 8 + 512 = 520 Datenblöcke erreichbar.",
+          "520 × 512 Byte = 266240 Byte = 260 KiB."
+        ]
+      },
+      {
+        title: "Plattenverbrauch inklusive Verwaltung",
+        prompt: "Hier wird nicht nach maximaler Dateigröße gefragt, sondern nach Platz auf der Platte.",
+        tags: ["I-Node", "Zeigerblock", "Plattenplatz"],
+        facts: [
+          ["Blockgröße", "1024 Byte"],
+          ["Dateigröße", "70000 Byte"],
+          ["I-Node", "10 direkte Einträge, danach einfach indirekt"],
+          ["Ein Zeigerblock enthält", "256 Adressen"],
+          ["Verwaltung", "I-Node selbst belegt 1 Block"]
+        ],
+        visual: { type: "inode", direct: 10, single: 1, perBlock: 256 },
+        fields: [
+          { id: "dataBlocks", label: "Benötigte Datenblöcke", answer: "69", unit: "Blöcke" },
+          { id: "indirectBlocks", label: "Benötigte Zeigerblöcke", answer: "1", unit: "Block" },
+          { id: "adminBlocks", label: "Verwaltungsblöcke inkl. I-Node", answer: "2", unit: "Blöcke" },
+          { id: "totalBlocks", label: "Belegte Blöcke insgesamt", answer: "71", unit: "Blöcke" },
+          { id: "diskBytes", label: "Belegter Plattenplatz", answer: "72704", unit: "Byte" }
+        ],
+        steps: [
+          "70000 / 1024 = 68,36..., also braucht die Datei 69 Datenblöcke.",
+          "10 Datenblöcke sind direkt erreichbar, 59 weitere brauchen indirekte Adressierung.",
+          "Ein Zeigerblock reicht, weil er 256 Adressen speichern kann.",
+          "Verwaltung: 1 I-Node-Block + 1 Zeigerblock = 2 Blöcke.",
+          "Gesamt: 69 + 2 = 71 Blöcke. 71 × 1024 = 72704 Byte."
+        ]
+      },
+      {
+        title: "Direkt, einfach und doppelt indirekt",
+        prompt: "Berechne die theoretisch maximal adressierbare Nutzdateigröße.",
+        tags: ["doppelt indirekt", "große Dateien"],
+        facts: [
+          ["Blockgröße", "4096 Byte"],
+          ["Adressgröße", "4 Byte"],
+          ["I-Node", "12 direkte, 1 einfach indirekter, 1 doppelt indirekter Eintrag"]
+        ],
+        visual: { type: "inode", direct: 12, single: 1, double: 1, perBlock: 1024 },
+        fields: [
+          { id: "ptrPerBlock", label: "Adressen pro Zeigerblock", answer: "1024", unit: "Adressen" },
+          { id: "singleData", label: "Datenblöcke über einfach indirekt", answer: "1024", unit: "Blöcke" },
+          { id: "doubleData", label: "Datenblöcke über doppelt indirekt", answer: "1048576", unit: "Blöcke" },
+          { id: "totalData", label: "Datenblöcke insgesamt", answer: "1049612", unit: "Blöcke" },
+          { id: "maxBytes", label: "Maximale Nutzdateigröße", answer: "4299210752", unit: "Byte" }
+        ],
+        steps: [
+          "Ein Zeigerblock fasst 4096 / 4 = 1024 Adressen.",
+          "Einfach indirekt: 1024 Datenblöcke.",
+          "Doppelt indirekt: 1024 × 1024 = 1048576 Datenblöcke.",
+          "Insgesamt: 12 + 1024 + 1048576 = 1049612 Datenblöcke.",
+          "1049612 × 4096 Byte = 4299210752 Byte."
+        ]
+      }
+    ]
+  },
+  exam: {
+    title: "Klausurbeispiel",
+    label: "Komplettbeispiel",
+    note: "<strong>Arbeitsweise:</strong> Erst alle Einheiten sauber notieren, dann runden. Bei I-Nodes vor dem Rechnen klären: Nutzdateigröße oder Plattenverbrauch?",
+    examples: [
+      {
+        title: "Zusammenfassungsbeispiel: FAT + Cluster + I-Node",
+        selectTitle: "FAT + Cluster + I-Node",
+        prompt: "Dieses Beispiel ist an den alten Dateisystem-Aufgaben orientiert, aber als eigenes Trainingsbeispiel formuliert.",
+        tags: ["Klausurstil", "FAT", "I-Node", "Belegungsarten"],
+        facts: [
+          ["Plattenblock", "512 Byte"],
+          ["FAT", "16-Bit-Einträge"],
+          ["Cluster", "2^3 zusammenhängende Blöcke"],
+          ["Datei", "652 Byte"],
+          ["I-Node", "8 direkte + 4 einfach indirekte Einträge; Zeigerblock enthält 128 Adressen"]
+        ],
+        visual: { type: "exam" },
+        fields: [
+          { id: "a", label: "a) FAT-Obergrenze ohne Cluster", answer: "32", unit: "MiB", accept: ["33554432"] },
+          { id: "b", label: "b) FAT-Obergrenze mit Cluster", answer: "256", unit: "MiB", accept: ["268435456"] },
+          { id: "c", label: "c) 652-Byte-Datei ohne Cluster belegt", answer: "1024", unit: "Byte" },
+          { id: "d", label: "d) 652-Byte-Datei mit Cluster belegt", answer: "4096", unit: "Byte" },
+          { id: "e", label: "e) I-Node maximale Nutzdateigröße", answer: "266240", unit: "Byte", accept: ["260"] },
+          { id: "f", label: "f) Zusammenhängende Belegung passt besonders für", type: "choice", answer: "readonly", options: [["", "Bitte wählen"], ["readonly", "read-only / selten wachsende Medien"], ["random", "häufig wachsende Dateien"], ["tiny", "nur sehr kleine Dateien"]] }
+        ],
+        steps: [
+          "a) 2^16 × 512 Byte = 33554432 Byte = 32 MiB.",
+          "b) Clustergröße: 2^3 × 512 = 4096 Byte. 2^16 × 4096 Byte = 256 MiB.",
+          "c) Ohne Cluster: ceil(652 / 512) = 2 Blöcke, also 1024 Byte.",
+          "d) Mit 4096-Byte-Clustern: ein Cluster reicht, also 4096 Byte.",
+          "e) I-Node: 8 + 4 × 128 = 520 Datenblöcke. 520 × 512 Byte = 266240 Byte = 260 KiB.",
+          "f) Zusammenhängende Belegung ist schnell, aber Wachstum ist schwierig. Gut passt sie für read-only oder selten veränderliche Medien."
+        ]
+      }
+    ]
+  }
+};
+
+const state = {
+  mode: "fat",
+  indices: { fat: 0, linked: 0, inode: 0, exam: 0 },
+  solutionVisible: { fat: false, linked: false, inode: false, exam: false },
+  answers: {}
+};
+
+function currentExample(mode = state.mode) {
+  return trainers[mode].examples[state.indices[mode]];
+}
+
+function answerKey(mode) {
+  return `${mode}:${state.indices[mode]}`;
+}
+
+function cacheAnswers(mode) {
+  const ex = currentExample(mode);
+  const saved = {};
+  ex.fields.forEach(field => {
+    const input = $(`${mode}_${field.id}`);
+    if (input) saved[field.id] = input.value;
+  });
+  state.answers[answerKey(mode)] = saved;
+}
+
+function savedValue(mode, fieldId) {
+  return state.answers[answerKey(mode)]?.[fieldId] ?? "";
+}
+
+function escapeAttr(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+}
+
+function normalizeText(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/×/g, "x")
+    .replace(/\s+/g, "")
+    .replace(/bytes?/g, "")
+    .replace(/einträge/g, "")
+    .replace(/eintraege/g, "")
+    .replace(/blöcke/g, "")
+    .replace(/bloecke/g, "")
+    .replace(/block/g, "")
+    .replace(/mib/g, "")
+    .replace(/kib/g, "")
+    .replace(/gib/g, "");
+}
+
+function numericValue(value) {
+  let raw = String(value ?? "").trim().toLowerCase().replace(",", ".");
+  raw = raw.replace(/[\s']/g, "");
+  if (/^\d{1,3}(\.\d{3})+($|[^0-9])/.test(raw)) {
+    raw = raw.replace(/\./g, "");
+  }
+  const match = raw.match(/-?\d+(\.\d+)?/);
+  return match ? Number(match[0]) : NaN;
+}
+
+function valueMatches(actualRaw, field) {
+  if (field.type === "choice") {
+    return actualRaw === field.answer;
+  }
+  const actual = numericValue(actualRaw);
+  const expected = numericValue(field.answer);
+  if (Number.isFinite(actual) && Number.isFinite(expected)) {
+    const tolerance = field.tolerance ?? 0.0001;
+    if (Math.abs(actual - expected) <= tolerance) return true;
+  }
+  const actualText = normalizeText(actualRaw);
+  const accepted = [field.answer, ...(field.accept ?? [])].map(normalizeText);
+  return accepted.includes(actualText);
+}
+
+function renderMode(mode) {
+  state.mode = mode;
+  for (const key of Object.keys(trainers)) {
+    $(`${key}Mode`).classList.toggle("active", key === mode);
+    $(`${key}ModeBtn`).classList.toggle("active", key === mode);
+  }
+}
+
+function renderAllModes() {
+  Object.keys(trainers).forEach(renderTrainer);
+  renderMode(state.mode);
+}
+
+function renderTrainer(mode) {
+  const trainer = trainers[mode];
+  const ex = currentExample(mode);
+  const section = $(`${mode}Mode`);
+  section.innerHTML = `
+    <div class="layout">
+      <aside class="panel">
+        <h2>${trainer.title}</h2>
+        <label for="${mode}Example">${trainer.label}</label>
+        <select id="${mode}Example">${trainer.examples.map((item, index) => `<option value="${index}" ${index === state.indices[mode] ? "selected" : ""}>${item.selectTitle ?? item.title}</option>`).join("")}</select>
+        <div class="button-row">
+          <button type="button" id="${mode}Next">Nächstes Beispiel</button>
+          <button type="button" id="${mode}SolutionBtn" class="secondary">${state.solutionVisible[mode] ? "Lösung ausblenden" : "Musterlösung"}</button>
+        </div>
+        <div class="button-row single">
+          <button type="button" id="${mode}Check">Antwort prüfen</button>
+        </div>
+        <h3>Deine Antwort</h3>
+        <div id="${mode}Answers" class="answer-grid">${buildFields(mode, ex)}</div>
+        <div id="${mode}Result" class="result">Rechne zuerst selbst und prüfe dann deine Antwort.</div>
+        <div class="note">${trainer.note}</div>
+      </aside>
+      <main class="sheet">
+        <h2>${ex.title}</h2>
+        <p>${ex.prompt}</p>
+        <div class="tags">${ex.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+        <div class="facts"><table><tbody>${ex.facts.map(row => `<tr><th>${row[0]}</th><td>${row[1]}</td></tr>`).join("")}</tbody></table></div>
+        <div class="visual">${buildVisual(ex)}</div>
+        <div id="${mode}Steps" class="formula-list">${buildSteps(mode)}</div>
+        <div id="${mode}Solution" class="solution ${state.solutionVisible[mode] ? "" : "locked"}">${buildSolution(mode)}</div>
+      </main>
+    </div>`;
+
+  $(`${mode}Example`).addEventListener("change", (event) => {
+    cacheAnswers(mode);
+    state.indices[mode] = Number(event.target.value);
+    state.solutionVisible[mode] = false;
+    renderTrainer(mode);
+  });
+  $(`${mode}Next`).addEventListener("click", () => {
+    cacheAnswers(mode);
+    state.indices[mode] = (state.indices[mode] + 1) % trainer.examples.length;
+    state.solutionVisible[mode] = false;
+    renderTrainer(mode);
+  });
+  $(`${mode}SolutionBtn`).addEventListener("click", () => {
+    cacheAnswers(mode);
+    state.solutionVisible[mode] = !state.solutionVisible[mode];
+    refreshSolution(mode);
+  });
+  $(`${mode}Check`).addEventListener("click", () => checkAnswers(mode));
+}
+
+function buildFields(mode, ex) {
+  return ex.fields.map(field => {
+    const id = `${mode}_${field.id}`;
+    const current = savedValue(mode, field.id);
+    if (field.type === "choice") {
+      return `<div><label for="${id}">${field.label}</label><select id="${id}" data-field="${field.id}">${field.options.map(([value, label]) => `<option value="${value}" ${current === value ? "selected" : ""}>${label}</option>`).join("")}</select></div>`;
+    }
+    const unit = field.unit ? ` <span class="small-label">(${field.unit})</span>` : "";
+    return `<div><label for="${id}">${field.label}${unit}</label><input id="${id}" data-field="${field.id}" inputmode="decimal" autocomplete="off" placeholder="Zahl" value="${escapeAttr(current)}"></div>`;
+  }).join("");
+}
+
+function buildSteps(mode) {
+  const ex = currentExample(mode);
+  return ex.steps.map((step, index) => `<div><strong>${index + 1}.</strong> ${state.solutionVisible[mode] ? step : "..."}</div>`).join("");
+}
+
+function buildSolution(mode) {
+  const ex = currentExample(mode);
+  if (!state.solutionVisible[mode]) return "Musterlösung ist ausgeblendet.";
+  return `<strong>Musterlösung:</strong><table class="mini-table"><tbody>${ex.fields.map(field => {
+    const answer = field.type === "choice"
+      ? field.options.find(([value]) => value === field.answer)?.[1]
+      : `${field.answer}${field.unit ? " " + field.unit : ""}`;
+    return `<tr><th>${field.label}</th><td><code>${answer}</code></td></tr>`;
+  }).join("")}</tbody></table>`;
+}
+
+function refreshSolution(mode) {
+  $(`${mode}SolutionBtn`).textContent = state.solutionVisible[mode] ? "Lösung ausblenden" : "Musterlösung";
+  $(`${mode}Steps`).innerHTML = buildSteps(mode);
+  $(`${mode}Solution`).className = `solution ${state.solutionVisible[mode] ? "" : "locked"}`;
+  $(`${mode}Solution`).innerHTML = buildSolution(mode);
+}
+
+function buildVisual(ex) {
+  const visual = ex.visual ?? { type: "fat" };
+  if (visual.type === "chain") return buildChainVisual(visual);
+  if (visual.type === "inode") return buildInodeVisual(visual);
+  if (visual.type === "exam") return buildExamVisual();
+  return buildFatVisual(visual);
+}
+
+function buildFatVisual(visual) {
+  const cells = Array.from({ length: 8 }, (_, index) => {
+    const used = visual.fileBlocks && index < visual.fileBlocks;
+    const cluster = visual.cluster && !used;
+    const label = used ? `Datei<br>Block ${index + 1}` : cluster ? `Cluster<br>${index + 1}` : `FAT<br>${index}`;
+    return `<div class="fat-cell ${used ? "used" : cluster ? "cluster" : ""}">${label}</div>`;
+  }).join("");
+  return `<div class="fat-bar">${cells}</div><p class="small-label">FAT rechnet immer in ganzen Zuordnungseinheiten: Block oder Cluster.</p>`;
+}
+
+function buildChainVisual(visual) {
+  const blocks = Array.from({ length: visual.blocks }, (_, index) => `
+    <div class="block"><div class="data">Daten<br>${index + 1}</div><div class="ptr">${visual.pointer}</div></div>
+    ${index < visual.blocks - 1 ? `<div class="arrow">→</div>` : ""}`
+  ).join("");
+  return `<div class="chain">${blocks}</div><p class="small-label">Bei der einfachen verketteten Liste kostet jeder Zeiger Platz im Datenblock.</p>`;
+}
+
+function buildInodeVisual(visual) {
+  const single = visual.single ?? 0;
+  const double = visual.double ?? 0;
+  return `
+    <svg class="inode-svg" viewBox="0 0 860 330" role="img" aria-label="I-Node mit direkter und indirekter Adressierung">
+      <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#333"/></marker></defs>
+      <rect class="box" x="30" y="110" width="150" height="92" rx="4"></rect>
+      <text class="txt" x="105" y="142" text-anchor="middle">I-Node</text>
+      <text class="sub" x="105" y="165" text-anchor="middle">${visual.direct} direkte</text>
+      <text class="sub" x="105" y="184" text-anchor="middle">Blockadressen</text>
+      <path class="edge" d="M180 132 C245 80 285 62 340 62"></path>
+      <rect class="box-soft" x="340" y="38" width="150" height="48" rx="4"></rect>
+      <text class="sub" x="415" y="67" text-anchor="middle">${visual.direct} Datenblöcke</text>
+      <path class="edge" d="M180 158 L340 158"></path>
+      <rect class="box-soft" x="340" y="128" width="150" height="60" rx="4"></rect>
+      <text class="sub" x="415" y="152" text-anchor="middle">${single} einfach indirekt</text>
+      <text class="sub" x="415" y="171" text-anchor="middle">je ${visual.perBlock} Adressen</text>
+      <path class="edge" d="M490 158 C555 130 590 116 645 116"></path>
+      <rect class="box-soft" x="645" y="92" width="155" height="48" rx="4"></rect>
+      <text class="sub" x="722" y="121" text-anchor="middle">Datenblöcke</text>
+      <path class="edge" d="M180 188 C245 248 285 270 340 270"></path>
+      <rect class="box-soft" x="340" y="240" width="150" height="60" rx="4"></rect>
+      <text class="sub" x="415" y="264" text-anchor="middle">${double} doppelt indirekt</text>
+      <text class="sub" x="415" y="283" text-anchor="middle">${visual.perBlock}² Datenblöcke</text>
+      <path class="edge" d="M490 270 C555 260 590 230 645 205"></path>
+      <rect class="box-soft" x="645" y="180" width="155" height="48" rx="4"></rect>
+      <text class="sub" x="722" y="209" text-anchor="middle">viele Datenblöcke</text>
+    </svg>`;
+}
+
+function buildExamVisual() {
+  return `
+    <div class="exam">
+      <h3>Klausurbeispiel: Dateisysteme</h3>
+      <p>Die Festplatte erlaubt Zugriff auf Blöcke der Größe 512 Byte. Ein FAT-Dateisystem nutzt 16-Bit-Einträge. Danach werden Cluster aus 2^3 Blöcken verwendet.</p>
+      <table>
+        <tr><th>Teil</th><th>Frage</th></tr>
+        <tr><td>a</td><td>Obergrenze einer Partition ohne Cluster?</td></tr>
+        <tr><td>b</td><td>Obergrenze mit Clustern aus 2^3 Blöcken?</td></tr>
+        <tr><td>c</td><td>Platzverbrauch einer 652-Byte-Datei ohne Cluster?</td></tr>
+        <tr><td>d</td><td>Platzverbrauch derselben Datei mit Clustern?</td></tr>
+        <tr><td>e</td><td>I-Node mit 8 direkten und 4 einfach indirekten Einträgen: maximale Dateigröße?</td></tr>
+      </table>
+      <p><strong>Hinweis:</strong> Rechne mit Zweierpotenzen und runde Plattenplatz auf ganze Blöcke oder Cluster.</p>
+    </div>`;
+}
+
+function checkAnswers(mode) {
+  const ex = currentExample(mode);
+  let wrong = 0;
+  const misses = [];
+  ex.fields.forEach(field => {
+    const input = $(`${mode}_${field.id}`);
+    const actual = input.value;
+    const ok = valueMatches(actual, field);
+    input.classList.toggle("ok", ok);
+    input.classList.toggle("bad", !ok);
+    if (!ok) {
+      wrong += 1;
+      if (misses.length < 3) misses.push(field.label);
+    }
+  });
+  const result = $(`${mode}Result`);
+  result.className = `result ${wrong ? "bad" : "good"}`;
+  result.innerHTML = wrong
+    ? `<strong>Noch nicht.</strong> ${wrong} Feld(er) passen nicht. Prüfe besonders: ${misses.join(", ")}.`
+    : "<strong>Richtig.</strong> Rechnung und Auswahl passen.";
+  cacheAnswers(mode);
+}
+
+for (const mode of Object.keys(trainers)) {
+  $(`${mode}ModeBtn`).addEventListener("click", () => renderMode(mode));
+}
+
+renderAllModes();
+</script>
+</body>
+</html>
