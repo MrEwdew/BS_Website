@@ -124,6 +124,7 @@ button:hover { background: #eee; }
   grid-template-columns: 1fr;
   margin-top: 8px;
 }
+.hidden { display: none; }
 .exam-table { border-collapse: collapse; table-layout: fixed; width: min(680px, 100%); margin: 12px 0 18px; }
 .exam-table th, .exam-table td { border: 1px solid #777; padding: 3px 8px; text-align: left; overflow-wrap: anywhere; }
 .question-list { margin: 12px 0 0; padding-left: 22px; }
@@ -191,11 +192,11 @@ svg { display: block; width: 100%; height: auto; }
         </div>
         <div>
           <label for="entryStart">von</label>
-          <input id="entryStart" type="number" min="0" step="1" placeholder="0">
+          <input id="entryStart" type="number" min="0" step="0.5" placeholder="0">
         </div>
         <div>
           <label for="entryEnd">bis</label>
-          <input id="entryEnd" type="number" min="1" step="1" placeholder="5">
+          <input id="entryEnd" type="number" min="1" step="0.5" placeholder="5">
         </div>
       </div>
       <button type="button" id="addSegmentBtn">CPU-Abschnitt eintragen</button>
@@ -203,7 +204,7 @@ svg { display: block; width: 100%; height: auto; }
       <div class="entry-row">
         <div>
           <label for="vTime">V bei t=</label>
-          <input id="vTime" type="number" min="0" step="1" placeholder="5">
+          <input id="vTime" type="number" min="0" step="0.5" placeholder="5">
         </div>
         <div>
           <label for="missTaskEntry">x bei Task</label>
@@ -222,42 +223,59 @@ svg { display: block; width: 100%; height: auto; }
       <div id="entryList" class="entry-list">Noch keine Einträge.</div>
 
       <div class="answer-sheet">
-        <h3>Kontrollfragen b-e</h3>
-        <div class="answer-row">
+        <h3 id="answerTitle">Kontrollfragen</h3>
+        <div class="answer-row hidden" id="rmsNameRow">
+          <div class="answer-letter">a)</div>
+          <label for="rmsNameAnswer">Name</label>
+          <select id="rmsNameAnswer">
+            <option value="">Bitte wählen</option>
+            <option value="rate">kleine Periode = hohe Rate</option>
+            <option value="runtime">kurze Rechenzeit</option>
+            <option value="deadline">frühe Deadline</option>
+          </select>
+        </div>
+
+        <div class="answer-row hidden" id="rmsOptimalRow">
           <div class="answer-letter">b)</div>
-          <label for="preemptionAnswer">Verdrängungen</label>
-          <select id="preemptionAnswer">
+          <label for="rmsOptimalAnswer">Optimal</label>
+          <select id="rmsOptimalAnswer">
             <option value="">Bitte wählen</option>
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="fixed">optimal unter festen Prioritäten</option>
+            <option value="always">garantiert immer bei U≤1</option>
+            <option value="edf">ist dasselbe wie EDF</option>
           </select>
+        </div>
+        <div class="answer-row">
+          <div class="answer-letter" id="preemptionLetter">b)</div>
+          <label for="preemptionAnswer" id="preemptionLabel">Verdrängungen</label>
+          <select id="preemptionAnswer"></select>
         </div>
 
         <div class="answer-row">
-          <div class="answer-letter">c)</div>
-          <label for="missAnswer">Deadline-Verletzung</label>
-          <select id="missAnswer">
-            <option value="">Bitte wählen</option>
-            <option value="keine">keine</option>
-            <option value="T1">T1</option>
-            <option value="T2">T2</option>
-            <option value="T3">T3</option>
-            <option value="T4">T4</option>
-            <option value="T1,T2">T1,T2</option>
-          </select>
+          <div class="answer-letter" id="missLetter">c)</div>
+          <label for="missAnswer" id="missLabel">Deadline-Verletzung</label>
+          <select id="missAnswer"></select>
         </div>
 
         <div class="answer-row">
-          <div class="answer-letter">d)</div>
-          <label for="rmsAnswer">RMS-Priorität</label>
+          <div class="answer-letter" id="rmsLetter">d)</div>
+          <label for="rmsAnswer" id="rmsLabel">RMS-Priorität</label>
           <input id="rmsAnswer" placeholder="z.B. T4 > T3 > T1 > T2">
         </div>
 
+        <div class="answer-row hidden" id="cpuDemandRow">
+          <div class="answer-letter" id="cpuDemandLetter">e)</div>
+          <label for="cpuDemandAnswer">CPU reicht?</label>
+          <select id="cpuDemandAnswer">
+            <option value="">Bitte wählen</option>
+            <option value="ja">ja</option>
+            <option value="nein">nein</option>
+          </select>
+        </div>
+
         <div class="answer-row">
-          <div class="answer-letter">e)</div>
-          <label for="rmsGuaranteeAnswer">RMS-Garantie T1/T2</label>
+          <div class="answer-letter" id="guaranteeLetter">e)</div>
+          <label for="rmsGuaranteeAnswer" id="guaranteeLabel">RMS-Garantie</label>
           <select id="rmsGuaranteeAnswer">
             <option value="">Bitte wählen</option>
             <option value="ja">ja</option>
@@ -279,13 +297,7 @@ svg { display: block; width: 100%; height: auto; }
       <p id="intro"></p>
       <table class="exam-table" id="taskTable"></table>
 
-      <ol class="question-list" type="a">
-        <li>Zeichnen Sie im Zeitdiagramm die Schedulingfolge während der angegebenen Zeit.</li>
-        <li>Kennzeichnen Sie Verdrängungen mit <strong>V</strong>.</li>
-        <li>Prüfen Sie, ob alle Deadlines eingehalten werden.</li>
-        <li>Falls die Tasks periodisch wären: Sortieren Sie die RMS-Prioritäten.</li>
-        <li>Nur für die ersten beiden Tasks: Leiten Sie rechnerisch ab, ob RMS garantiert.</li>
-      </ol>
+      <ol class="question-list" type="a" id="questionList"></ol>
 
       <p><strong>Verwenden Sie ggf. Hilfspapier !</strong></p>
       <div class="plot-scroll">
@@ -350,6 +362,50 @@ const examples = [
     rmsGuarantee: "nein",
     rmsGuaranteeText: "nein; schon für T1/T2 liegt die Auslastung bei 6/9+4/12=1, und die Antwortzeit von T2 läuft auf 16>12.",
     utilization: "Bei periodischer Deutung nach relativer Deadline: T3, T4, T1, T2. Für T1/T2 ist RMS nicht garantiert: R1=6≤9, aber R2=16>12."
+  },
+  {
+    id: "bs07-rms",
+    kind: "rms",
+    table: "periodic",
+    title: "Klausurbeispiel nach BS-SS-07: RMS-Zeitdiagramm",
+    intro: "Vier periodische Tasks A, B, C, D werden direkt mit Rate Monotonic Scheduling verwaltet. Das ist die RMS-Aufgabe, die vorher im Trainer gefehlt hat.",
+    horizon: 20,
+    tasks: [
+      { id: "A", a: 0, c: 4, period: 16, dText: "P", absD: 16 },
+      { id: "B", a: 2, c: 1.5, period: 10, dText: "P", absD: 12 },
+      { id: "C", a: 3, c: 3, period: 24, dText: "P", absD: 27 },
+      { id: "D", a: 7.5, c: 2.5, period: 20, dText: "P", absD: 27.5 }
+    ],
+    questions: [
+      "Wovon erhält Rate Monotonic Scheduling seinen Namen?",
+      "Was bedeutet die Aussage, dass RMS ein optimales Scheduling garantiert?",
+      "Zeichnen Sie im Zeitdiagramm die RMS-Schedulingfolge während der ersten 20 Zeiteinheiten.",
+      "Werden alle Deadlines eingehalten?",
+      "Ist rechnerisch sichergestellt, dass eine CPU für die Rechenanforderungen ausreicht?",
+      "Ist rechnerisch sichergestellt, dass RMS auch in Zukunft alle Deadlines einhält?"
+    ],
+    segments: [
+      { task: "A", start: 0, end: 2 },
+      { task: "B", start: 2, end: 3.5 },
+      { task: "A", start: 3.5, end: 5.5 },
+      { task: "C", start: 5.5, end: 7.5 },
+      { task: "D", start: 7.5, end: 10 },
+      { task: "C", start: 10, end: 11 },
+      { task: "B", start: 12, end: 13.5 },
+      { task: "A", start: 16, end: 20 }
+    ],
+    preemptions: [
+      { time: 2, text: "B verdrängt A" },
+      { time: 7.5, text: "D verdrängt C" }
+    ],
+    misses: [],
+    rmsOrder: ["B", "A", "D", "C"],
+    rmsName: "rate",
+    rmsOptimal: "fixed",
+    cpuDemand: "ja",
+    rmsGuarantee: "ja",
+    rmsGuaranteeText: "ja; U=4/16 + 1,5/10 + 3/24 + 2,5/20 = 0,65 und liegt unter der RMS-Grenze für n=4: 4(2^(1/4)-1)≈0,757.",
+    utilization: "Prioritäten nach Periode: B(P=10) > A(P=16) > D(P=20) > C(P=24). U=0,65≤1, also reicht die CPU für Rechenzeit. Weil U≤0,757, ist unter den RMS-Annahmen auch die Deadline-Einhaltung garantiert."
   }
 ];
 
@@ -391,19 +447,79 @@ function renderTaskControls(ex) {
   $("vTime").max = String(ex.horizon);
 }
 
+function combinations(ids) {
+  const result = [];
+  const total = 1 << ids.length;
+  for (let mask = 1; mask < total; mask++) {
+    const combo = ids.filter((_, index) => mask & (1 << index));
+    result.push(combo.join(","));
+  }
+  return result;
+}
+
+function renderAnswerControls(ex) {
+  const isRmsTask = ex.kind === "rms";
+  $("answerTitle").textContent = isRmsTask ? "RMS-Kontrollfragen a-f" : "Kontrollfragen b-e";
+  $("checkBtn").textContent = isRmsTask ? "a-f prüfen" : "b-e prüfen";
+  $("rmsNameRow").classList.toggle("hidden", !isRmsTask);
+  $("rmsOptimalRow").classList.toggle("hidden", !isRmsTask);
+  $("cpuDemandRow").classList.toggle("hidden", !isRmsTask);
+
+  $("preemptionLetter").textContent = isRmsTask ? "c)" : "b)";
+  $("missLetter").textContent = isRmsTask ? "d)" : "c)";
+  $("rmsLetter").textContent = isRmsTask ? "Prio" : "d)";
+  $("cpuDemandLetter").textContent = "e)";
+  $("guaranteeLetter").textContent = isRmsTask ? "f)" : "e)";
+  $("preemptionLabel").textContent = "Verdrängungen";
+  $("missLabel").textContent = "Deadline-Verletzung";
+  $("rmsLabel").textContent = "RMS-Priorität";
+  $("guaranteeLabel").textContent = isRmsTask ? "RMS-Garantie" : "RMS-Garantie T1/T2";
+  $("rmsAnswer").placeholder = `z.B. ${ex.rmsOrder.join(" > ")}`;
+
+  const maxPreemptions = Math.max(4, ex.preemptions.length + 2);
+  $("preemptionAnswer").innerHTML = `<option value="">Bitte wählen</option>` +
+    Array.from({ length: maxPreemptions + 1 }, (_, n) => `<option value="${n}">${n}</option>`).join("");
+
+  const ids = ex.tasks.map(t => t.id);
+  const missValues = ["keine", ...combinations(ids)];
+  $("missAnswer").innerHTML = `<option value="">Bitte wählen</option>` +
+    missValues.map(value => `<option value="${value}">${value}</option>`).join("");
+}
+
+function renderQuestions(ex) {
+  const questions = ex.questions || [
+    "Zeichnen Sie im Zeitdiagramm die Schedulingfolge während der angegebenen Zeit.",
+    "Kennzeichnen Sie Verdrängungen mit V.",
+    "Prüfen Sie, ob alle Deadlines eingehalten werden.",
+    "Falls die Tasks periodisch wären: Sortieren Sie die RMS-Prioritäten.",
+    "Nur für die ersten beiden Tasks: Leiten Sie rechnerisch ab, ob RMS garantiert."
+  ];
+  $("questionList").innerHTML = questions.map(q => `<li>${q}</li>`).join("");
+}
+
 function renderTable(ex) {
+  if (ex.table === "periodic") {
+    $("taskTable").innerHTML = `
+      <thead><tr><th>Task</th><th>Startzeit</th><th>Periodendauer P</th><th>Ausführungszeit C</th><th>erste Deadline</th></tr></thead>
+      <tbody>
+        ${ex.tasks.map(t => `<tr><td>Task ${t.id}</td><td>${formatTime(t.a)}</td><td>${formatTime(t.period)}</td><td>${formatTime(t.c)}</td><td>${formatTime(t.absD)}</td></tr>`).join("")}
+      </tbody>`;
+    return;
+  }
   $("taskTable").innerHTML = `
     <thead><tr><th>Task</th><th>Anforderungszeit (A)</th><th>Ausführungsdauer</th><th>Deadline</th><th>absolute Deadline</th></tr></thead>
     <tbody>
-      ${ex.tasks.map(t => `<tr><td>Task ${t.id}</td><td>${t.a}</td><td>${t.c}</td><td>${t.dText}</td><td>${t.absD}</td></tr>`).join("")}
+      ${ex.tasks.map(t => `<tr><td>Task ${t.id}</td><td>${formatTime(t.a)}</td><td>${formatTime(t.c)}</td><td>${t.dText}</td><td>${formatTime(t.absD)}</td></tr>`).join("")}
     </tbody>`;
 }
 
 function renderChart(ex) {
   const unit = 30;
   const x0 = 70;
-  const yAxis = 360;
-  const rowY = { T1: 100, T2: 155, T3: 210, T4: 265 };
+  const rowGap = 55;
+  const firstRowY = 100;
+  const rowY = Object.fromEntries(ex.tasks.map((task, index) => [task.id, firstRowY + index * rowGap]));
+  const yAxis = firstRowY + ex.tasks.length * rowGap + 40;
   const xEnd = x0 + unit * ex.horizon;
   const width = xEnd + 90;
   const vertical = Array.from({ length: ex.horizon + 1 }, (_, t) => {
@@ -421,9 +537,9 @@ function renderChart(ex) {
   const activeSegments = showSolution ? ex.segments : userSegments;
   const activePreemptions = showSolution ? ex.preemptions : userPreemptions;
   const activeMisses = showSolution ? ex.misses : userMisses;
-  const deadlineLines = showSolution ? ex.tasks.map(t => {
+  const deadlineLines = showSolution ? ex.tasks.filter(t => t.absD <= ex.horizon).map(t => {
     const x = x0 + t.absD * unit;
-    return `<line class="deadline" x1="${x}" y1="58" x2="${x}" y2="${yAxis - 10}"/><text class="tiny" x="${x}" y="50" text-anchor="middle">D${t.id.slice(1)}=${t.absD}</text>`;
+    return `<line class="deadline" x1="${x}" y1="58" x2="${x}" y2="${yAxis - 10}"/><text class="tiny" x="${x}" y="50" text-anchor="middle">D${t.id}=${formatTime(t.absD)}</text>`;
   }).join("") : "";
   const bars = activeSegments.map(s => {
     const y = rowY[s.task] - 12;
@@ -443,7 +559,13 @@ function renderChart(ex) {
     return `<text class="mark" x="${x}" y="${y}" text-anchor="middle">x</text>${label}`;
   }).join("");
 
-  $("chart").setAttribute("viewBox", `0 0 ${width} 430`);
+  const horizontalLines = ex.tasks.map(t => {
+    const y = rowY[t.id];
+    return `<line x1="${x0}" y1="${y}" x2="${xEnd + 20}" y2="${y}"/>`;
+  }).join("");
+  const taskLabels = ex.tasks.map(t => `<text class="task-label" x="38" y="${rowY[t.id] + 5}">${t.id}</text>`).join("");
+
+  $("chart").setAttribute("viewBox", `0 0 ${width} ${yAxis + 70}`);
   $("chart").innerHTML = `
     <defs>
       <marker id="arrow" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#000"/></marker>
@@ -451,13 +573,11 @@ function renderChart(ex) {
     </defs>
     <g class="grid">
       ${vertical}
-      <line x1="${x0}" y1="100" x2="${xEnd + 20}" y2="100"/><line x1="${x0}" y1="155" x2="${xEnd + 20}" y2="155"/>
-      <line x1="${x0}" y1="210" x2="${xEnd + 20}" y2="210"/><line x1="${x0}" y1="265" x2="${xEnd + 20}" y2="265"/>
+      ${horizontalLines}
     </g>
     <line class="axis" x1="${x0}" y1="${yAxis}" x2="${xEnd + 45}" y2="${yAxis}"/>
     <line class="axis" x1="${x0}" y1="${yAxis}" x2="${x0}" y2="44"/>
-    <text class="task-label" x="38" y="105">T1</text><text class="task-label" x="38" y="160">T2</text>
-    <text class="task-label" x="38" y="215">T3</text><text class="task-label" x="38" y="270">T4</text>
+    ${taskLabels}
     <g class="tick">${ticks}</g>
     <g class="tiny">${labels}</g>
     ${deadlineLines}
@@ -467,12 +587,18 @@ function renderChart(ex) {
 }
 
 function renderSolution(ex) {
-  const segments = ex.segments.map(s => `${s.task}: ${s.start}-${s.end}`).join(", ");
+  const segments = ex.segments.map(s => `${s.task}: ${formatTime(s.start)}-${formatTime(s.end)}`).join(", ");
   const miss = ex.misses.length ? ex.misses.map(m => m.task).join(", ") : "keine";
+  const theory = ex.kind === "rms" ? `
+    <p>Name: Rate Monotonic heißt so, weil kürzere Perioden einer höheren Rate entsprechen und deshalb höhere Priorität bekommen.</p>
+    <p>Optimalität: RMS ist unter den klassischen Annahmen optimal unter den Verfahren mit festen Prioritäten; nicht: „RMS schafft immer alles bei U≤1“.</p>
+    <p>CPU-Rechenzeit: ${ex.cpuDemand === "ja" ? "ja" : "nein"}.</p>
+  ` : "";
   $("solutionBox").innerHTML = showSolution ? `
     <strong>Musterlösung:</strong>
+    ${theory}
     <p>CPU-Abschnitte: ${segments}.</p>
-    <p>Verdrängungen: ${ex.preemptions.length ? ex.preemptions.map(p => `V bei t=${p.time}`).join(", ") : "keine"}.</p>
+    <p>Verdrängungen: ${ex.preemptions.length ? ex.preemptions.map(p => `V bei t=${formatTime(p.time)}`).join(", ") : "keine"}.</p>
     <p>Deadline-Verletzungen: ${miss}.</p>
     <p>RMS-Priorität: ${ex.rmsOrder.join(" > ")}.</p>
     <p>RMS-Garantie für T1/T2: ${ex.rmsGuaranteeText}</p>
@@ -494,6 +620,8 @@ function render() {
   $("intro").textContent = ex.intro;
   renderSelect();
   renderTaskControls(ex);
+  renderAnswerControls(ex);
+  renderQuestions(ex);
   renderTable(ex);
   renderChart(ex);
   renderSolution(ex);
@@ -552,7 +680,7 @@ function checkDiagramOnly() {
   renderEntryList();
   const ex = current();
   const check = diagramCheck();
-  const expectedSegments = ex.segments.map(s => `${s.task} ${s.start}-${s.end}`).join(", ");
+  const expectedSegments = ex.segments.map(s => `${s.task} ${formatTime(s.start)}-${formatTime(s.end)}`).join(", ");
   const actualSegments = userSegments.length ? normalizedSegments(userSegments).join(", ") : "keine";
   $("result").className = `result ${check.ok ? "good" : "bad"}`;
   $("result").innerHTML = check.ok
@@ -562,17 +690,24 @@ function checkDiagramOnly() {
 
 function checkAnswers() {
   const ex = current();
+  const isRmsTask = ex.kind === "rms";
+  const nameOk = !isRmsTask || $("rmsNameAnswer").value === ex.rmsName;
+  const optimalOk = !isRmsTask || $("rmsOptimalAnswer").value === ex.rmsOptimal;
   const preemptionOk = $("preemptionAnswer").value === String(ex.preemptions.length);
   const missValue = $("missAnswer").value || "";
   const expectedMiss = ex.misses.length ? ex.misses.map(m => m.task).join(",") : "keine";
   const missOk = normalizeList(missValue) === normalizeList(expectedMiss);
   const rmsOk = normalizeList($("rmsAnswer").value) === normalizeList(ex.rmsOrder.join(","));
+  const cpuDemandOk = !isRmsTask || $("cpuDemandAnswer").value === ex.cpuDemand;
   const rmsGuaranteeOk = $("rmsGuaranteeAnswer").value === ex.rmsGuarantee;
-  const ok = preemptionOk && missOk && rmsOk && rmsGuaranteeOk;
+  const ok = nameOk && optimalOk && preemptionOk && missOk && rmsOk && cpuDemandOk && rmsGuaranteeOk;
+  const extra = isRmsTask
+    ? `<br>Name: ${ex.rmsName === "rate" ? "kleine Periode = hohe Rate" : ex.rmsName}; Optimal: feste Prioritäten; CPU reicht: ${ex.cpuDemand}.`
+    : "";
   $("result").className = `result ${ok ? "good" : "bad"}`;
   $("result").innerHTML = ok
-    ? "<strong>b-e richtig.</strong> Verdrängung, Deadline-Check, RMS-Reihenfolge und RMS-Garantie passen."
-    : `<strong>b-e noch nicht.</strong><br>Erwartet: ${ex.preemptions.length} Verdrängung(en), Deadline-Miss: ${expectedMiss}, RMS: ${ex.rmsOrder.join(" > ")}, RMS-Garantie T1/T2: ${ex.rmsGuarantee}.`;
+    ? "<strong>Kontrollfragen richtig.</strong> Diagramm- und RMS-Antworten passen."
+    : `<strong>Kontrollfragen noch nicht.</strong><br>Erwartet: ${ex.preemptions.length} Verdrängung(en), Deadline-Miss: ${expectedMiss}, RMS: ${ex.rmsOrder.join(" > ")}, RMS-Garantie: ${ex.rmsGuarantee}.${extra}`;
 }
 
 function addSegment() {
@@ -663,9 +798,12 @@ function deleteEntry(type, index) {
 }
 
 function resetAnswerControls() {
+  $("rmsNameAnswer").value = "";
+  $("rmsOptimalAnswer").value = "";
   $("preemptionAnswer").value = "";
   $("missAnswer").value = "";
   $("rmsAnswer").value = "";
+  $("cpuDemandAnswer").value = "";
   $("rmsGuaranteeAnswer").value = "";
 }
 
