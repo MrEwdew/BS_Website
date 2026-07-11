@@ -13,7 +13,7 @@ body {
   background: #e9e9e9;
   color: #000;
   font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.18;
+  line-height: 1.15;
 }
 .toolbar {
   max-width: 210mm;
@@ -45,8 +45,8 @@ body {
 .page:last-child { page-break-after: auto; }
 header {
   border-bottom: 2px solid #000;
-  margin-bottom: 4mm;
-  padding-bottom: 2mm;
+  margin-bottom: 3mm;
+  padding-bottom: 1.6mm;
 }
 h1 {
   margin: 0;
@@ -64,33 +64,33 @@ h1 {
 }
 section {
   border: 1px solid #000;
-  padding: 2.2mm;
-  margin-bottom: 2.6mm;
+  padding: 2mm;
+  margin-bottom: 2.2mm;
   break-inside: avoid;
 }
 h2 {
-  margin: -2.2mm -2.2mm 1.6mm;
-  padding: 1mm 1.6mm;
+  margin: -2mm -2mm 1.4mm;
+  padding: .9mm 1.5mm;
   background: #000;
   color: #fff;
-  font-size: 10px;
+  font-size: 9.7px;
   line-height: 1.05;
   text-transform: uppercase;
 }
 h3 {
-  margin: 1.5mm 0 .8mm;
-  font-size: 9.1px;
+  margin: 1.2mm 0 .6mm;
+  font-size: 8.9px;
   border-bottom: 1px solid #888;
 }
 p, li, td, th, .line {
-  font-size: 8.1px;
+  font-size: 7.8px;
 }
-p { margin: .8mm 0; }
+p { margin: .65mm 0; }
 ul, ol {
-  margin: 1mm 0 1mm 4mm;
+  margin: .8mm 0 .8mm 3.6mm;
   padding: 0;
 }
-li { margin: .45mm 0; }
+li { margin: .32mm 0; }
 table {
   width: 100%;
   border-collapse: collapse;
@@ -98,13 +98,13 @@ table {
 }
 th, td {
   border: 1px solid #777;
-  padding: .75mm;
+  padding: .6mm;
   vertical-align: top;
 }
 th { background: #eee; text-align: left; }
 .mono {
   font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: 7.8px;
+  font-size: 7.45px;
 }
 .copy {
   border-left: 2px solid #000;
@@ -114,11 +114,11 @@ th { background: #eee; text-align: left; }
 .must {
   background: #f1f1f1;
   border: 1px dashed #333;
-  padding: 1mm;
-  margin: 1mm 0;
+  padding: .8mm;
+  margin: .8mm 0;
 }
 .mini {
-  font-size: 7.4px;
+  font-size: 7.1px;
 }
 .blockline {
   display: block;
@@ -188,6 +188,13 @@ th { background: #eee; text-align: left; }
           <tr><td>EDF</td><td>kleinste absolute Deadline gewinnt.</td></tr>
           <tr><td>RMS</td><td>kleinste Periode = hoechste Prio.</td></tr>
         </table>
+        <h3>Kennzahlen</h3>
+        <table class="short">
+          <tr><td>Turnaround</td><td>Fertigstellung - Ankunft.</td></tr>
+          <tr><td>Wartezeit</td><td>Turnaround - Rechenzeit.</td></tr>
+          <tr><td>Antwortzeit</td><td>erste CPU-Zuteilung - Ankunft.</td></tr>
+          <tr><td>Preemptiv</td><td>laufender Task darf verdraengt werden.</td></tr>
+        </table>
         <div class="must">Fallen: EDF absolute Deadline! RMS nicht nach Rechenzeit sortieren.</div>
       </section>
 
@@ -198,6 +205,12 @@ th { background: #eee; text-align: left; }
         <div class="copy"><span class="mono">U <= n(2^(1/n)-1)</span> => RMS garantiert.</div>
         <p>Werte: n=2: 0,828 | n=3: 0,779 | n->inf: 0,693.</p>
         <p>Grenze ist <b>hinreichend</b>, nicht notwendig.</p>
+        <table class="short">
+          <tr><td>hart</td><td>Deadline-Verletzung = Systemfehler.</td></tr>
+          <tr><td>weich</td><td>Verletzung schlecht, aber tolerierbar.</td></tr>
+          <tr><td>periodisch</td><td>Job kommt alle P Zeiteinheiten.</td></tr>
+          <tr><td>aperiodisch</td><td>unregelmaessige Anforderung.</td></tr>
+        </table>
         <h3>Antwortzeit-Test</h3>
         <div class="copy mono">R_i = C_i + sum(ceil(R_i/P_j)*C_j)</div>
         <p>Nur hoehere Prioritaeten <span class="mono">j</span> summieren. Starte mit <span class="mono">R=C_i</span>, iteriere bis stabil. OK wenn <span class="mono">R_i <= D_i</span>.</p>
@@ -216,6 +229,12 @@ th { background: #eee; text-align: left; }
         <h3>Programm -> Prozess</h3>
         <div class="copy mono">Quellcode -> Compiler -> Objektcode -> Linker -> Programm -> Loader -> Prozess</div>
         <p><b>Rechenzustand:</b> PC/IP, SP, Register, Status/Flags, PCB. <b>Fork:</b> Prozess kopieren. <b>Exec:</b> Programm ersetzen.</p>
+        <table class="short">
+          <tr><td>CPU-bound</td><td>lange CPU-Phasen; Scheduling wichtig.</td></tr>
+          <tr><td>I/O-bound</td><td>oft blockiert auf E/A; kurze CPU-Bursts.</td></tr>
+          <tr><td>User-Thread</td><td>schnell, Kernel sieht ggf. nur Prozess.</td></tr>
+          <tr><td>Kernel-Thread</td><td>echte Parallelitaet/blockierende Syscalls besser.</td></tr>
+        </table>
         <div class="must">Verdraengung != Blockieren. Verdraengung = CPU wird entzogen.</div>
       </section>
     </div>
@@ -238,6 +257,11 @@ th { background: #eee; text-align: left; }
         </ol>
         <h3>Array ueber Pages</h3>
         <div class="copy mono">Pages = floor((Offset + Laenge - 1)/PageSize)+1</div>
+        <table class="short">
+          <tr><td>Paging</td><td>feste Seiten; keine externe Fragmentierung, evtl. interne.</td></tr>
+          <tr><td>Segment</td><td>variable logische Bereiche; externe Fragmentierung moeglich.</td></tr>
+          <tr><td>Schutzbits</td><td>R/W/X pro Seite, User/Supervisor, Valid/Present.</td></tr>
+        </table>
       </section>
 
       <section>
@@ -255,6 +279,11 @@ th { background: #eee; text-align: left; }
           <li>Instruktion spaeter erneut ausfuehren.</li>
         </ol>
         <p><b>Thrashing:</b> Working Sets passen nicht in Frames => viele Page Faults. Fix: Multiprogramminggrad senken.</p>
+        <table class="short">
+          <tr><td>Present</td><td>Seite im RAM?</td></tr>
+          <tr><td>Dirty</td><td>veraendert, beim Ersetzen zurueckschreiben.</td></tr>
+          <tr><td>Ref/Use</td><td>fuer LRU/Clock/Working Set.</td></tr>
+        </table>
       </section>
 
       <section>
@@ -275,23 +304,10 @@ th { background: #eee; text-align: left; }
         <div class="copy mono">Misses = ceil(Bytes / Blockgroesse)</div>
         <div class="copy mono">HitRate = Hits / Zugriffe</div>
         <p>200 B, Block 64 B, Cold Cache => 4 Misses, 196 Hits, 98%.</p>
-      </section>
-
-      <section>
-        <h2>7. Hardware / E-A</h2>
-        <table class="short">
-          <tr><td>PC/IP</td><td>Adresse der naechsten Instruktion.</td></tr>
-          <tr><td>SP</td><td>zeigt auf Stack; pro Thread eigener Stack.</td></tr>
-          <tr><td>PSW/Flags</td><td>Statusbits, Mode-Bit, Interrupt-Bit.</td></tr>
-          <tr><td>Treiber</td><td>Kernel-Code, der Geraet/Controller bedient.</td></tr>
-          <tr><td>Controller</td><td>Geraete-Hardware mit Status-, Daten-, Steuerregistern.</td></tr>
-          <tr><td>Polling</td><td>CPU fragt aktiv Status ab; einfach, aber CPU-Verbrauch.</td></tr>
-          <tr><td>Interrupt</td><td>Geraet meldet Ereignis; CPU reagiert per ISR.</td></tr>
-          <tr><td>DMA</td><td>Blocktransfer Geraet-RAM ohne jedes Byte ueber CPU.</td></tr>
-        </table>
-        <div class="copy mono">Register -> Cache -> RAM -> SSD/HDD: schneller/kleiner/teurer nach links</div>
-        <p><b>Lokalitaet:</b> zeitlich = bald wieder; raeumlich = Nachbaradressen bald.</p>
-        <p><b>Einheiten:</b> KiB=2^10, MiB=2^20, GiB=2^30. 1 Hex-Ziffer = 4 Bit.</p>
+        <p><b>Belady:</b> FIFO kann mit mehr Frames mehr Faults haben. LRU/OPT sind Stack-Algorithmen.</p>
+        <p><b>Write-through:</b> sofort schreiben. <b>Write-back:</b> erst bei Verdraengung, Dirty-Bit noetig.</p>
+        <p><b>E/A kurz:</b> Polling=CPU fragt; Interrupt=Geraet meldet; DMA=Controller transferiert Block.</p>
+        <p class="mini"><b>COW:</b> nach fork Seiten teilen, erst bei Schreibzugriff kopieren. <b>ASID:</b> Prozesskennung im TLB, weniger Flushes.</p>
       </section>
     </div>
   </div>
@@ -306,7 +322,7 @@ th { background: #eee; text-align: left; }
   <div class="columns">
     <div>
       <section>
-        <h2>8. Synchronisation</h2>
+        <h2>7. Synchronisation</h2>
         <p><b>Race Condition:</b> Ergebnis haengt vom zeitlichen Ablauf nebenlaeufiger Zugriffe ab.</p>
         <p><b>Kritischer Abschnitt:</b> Code mit gemeinsamer Ressource, exklusiv schuetzen.</p>
         <table class="short">
@@ -314,13 +330,17 @@ th { background: #eee; text-align: left; }
           <tr><td>Semaphore</td><td>Zaehler mit atomarem wait/signal.</td></tr>
           <tr><td>Monitor</td><td>Daten + Prozeduren gekapselt, automatisch exklusiv.</td></tr>
           <tr><td>Cond. Var.</td><td>wait gibt Monitor frei, signal weckt.</td></tr>
+          <tr><td>Atomar</td><td>Operation wird unteilbar ausgefuehrt.</td></tr>
+          <tr><td>Busy wait</td><td>aktiv warten; CPU-Verbrauch, aber simpel.</td></tr>
+          <tr><td>Blockieren</td><td>Thread schlaeft; CPU frei, Kontextwechsel kostet.</td></tr>
         </table>
         <div class="copy mono">Mutex: wait(S); krit. Abschnitt; signal(S)</div>
         <p>Initialwert: 1 = freier Mutex, 0 = Reihenfolge/Event, N = Ressourcenpool.</p>
+        <p><b>Safety:</b> nie zwei im kritischen Abschnitt. <b>Liveness:</b> Fortschritt, kein ewiges Warten.</p>
       </section>
 
       <section>
-        <h2>9. Semaphor-Code</h2>
+        <h2>8. Semaphor-Code</h2>
         <ol>
           <li>Initialwerte an Code schreiben.</li>
           <li>Nach jedem wait: "haelt S".</li>
@@ -334,10 +354,12 @@ th { background: #eee; text-align: left; }
         <div class="copy mono">mutex=1, empty=N, full=0</div>
         <p>Prod: <span class="mono">wait(empty), wait(mutex), insert, signal(mutex), signal(full)</span></p>
         <p>Cons: <span class="mono">wait(full), wait(mutex), remove, signal(mutex), signal(empty)</span></p>
+        <p><b>Barrier:</b> Zaehler + Semaphore; alle warten, bis N Prozesse angekommen sind.</p>
+        <p><b>Readers/Writers:</b> mehrere Leser ok, Schreiber exklusiv; Fairness gegen Verhungern pruefen.</p>
       </section>
 
       <section>
-        <h2>10. Deadlocks</h2>
+        <h2>9. Deadlocks</h2>
         <p><b>Deadlock:</b> zyklische Wartebeziehung, keiner kann die benoetigte Ressource freigeben.</p>
         <ul>
           <li>Mutual Exclusion</li>
@@ -358,12 +380,19 @@ th { background: #eee; text-align: left; }
           <li>Als fertig markieren, Ressourcen freigeben.</li>
           <li>Wiederholen. Bleibt ein wartender Rest => Deadlock.</li>
         </ol>
+        <table class="short">
+          <tr><td>Praevention</td><td>eine Coffman-Bedingung verhindern.</td></tr>
+          <tr><td>Vermeidung</td><td>nur sichere Zustaende zulassen, z.B. Banker.</td></tr>
+          <tr><td>Erkennung</td><td>Deadlock zulassen, Graph/Algorithmus prueft.</td></tr>
+          <tr><td>Behebung</td><td>Prozess abbrechen oder Ressourcen entziehen.</td></tr>
+        </table>
+        <p><b>Starvation:</b> wartet sehr lange trotz moeglichem Fortschritt. <b>Livelock:</b> aktiv, aber kein Fortschritt.</p>
       </section>
     </div>
 
     <div>
       <section>
-        <h2>11. Dateisysteme</h2>
+        <h2>10. Dateisysteme</h2>
         <div class="copy mono">belegt = ceil(Dateigroesse / Einheit) * Einheit</div>
         <p>Einheit = Block oder Cluster. Immer auf ganze Einheit runden.</p>
         <h3>FAT / Cluster</h3>
@@ -380,10 +409,17 @@ th { background: #eee; text-align: left; }
           <tr><td>FAT</td><td>Kette in Tabelle; FAT gross, Clusterverlust.</td></tr>
           <tr><td>I-Node</td><td>Index mit direkten/indirekten Adressen.</td></tr>
         </table>
+        <h3>Grundbegriffe</h3>
+        <table class="short">
+          <tr><td>Datei</td><td>benannter Bytestrom + Metadaten.</td></tr>
+          <tr><td>Verzeichnis</td><td>ordnet Namen auf Datei/I-Node.</td></tr>
+          <tr><td>FD</td><td>Prozess-lokaler Handle auf geoeffnete Datei.</td></tr>
+          <tr><td>Journal</td><td>schreibt Aenderungen vorab; Recovery nach Crash.</td></tr>
+        </table>
       </section>
 
       <section>
-        <h2>12. I-Node</h2>
+        <h2>11. I-Node</h2>
         <div class="copy mono">ptr = Blockgroesse / Adressgroesse</div>
         <div class="copy mono">Daten = direkt + einfach*ptr + doppelt*ptr^2 + dreifach*ptr^3</div>
         <div class="copy mono">MaxBytes = Datenbloecke * Blockgroesse</div>
@@ -391,10 +427,11 @@ th { background: #eee; text-align: left; }
         <p>Beispiel: 8 direkte + 4 einfach indirekte, 128 Adr./Block, Block 512:</p>
         <p class="mono">Daten = 8 + 4*128 = 520</p>
         <p class="mono">Max = 520*512 = 266240 B = 260 KiB</p>
+        <p><b>Direkt</b> gut fuer kleine Dateien; <b>indirekt</b> skaliert fuer grosse Dateien. Sparse File: logische Loecher ohne Datenbloecke.</p>
       </section>
 
       <section>
-        <h2>13. Kurzantworten</h2>
+        <h2>12. Kurzantworten</h2>
         <table class="short">
           <tr><td>BS</td><td>abstrahiert Hardware, verwaltet Ressourcen, schuetzt Prozesse.</td></tr>
           <tr><td>Syscall</td><td>kontrollierter Eintritt in Kernel fuer Dienste wie E/A, Dateien, Prozesse.</td></tr>
@@ -408,11 +445,14 @@ th { background: #eee; text-align: left; }
           <tr><td>Thrashing</td><td>Working Sets passen nicht; viele Page Faults; wenig Nutzarbeit.</td></tr>
           <tr><td>Hierarchie</td><td>Register -> Cache -> RAM -> SSD/HDD: schneller, kleiner, teurer nach links.</td></tr>
           <tr><td>IPC</td><td>Pipes, Queues, Shared Memory, Sockets, Signale.</td></tr>
+          <tr><td>Starvation</td><td>Prozess wartet unbeschraenkt lange; Aging kann helfen.</td></tr>
+          <tr><td>Spooling</td><td>Auftraege puffern, z.B. Drucker-Warteschlange.</td></tr>
+          <tr><td>Trap vs Int.</td><td>Trap synchron durch Programm, Interrupt asynchron von aussen.</td></tr>
         </table>
       </section>
 
       <section>
-        <h2>14. Fallenliste</h2>
+        <h2>13. Fallenliste</h2>
         <ul>
           <li>EDF: absolute Deadline rechnen.</li>
           <li>RMS: nach Periode, nicht nach C.</li>
@@ -423,8 +463,10 @@ th { background: #eee; text-align: left; }
           <li>Paging: Offsetbits aus Pagegroesse.</li>
           <li>Array: Startoffset beachten.</li>
           <li>Cache: Miss laedt ganzen Block.</li>
+          <li>FIFO kann Belady-Anomalie zeigen.</li>
           <li>Liste: Zeigerplatz abziehen.</li>
           <li>FAT/Cluster: aufrunden.</li>
+          <li>Journal schuetzt Metadaten-Konsistenz, nicht automatisch Nutzdaten.</li>
           <li>I-Node: Nutzgroesse vs. Plattenplatz.</li>
           <li>Theorie: Definition + Eigenschaft + Beispiel.</li>
         </ul>
