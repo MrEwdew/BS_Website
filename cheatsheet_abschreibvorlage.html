@@ -6,7 +6,7 @@
 <title>BS Cheatsheet - Abschreibvorlage</title>
 <link rel="icon" href="data:,">
 <style>
-@page { size: A4; margin: 9mm; }
+@page { size: A4; margin: 8mm; }
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -36,7 +36,7 @@ body {
   width: 210mm;
   min-height: 297mm;
   margin: 0 auto 10px;
-  padding: 9mm;
+  padding: 8mm;
   background: #fff;
   box-shadow: 0 0 8px rgba(0,0,0,.16);
   page-break-after: always;
@@ -60,37 +60,37 @@ h1 {
 .columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5mm;
+  gap: 4mm;
 }
 section {
   border: 1px solid #000;
-  padding: 2.6mm;
-  margin-bottom: 3.2mm;
+  padding: 2.2mm;
+  margin-bottom: 2.6mm;
   break-inside: avoid;
 }
 h2 {
-  margin: -2.6mm -2.6mm 2mm;
-  padding: 1.2mm 2mm;
+  margin: -2.2mm -2.2mm 1.6mm;
+  padding: 1mm 1.6mm;
   background: #000;
   color: #fff;
-  font-size: 10.6px;
+  font-size: 10px;
   line-height: 1.05;
   text-transform: uppercase;
 }
 h3 {
-  margin: 2mm 0 1mm;
-  font-size: 9.6px;
+  margin: 1.5mm 0 .8mm;
+  font-size: 9.1px;
   border-bottom: 1px solid #888;
 }
 p, li, td, th, .line {
-  font-size: 8.6px;
+  font-size: 8.1px;
 }
-p { margin: 1mm 0; }
+p { margin: .8mm 0; }
 ul, ol {
   margin: 1mm 0 1mm 4mm;
   padding: 0;
 }
-li { margin: .65mm 0; }
+li { margin: .45mm 0; }
 table {
   width: 100%;
   border-collapse: collapse;
@@ -98,27 +98,27 @@ table {
 }
 th, td {
   border: 1px solid #777;
-  padding: 1mm;
+  padding: .75mm;
   vertical-align: top;
 }
 th { background: #eee; text-align: left; }
 .mono {
   font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: 8.2px;
+  font-size: 7.8px;
 }
 .copy {
   border-left: 2px solid #000;
-  padding-left: 1.5mm;
-  margin: 1mm 0;
+  padding-left: 1.2mm;
+  margin: .8mm 0;
 }
 .must {
   background: #f1f1f1;
   border: 1px dashed #333;
-  padding: 1.2mm;
-  margin: 1.2mm 0;
+  padding: 1mm;
+  margin: 1mm 0;
 }
 .mini {
-  font-size: 7.8px;
+  font-size: 7.4px;
 }
 .blockline {
   display: block;
@@ -153,11 +153,24 @@ th { background: #eee; text-align: left; }
 <article class="page">
   <header>
     <h1>BS Cheatsheet Abschreibvorlage - Seite 1/2</h1>
-    <div class="hint">Schreibe diese Bloecke in dieser Reihenfolge ab. Kurz halten, Symbole nutzen, keine ganzen Saetze.</div>
+    <div class="hint">Schreibe diese Bloecke in dieser Reihenfolge ab. Grundlagen zuerst, dann Rechenverfahren. Kurz halten, Symbole nutzen.</div>
   </header>
 
   <div class="columns">
     <div>
+      <section>
+        <h2>0. Grundlagen / BS</h2>
+        <p><b>Betriebssystem:</b> Schicht zwischen Anwendung und Hardware; stellt Abstraktionen bereit und verwaltet Ressourcen.</p>
+        <table class="short">
+          <tr><td>Abstraktion</td><td>einheitliche Sicht: Prozess, Datei, virtueller Speicher, Socket.</td></tr>
+          <tr><td>Verwaltung</td><td>CPU, Speicher, Dateien, E/A-Geraete, Rechte, Netzwerk.</td></tr>
+          <tr><td>Schutz</td><td>Isolation, User/Kernel Mode, Rechte, kontrollierte Zugriffe.</td></tr>
+          <tr><td>Ziele</td><td>Fairness, Durchsatz, Antwortzeit, Auslastung, Sicherheit.</td></tr>
+        </table>
+        <div class="copy mono">Anwendung -> System Call -> Kernel -> Hardware -> Rueckkehr</div>
+        <p><b>User Mode:</b> keine privilegierten Befehle. <b>Kernel Mode:</b> darf Hardware/Seitentabellen/Interrupts steuern.</p>
+      </section>
+
       <section>
         <h2>1. Scheduling</h2>
         <ol>
@@ -195,10 +208,14 @@ th { background: #eee; text-align: left; }
         <table class="short">
           <tr><td>Prozess</td><td>Programm in Ausfuehrung + eigener Adressraum + Ressourcen + PCB.</td></tr>
           <tr><td>Thread</td><td>eigener Stack/Register, teilt Adressraum im Prozess.</td></tr>
+          <tr><td>PCB</td><td>PID, Zustand, Register/PC/SP, Speicherinfo, offene Dateien, Prioritaet.</td></tr>
           <tr><td>Ready</td><td>lauffaehig, wartet auf CPU.</td></tr>
           <tr><td>Blocked</td><td>wartet auf Ereignis/E-A/Semaphore.</td></tr>
           <tr><td>Switch</td><td>alten Zustand sichern, neuen laden, Dispatcher startet.</td></tr>
         </table>
+        <h3>Programm -> Prozess</h3>
+        <div class="copy mono">Quellcode -> Compiler -> Objektcode -> Linker -> Programm -> Loader -> Prozess</div>
+        <p><b>Rechenzustand:</b> PC/IP, SP, Register, Status/Flags, PCB. <b>Fork:</b> Prozess kopieren. <b>Exec:</b> Programm ersetzen.</p>
         <div class="must">Verdraengung != Blockieren. Verdraengung = CPU wird entzogen.</div>
       </section>
     </div>
@@ -259,6 +276,23 @@ th { background: #eee; text-align: left; }
         <div class="copy mono">HitRate = Hits / Zugriffe</div>
         <p>200 B, Block 64 B, Cold Cache => 4 Misses, 196 Hits, 98%.</p>
       </section>
+
+      <section>
+        <h2>7. Hardware / E-A</h2>
+        <table class="short">
+          <tr><td>PC/IP</td><td>Adresse der naechsten Instruktion.</td></tr>
+          <tr><td>SP</td><td>zeigt auf Stack; pro Thread eigener Stack.</td></tr>
+          <tr><td>PSW/Flags</td><td>Statusbits, Mode-Bit, Interrupt-Bit.</td></tr>
+          <tr><td>Treiber</td><td>Kernel-Code, der Geraet/Controller bedient.</td></tr>
+          <tr><td>Controller</td><td>Geraete-Hardware mit Status-, Daten-, Steuerregistern.</td></tr>
+          <tr><td>Polling</td><td>CPU fragt aktiv Status ab; einfach, aber CPU-Verbrauch.</td></tr>
+          <tr><td>Interrupt</td><td>Geraet meldet Ereignis; CPU reagiert per ISR.</td></tr>
+          <tr><td>DMA</td><td>Blocktransfer Geraet-RAM ohne jedes Byte ueber CPU.</td></tr>
+        </table>
+        <div class="copy mono">Register -> Cache -> RAM -> SSD/HDD: schneller/kleiner/teurer nach links</div>
+        <p><b>Lokalitaet:</b> zeitlich = bald wieder; raeumlich = Nachbaradressen bald.</p>
+        <p><b>Einheiten:</b> KiB=2^10, MiB=2^20, GiB=2^30. 1 Hex-Ziffer = 4 Bit.</p>
+      </section>
     </div>
   </div>
 </article>
@@ -272,7 +306,7 @@ th { background: #eee; text-align: left; }
   <div class="columns">
     <div>
       <section>
-        <h2>7. Synchronisation</h2>
+        <h2>8. Synchronisation</h2>
         <p><b>Race Condition:</b> Ergebnis haengt vom zeitlichen Ablauf nebenlaeufiger Zugriffe ab.</p>
         <p><b>Kritischer Abschnitt:</b> Code mit gemeinsamer Ressource, exklusiv schuetzen.</p>
         <table class="short">
@@ -286,7 +320,7 @@ th { background: #eee; text-align: left; }
       </section>
 
       <section>
-        <h2>8. Semaphor-Code</h2>
+        <h2>9. Semaphor-Code</h2>
         <ol>
           <li>Initialwerte an Code schreiben.</li>
           <li>Nach jedem wait: "haelt S".</li>
@@ -303,7 +337,7 @@ th { background: #eee; text-align: left; }
       </section>
 
       <section>
-        <h2>9. Deadlocks</h2>
+        <h2>10. Deadlocks</h2>
         <p><b>Deadlock:</b> zyklische Wartebeziehung, keiner kann die benoetigte Ressource freigeben.</p>
         <ul>
           <li>Mutual Exclusion</li>
@@ -329,7 +363,7 @@ th { background: #eee; text-align: left; }
 
     <div>
       <section>
-        <h2>10. Dateisysteme</h2>
+        <h2>11. Dateisysteme</h2>
         <div class="copy mono">belegt = ceil(Dateigroesse / Einheit) * Einheit</div>
         <p>Einheit = Block oder Cluster. Immer auf ganze Einheit runden.</p>
         <h3>FAT / Cluster</h3>
@@ -349,7 +383,7 @@ th { background: #eee; text-align: left; }
       </section>
 
       <section>
-        <h2>11. I-Node</h2>
+        <h2>12. I-Node</h2>
         <div class="copy mono">ptr = Blockgroesse / Adressgroesse</div>
         <div class="copy mono">Daten = direkt + einfach*ptr + doppelt*ptr^2 + dreifach*ptr^3</div>
         <div class="copy mono">MaxBytes = Datenbloecke * Blockgroesse</div>
@@ -360,18 +394,25 @@ th { background: #eee; text-align: left; }
       </section>
 
       <section>
-        <h2>12. Kurzantworten</h2>
+        <h2>13. Kurzantworten</h2>
         <table class="short">
+          <tr><td>BS</td><td>abstrahiert Hardware, verwaltet Ressourcen, schuetzt Prozesse.</td></tr>
+          <tr><td>Syscall</td><td>kontrollierter Eintritt in Kernel fuer Dienste wie E/A, Dateien, Prozesse.</td></tr>
           <tr><td>Interrupt</td><td>asynchrone Unterbrechung; ISR behandelt Ereignis; Fortsetzung.</td></tr>
+          <tr><td>Trap</td><td>synchron durch Instruktion/Fehler, z.B. System Call oder Page Fault.</td></tr>
           <tr><td>DMA</td><td>Controller uebertraegt Geraet-RAM; CPU initialisiert; Ende per Interrupt.</td></tr>
+          <tr><td>Polling</td><td>CPU prueft Status wiederholt; keine Interruptlogik, aber Warteschleife.</td></tr>
+          <tr><td>Treiber</td><td>uebersetzt BS-Auftraege in konkrete Controller-Kommandos.</td></tr>
+          <tr><td>MMU</td><td>uebersetzt virtuelle in physische Adressen, prueft Schutzbits.</td></tr>
           <tr><td>TLB</td><td>Cache fuer virtuelle->physische Adressuebersetzungen.</td></tr>
           <tr><td>Thrashing</td><td>Working Sets passen nicht; viele Page Faults; wenig Nutzarbeit.</td></tr>
+          <tr><td>Hierarchie</td><td>Register -> Cache -> RAM -> SSD/HDD: schneller, kleiner, teurer nach links.</td></tr>
           <tr><td>IPC</td><td>Pipes, Queues, Shared Memory, Sockets, Signale.</td></tr>
         </table>
       </section>
 
       <section>
-        <h2>13. Fallenliste</h2>
+        <h2>14. Fallenliste</h2>
         <ul>
           <li>EDF: absolute Deadline rechnen.</li>
           <li>RMS: nach Periode, nicht nach C.</li>
@@ -387,6 +428,7 @@ th { background: #eee; text-align: left; }
           <li>I-Node: Nutzgroesse vs. Plattenplatz.</li>
           <li>Theorie: Definition + Eigenschaft + Beispiel.</li>
         </ul>
+        <div class="must mini">Theorie-Schema: Definition -> Mechanismus -> Vorteil/Nachteil -> Beispiel. Vergleich: Gemeinsamkeit, Unterschied, typischer Einsatz.</div>
       </section>
     </div>
   </div>
