@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Betriebssysteme - Musterlösungen Probeklausuren</title>
+<link rel="icon" href="data:,">
+<style>
+@page { size: A4; margin: 14mm; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #eee; color: #000; font-family: "Times New Roman", Times, serif; line-height: 1.25; }
+.toolbar { max-width: 210mm; margin: 10px auto; display: flex; gap: 8px; justify-content: space-between; font: 14px Arial, sans-serif; }
+.toolbar a, .toolbar button { border: 1px solid #777; background: #fff; color: #000; padding: 7px 10px; text-decoration: none; font: inherit; cursor: pointer; }
+.page { width: 210mm; min-height: 297mm; margin: 0 auto 12px; padding: 18mm 17mm; background: #fff; box-shadow: 0 0 8px rgba(0,0,0,.18); page-break-after: always; }
+.page:last-child { page-break-after: auto; }
+h1 { margin: 0 0 8mm; font-size: 24px; text-align: center; }
+h2 { margin: 0 0 5mm; font-size: 20px; border-bottom: 1px solid #000; padding-bottom: 2mm; }
+h3 { margin: 5mm 0 2mm; font-size: 17px; }
+h4 { margin: 3mm 0 1mm; font-size: 15px; }
+p { margin: 1.6mm 0; }
+ol, ul { margin: 1.5mm 0 2mm 6mm; padding: 0; }
+li { margin: .9mm 0; }
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; font-size: 13.5px; }
+th, td { border: 1px solid #777; padding: 1.2mm 1.5mm; vertical-align: top; }
+th { font-weight: 700; background: #f2f2f2; text-align: left; }
+.meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; margin-bottom: 7mm; }
+.blank { border-bottom: 1px solid #000; min-height: 5mm; }
+.answer { border: 1px solid #000; padding: 2mm 2.5mm; margin: 2mm 0 3mm; background: #fff; }
+.answer strong:first-child { text-decoration: underline; }
+.note { border-left: 3px solid #000; padding-left: 2mm; margin: 2mm 0; }
+.segments { font-family: "Courier New", monospace; font-size: 13px; }
+.trace th, .trace td { text-align: center; font-size: 12.4px; padding: .9mm; }
+.trace td:first-child, .trace th:first-child { text-align: left; font-weight: 700; }
+.small { font-size: 12.5px; }
+.toc a { color: #000; text-decoration: none; }
+.toc li { margin: 1.7mm 0; }
+.page-break { break-before: page; }
+@media screen and (max-width: 900px) {
+  .toolbar { margin: 8px; }
+  .page { width: auto; min-height: auto; margin: 0 8px 12px; padding: 18px; }
+}
+@media print {
+  body { background: #fff; }
+  .toolbar { display: none; }
+  .page { width: auto; min-height: auto; margin: 0; padding: 0; box-shadow: none; }
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <a href="index.html">Zur Startseite</a>
+  <a href="Betriebssysteme_pruefungsorientierte_Zusammenfassung.html">Zur Zusammenfassung</a>
+  <button type="button" onclick="window.print()">Drucken / als PDF speichern</button>
+</div>
+
+<section class="page" id="start">
+  <h1>Betriebssysteme<br>Musterlösungen zu den Probeklausuren</h1>
+  <div class="meta">
+    <div>Name: <span class="blank"></span></div>
+    <div>Matrikelnummer: <span class="blank"></span></div>
+  </div>
+  <p><strong>Hinweis:</strong> Diese Musterlösungen sind im Klausurblatt-Stil aufgebaut: Aufgabenstruktur wie im Blatt, Lösung direkt darunter. Zeitdiagramme und Graphen sind als einzutragende Balken/Kanten angegeben, damit du sie 1:1 in die Raster übertragen kannst.</p>
+  <h2>Inhalt</h2>
+  <ol class="toc">
+    <li><a href="#ss07">Klausur Betriebssysteme SS 2007</a></li>
+    <li><a href="#ss08">Klausur Betriebssysteme SS 2008</a></li>
+    <li><a href="#ss09">Klausur Betriebssysteme SS 2009</a></li>
+    <li><a href="#ss2011">Klausur Betriebssysteme SS 2011</a></li>
+    <li><a href="#ws1516">Prüfung Betriebssysteme WS 2015/16</a></li>
+    <li><a href="#ws1920">Prüfung Betriebssysteme WS 2019/20</a></li>
+    <li><a href="#ss21">Exam Operating Systems SS 2021</a></li>
+  </ol>
+  <div class="note"><strong>Wichtig:</strong> Bei RMS-Aufgaben unterscheide ich zwischen notwendiger CPU-Auslastung <code>U <= 1</code> und der hinreichenden RMS-Garantiegrenze. Liegt U dazwischen, ist die einfache Vorlesungsgrenze nicht beweisend; ein genauer Antwortzeittest kann im Einzelfall trotzdem funktionieren.</div>
+</section>
+
+<section class="page" id="ss07">
+  <h2>Klausur Betriebssysteme SS 2007 - Musterlösung</h2>
+  <h3>Aufgabe 1: E/A, DMA</h3>
+  <div class="answer"><strong>a)</strong> Drei Formen der E/A-Organisation: programmierte E/A/Polling, interruptgesteuerte E/A, DMA.</div>
+  <div class="answer"><strong>b)</strong> Memory-mapped I/O: Gerätere­gister liegen im normalen Adressraum und werden mit normalen Lade-/Speicherbefehlen angesprochen. Vorteil: einheitliche Befehle/Adressierung; Nachteil: Teile des Adressraums gehen für Geräte verloren, Caching/Schutz muss beachtet werden. Port-mapped I/O: eigener I/O-Adressraum und spezielle I/O-Befehle. Vorteil: Trennung von Speicher und Geräten; Nachteil: eigene Befehle, weniger einheitlich.</div>
+  <div class="answer"><strong>c)</strong> DMA = Direct Memory Access. Die CPU initialisiert einen Controller, der danach einen Datenblock direkt zwischen Gerät und Hauptspeicher überträgt. Die CPU muss nicht jedes Byte selbst kopieren; am Ende meldet der Controller den Abschluss meist per Interrupt.</div>
+  <div class="answer"><strong>d)</strong> Mindestens: Geräte-/Plattenadresse bzw. Blocknummer, Zieladresse im Hauptspeicher, Länge/Anzahl Bytes oder Blöcke, Richtung Leseauftrag, ggf. Steuer-/Statusinformationen.</div>
+  <div class="answer"><strong>e)</strong> Cycle Stealing bedeutet, dass der DMA-Controller einzelne Speicherbuszyklen benutzt und die CPU in diesen Zyklen kurz ausbremst.</div>
+
+  <h3>Aufgabe 2: RMS</h3>
+  <div class="answer"><strong>a)</strong> Rate Monotonic heißt so, weil kürzere Periodendauer eine höhere Aktivierungsrate bedeutet. Je höher die Rate, desto höher die feste Priorität.</div>
+  <div class="answer"><strong>b)</strong> RMS ist unter den klassischen Annahmen optimal unter allen Verfahren mit festen Prioritäten. Wenn irgendein festes Prioritätsverfahren eine periodische Taskmenge schedulen kann, dann schafft RMS sie ebenfalls. Das heißt nicht, dass RMS jede beliebige Taskmenge schafft.</div>
+  <div class="answer"><strong>c) Zeitdiagramm:</strong><br><span class="segments">A: 0-2, 3,5-5,5, 16-20 &nbsp;|&nbsp; B: 2-3,5, 12-13,5 &nbsp;|&nbsp; C: 5,5-7,5, 10-11 &nbsp;|&nbsp; D: 7,5-10</span><br>Verdrängungen: <span class="segments">V bei t=2</span> und <span class="segments">V bei t=7,5</span>.</div>
+  <div class="answer"><strong>d)</strong> Ja, alle bis dahin relevanten Deadlines werden eingehalten: A0 fertig 5,5 ≤ 16; B2 fertig 3,5 ≤ 12; C3 fertig 11 ≤ 27; D7,5 fertig 10 ≤ 27,5; B12 fertig 13,5 ≤ 22. A16 hat Deadline 32 und ist bei t=20 noch nicht fällig.</div>
+  <div class="answer"><strong>e)</strong> Ja. <code>U = 4/16 + 1,5/10 + 3/24 + 2,5/20 = 0,25 + 0,15 + 0,125 + 0,125 = 0,65 <= 1</code>. Die benötigte CPU-Zeit passt also auf eine einzelne CPU.</div>
+  <div class="answer"><strong>f)</strong> Ja, mit der RMS-Grenze: Für <code>n=4</code> gilt <code>4(2^(1/4)-1) ≈ 0,757</code>. Da <code>U=0,65</code> darunter liegt, ist Deadline-Einhaltung unter den RMS-Annahmen garantiert.</div>
+
+  <h3>Aufgabe 3: Semaphore/Deadlock</h3>
+  <table>
+    <tr><th></th><th>B=true</th><th>B=false</th></tr>
+    <tr><th>A=true</th><td>Nein. P1 kann ggf. S3 bekommen; P2 hält S3 nicht dauerhaft, bevor es S1/S2 nimmt.</td><td>Ja. Möglich: P1 hält S2 und wartet auf S3; P2 hält S3 und wartet auf S2.</td></tr>
+    <tr><th>A=false</th><td>Nein. P2 gibt S3 frei, bevor eine echte Kreiswartebeziehung entstehen kann.</td><td>Nein. Wartesituationen lösen sich auf, weil jeweils eine benötigte Semaphore frei werden kann.</td></tr>
+  </table>
+  <div class="answer"><strong>b)</strong> Schlecht strukturiert: verschachtelte und verzweigte Sperrlogik, unterschiedliche Reihenfolgen, Signale innerhalb der Zweige. Genau solche Programme sind schwer zu prüfen und deadlockanfällig.</div>
+  <div class="answer"><strong>c)</strong> <code>wait(S)</code> ist atomar. Ist S frei/positiv, wird S belegt/dekrementiert und der Prozess läuft weiter. Ist S nicht verfügbar, wird der Prozess blockiert und in die Warteschlange der Semaphore eingetragen. <code>signal(S)</code> gibt S frei/inkrementiert; wartet ein Prozess, wird einer deblockiert und in den Ready-Zustand versetzt.</div>
+
+  <h3>Aufgabe 4: Paging</h3>
+  <div class="answer"><strong>a)</strong> Bei 32 Bit und Rahmengröße <code>2^k</code>: <code>2^(32-k)</code> Seitentabelleneinträge. Falls mit 2 KiB gemeint ist: <code>2^(32-11)=2^21</code>.</div>
+  <div class="answer"><strong>b)</strong> Mehrstufige Seitentabellen, invertierte Seitentabelle oder Seitentabellen nur für tatsächlich benutzte Bereiche.</div>
+  <div class="answer"><strong>c)</strong> Bei 2 KiB Rahmen: Offset der Startadresse <code>0x780 = 1920</code>. <code>floor((1920 + 4225 - 1)/2048)+1 = 4</code>. Das Array benötigt also 4 Rahmen.</div>
+  <div class="answer"><strong>d)</strong> Typische Bits: Present/Valid-Bit: Seite im Hauptspeicher? Referenced/Use-Bit: wurde seit letzter Prüfung benutzt, wichtig für Clock/LRU-Näherung. Dirty/Modified-Bit: wurde verändert, muss beim Ersetzen zurückgeschrieben werden.</div>
+
+  <h3>Aufgabe 5: Seitenersetzung</h3>
+  <table class="trace"><tr><th>Seq</th><th>7</th><th>5</th><th>8</th><th>6</th><th>5</th><th>9</th><th>6</th><th>9</th><th>8</th><th>6</th><th>5</th><th>6</th></tr>
+    <tr><th>OPT R1</th><td>7</td><td>7</td><td>7</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+    <tr><th>OPT R2</th><td>-</td><td>5</td><td>5</td><td>5</td><td>5</td><td>9</td><td>9</td><td>9</td><td>9</td><td>9</td><td>5</td><td>5</td></tr>
+    <tr><th>OPT R3</th><td>-</td><td>-</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td></tr>
+    <tr><th>F</th><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td>F</td><td></td><td></td><td></td><td></td><td>F</td><td></td></tr></table>
+  <table class="trace"><tr><th>Seq</th><th>7</th><th>5</th><th>8</th><th>6</th><th>5</th><th>9</th><th>6</th><th>9</th><th>8</th><th>6</th><th>5</th><th>6</th></tr>
+    <tr><th>LRU R1</th><td>7</td><td>7</td><td>7</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+    <tr><th>LRU R2</th><td>-</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>8</td><td>8</td><td>8</td><td>8</td></tr>
+    <tr><th>LRU R3</th><td>-</td><td>-</td><td>8</td><td>8</td><td>8</td><td>9</td><td>9</td><td>9</td><td>9</td><td>9</td><td>5</td><td>5</td></tr>
+    <tr><th>F</th><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td>F</td><td></td><td></td><td>F</td><td></td><td>F</td><td></td></tr></table>
+  <div class="answer small"><strong>Second Chance:</strong> gleiche Seitenfolge wie LRU in dieser Aufgabe: Faults bei 7, 5, 8, 6, 9, 8, 5. Zustände nach jedem Zugriff: (7,-,-), (7,5,-), (7,5,8), (6,5,8), (6,5,8), (6,5,9), (6,5,9), (6,5,9), (6,8,9), (6,8,9), (6,8,5), (6,8,5). Use-Bits nach Clock-Regel aktualisieren.</div>
+</section>
+
+<section class="page" id="ss08">
+  <h2>Klausur Betriebssysteme SS 2008 - Musterlösung</h2>
+  <h3>Aufgabe 1: Threads/Prozesswechsel</h3>
+  <div class="answer"><strong>a)</strong> Threads sind leichter als Prozesse: schnelleres Erzeugen/Wechseln, gemeinsamer Adressraum, einfache Kommunikation. Nachteile: weniger Isolation; Fehler/Race Conditions betreffen denselben Prozess; Synchronisation ist nötig.</div>
+  <div class="answer"><strong>b)</strong> Benutzerthreads: sehr schnell im User Space, aber blockierender Systemaufruf kann den ganzen Prozess blockieren und echte Mehrkernparallelität ist eingeschränkt. Kernelthreads: vom Kernel separat planbar, Blockierung einzelner Threads und echte Parallelität möglich; dafür mehr Overhead.</div>
+  <div class="answer"><strong>c)</strong> Jacketing wird eingesetzt, damit blockierende Systemaufrufe bei Benutzerthreads nicht den gesamten Prozess blockieren. Eine Bibliothek erkennt/umhüllt blockierende Aufrufe und ersetzt sie z.B. durch nichtblockierende Varianten oder organisiert den Aufruf über Hilfsmechanismen.</div>
+  <div class="answer"><strong>d)</strong> Beim Prozesswechsel P1→P2: Zustand von P1 sichern (PC, Register, Stackpointer, Statuswort, ggf. Speicherverwaltungsinfos) im PCB; Zustand/Priorität/Zustandstabellen aktualisieren; PCB von P2 auswählen; Adressraum/Speicherabbildung ggf. umschalten; Register/PC/SP von P2 laden; P2 in aktiv/laufend setzen; Sprung zur gespeicherten Fortsetzungsadresse.</div>
+  <div class="answer"><strong>e)</strong> Die Anwendung muss parallelisierbare, unabhängige bzw. nebenläufig ausführbare Teile haben und mehrere lauffähige Threads/Prozesse erzeugen.</div>
+
+  <h3>Aufgabe 2: EDF + RMS</h3>
+  <div class="answer"><strong>a/b) Zeitdiagramm:</strong><br><span class="segments">T1: 0-5, 12-14 &nbsp;|&nbsp; T3: 5-9 &nbsp;|&nbsp; T4: 9-12 &nbsp;|&nbsp; T2: 14-20</span><br>Verdrängung: <span class="segments">V bei t=5</span>, weil T3 mit absoluter Deadline 10 früher ist als T1 mit Deadline 13.</div>
+  <div class="answer"><strong>c)</strong> Nicht alle Deadlines werden eingehalten. T1 hat absolute Deadline 13 und wird erst bei t=14 fertig. T2 wird bei 20 fertig, T3 bei 9, T4 bei 12.</div>
+  <div class="answer"><strong>d)</strong> RMS-Priorität nach relativer Deadline/Periode: T4(P=4) &gt; T3(P=5) &gt; T1(P=13) &gt; T2(P=18).</div>
+  <div class="answer"><strong>e)</strong> Für T1/T2: <code>U = 7/13 + 6/18 ≈ 0,872</code>. Notwendig ist <code>U <= 1</code>, also ist es nicht grundsätzlich unmöglich. Die einfache RMS-Garantie für n=2 lautet <code>2(sqrt(2)-1)≈0,828</code>; diese wird überschritten. Mit der reinen Vorlesungsgrenze ist also keine Immer-Garantie ableitbar; genauer geprüft ist die konkrete Zweitaskmenge aber schedulbar (<code>R1=7<=13</code>, <code>R2=13<=18</code>).</div>
+
+  <h3>Aufgabe 3: Race Conditions</h3>
+  <div class="answer"><strong>a)</strong> Atomare Statements, Reihenfolge je Thread bleibt erhalten. Minimum: <code>8</code> bei <code>S21 -> S22 -> S11 -> S12</code>. Maximum: <code>24</code> bei <code>S21 -> S11 -> S12 -> S22</code>.</div>
+  <div class="answer"><strong>b)</strong> Wenn einzelne Statements unterbrochen werden können, wird die Ergebnismenge größer. Zerlegt man <code>x=x+1</code> und <code>x=3*x</code> in Lesen/Berechnen/Schreiben, kann z.B. Minimum <code>6</code> entstehen: <code>S11, S21, S12 liest 5, S22 liest 5, S22 schreibt 15, S12 schreibt 6</code>. Maximum bleibt <code>24</code>.</div>
+  <div class="answer"><strong>c)</strong> Schutz durch kritische Abschnitte mit Mutex/Semaphor/Monitor, atomare Test-and-Set-Operationen bzw. Locks, oder strukturierte Synchronisation/Message Passing.</div>
+
+  <h3>Aufgabe 4: Paging</h3>
+  <div class="answer"><strong>a)</strong> 4 KiB = 2^12, also Offset = untere 12 Bit = <code>0x078</code>; Seitennummer = obere 20 Bit = <code>0x7A5B3</code>.</div>
+  <div class="answer"><strong>b)</strong> Kleinste Adresse derselben Seite: <code>0x7A5B3000</code>. Größte: <code>0x7A5B3FFF</code>.</div>
+  <div class="answer"><strong>c)</strong> Anzahl Seitentabelleneinträge: <code>2^20</code>.</div>
+  <div class="answer"><strong>d)</strong> Skizze: virtuelle Adresse → Zerlegung in Seitennummer und Offset; Seitennummer indexiert Seitentabelle; Eintrag liefert Rahmennummer plus Statusbits; physische Adresse = Rahmennummer || unveränderter Offset.</div>
+  <div class="answer"><strong>e)</strong> Insgesamt <code>2^20</code> virtuelle Seiten. Bei gleich großen Haupt- und Untertabellen: <code>2^10</code> Einträge in der Haupttabelle und <code>2^10</code> Einträge je Unterseitentabelle.</div>
+</section>
+
+<section class="page" id="ss09">
+  <h2>Klausur Betriebssysteme SS 2009 - Musterlösung</h2>
+  <h3>Aufgabe 1: Scheduling-Theorie</h3>
+  <div class="answer"><strong>a)</strong> Ziele: hohe CPU-Auslastung, hoher Durchsatz, kurze Antwortzeit, kurze Wartezeit, kurze Durchlaufzeit, Fairness/kein Verhungern, Deadline-Einhaltung, geringer Overhead.</div>
+  <div class="answer"><strong>b)</strong> Zielkonflikt: kurze Antwortzeit durch häufige Verdrängung erhöht Kontextwechsel-Overhead und kann den Durchsatz senken.</div>
+  <div class="answer"><strong>c)</strong> Verdrängung bedeutet, dass einem laufenden Prozess die CPU entzogen wird, obwohl er selbst nicht blockiert oder fertig ist.</div>
+  <div class="answer"><strong>d)</strong> Verdrängung kann stattfinden bei Ablauf eines Quantums, Ankunft eines höherprioren bzw. dringlicheren Tasks, Ablauf/Änderung von Prioritäten, Echtzeitereignis/Deadline-relevanter Ankunft.</div>
+  <div class="answer"><strong>e)</strong> FCFS: erste Ankunft zuerst, nicht präemptiv. SJF: kürzeste erwartete Rechenzeit zuerst. SRT: kürzeste Restzeit, präemptiv. Round Robin: Zeitscheiben mit zyklischer Queue. EDF: früheste absolute Deadline zuerst. RMS: kürzeste Periode hat höchste feste Priorität.</div>
+
+  <h3>Aufgabe 2: Semaphore/Deadlocks</h3>
+  <div class="answer"><strong>a)</strong> Ja, der kritische Abschnitt ist geschützt. P1/P2 teilen S1, P1/P3 teilen S2, P2/P3 teilen S3. Damit kann kein Paar gleichzeitig im kritischen Abschnitt sein.</div>
+  <div class="answer"><strong>b)</strong> P2 im kritischen Abschnitt hält S1 und S3. P1 wartet vor dem kritischen Abschnitt auf S1. P3 kann S2 nehmen und wartet dann auf S3. Graph: <code>S1 -> P2</code>, <code>S3 -> P2</code>, <code>S2 -> P3</code>, <code>P1 -> S1</code>, <code>P3 -> S3</code>.</div>
+  <div class="answer"><strong>c)</strong> Kein Deadlock, weil P2 nicht wartet und den kritischen Abschnitt verlassen kann. Danach werden S1/S3 frei.</div>
+  <div class="answer"><strong>d)</strong> Nein, bei beliebigem Ablauf entsteht kein Deadlock. Die Sperren werden konsistent in einer globalen Ordnung genommen: S1 vor S2/S3, S2 vor S3. Eine zirkuläre Wartebedingung kann dadurch nicht entstehen.</div>
+  <div class="answer"><strong>e)</strong> Die Implementierung ist ungeeignet, weil Test und Setzen nicht atomar sind. Zwei Prozesse können beide <code>my_sems[sem]==0</code> sehen, beide die Schleife verlassen, beide auf 1 setzen und gleichzeitig eintreten. Außerdem ist Busy Waiting ineffizient.</div>
+  <div class="answer"><strong>f)</strong> Methoden: Interrupts sperren, atomare Test-and-Set/Compare-and-Swap-Operationen, Mutex/Semaphore, Monitore, Peterson-Algorithmus, Message Passing.</div>
+
+  <h3>Aufgabe 3: Speicher</h3>
+  <div class="answer"><strong>a)</strong> 256 MiB / 64 KiB = <code>2^28 / 2^16 = 2^12</code> Rahmen.</div>
+  <div class="answer"><strong>b)</strong> 32 Bit / 64 KiB Seiten: <code>2^32 / 2^16 = 2^16</code> Seitentabelleneinträge.</div>
+  <div class="answer"><strong>c)</strong> 340 KiB / 64 KiB = 5,3125, also minimal 6 Rahmen. Bei ungünstigem Startoffset maximal 7 Rahmen.</div>
+  <div class="answer"><strong>d)</strong> Adresse <code>0x470A78BB</code>: Seite <code>0x470A</code>, Offset <code>0x78BB</code>. Tabelle liefert Rahmen <code>0x1B3</code>. Physische Adresse: <code>0x01B378BB</code>.</div>
+  <div class="answer"><strong>e)</strong> Physische Adresse <code>0x31A9175</code>: Rahmen <code>0x31A</code>, Offset <code>0x9175</code>. In der Tabelle gehört Rahmen <code>0x31A</code> zu Seite <code>0x4708</code>. Virtuelle Adresse: <code>0x47089175</code>.</div>
+  <div class="answer"><strong>f)</strong> <code>0x4709FFFF</code> liegt auf Seite <code>0x4709</code>, P-Bit 0. Es entsteht ein Page Fault: Trap in den Kernel, Prozess blockieren, freie Kachel oder Opfer suchen, ggf. Dirty-Seite zurückschreiben, Seite laden, Seitentabelle/TLB aktualisieren, Instruktion wiederholen.</div>
+
+  <h3>Aufgabe 4: Thrashing und Ersetzung</h3>
+  <div class="answer"><strong>a)</strong> Thrashing entsteht, wenn die Working Sets der Prozesse nicht in den Hauptspeicher passen. Das System verbringt dann mehr Zeit mit Page Faults und Auslagern als mit Nutzarbeit.</div>
+  <div class="answer"><strong>b)</strong> Lokalität hilft gegen Thrashing: zeitliche Lokalität nutzt kürzlich verwendete Seiten erneut; räumliche Lokalität nutzt benachbarte Seiten. Dadurch sinkt die benötigte aktive Seitenmenge.</div>
+  <table class="trace"><tr><th>Seq</th><th>8</th><th>7</th><th>8</th><th>3</th><th>2</th><th>8</th><th>3</th><th>7</th><th>3</th></tr>
+    <tr><th>OPT R1</th><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>7</td><td>7</td></tr>
+    <tr><th>OPT R2</th><td>4</td><td>7</td><td>7</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+    <tr><th>OPT R3</th><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+    <tr><th>F</th><td></td><td>F</td><td></td><td>F</td><td></td><td></td><td></td><td>F</td><td></td></tr></table>
+  <div class="answer small"><strong>d) Clock:</strong> Faults bei 7, 3, 2, 8, 7, 3. Zustände nach jedem Zugriff: (8,4,2), (8,7,2), (8,7,2), (8,7,3), (2,7,3), (2,8,3), (2,8,3), (2,8,7), (3,8,7). Use-Bits und Zeiger werden nach Second-Chance-Regel aktualisiert.</div>
+</section>
+
+<section class="page" id="ss2011">
+  <h2>Klausur Betriebssysteme SS 2011 - Musterlösung</h2>
+  <h3>Aufgabe 1: Dateisysteme/Abstraktion</h3>
+  <div class="answer"><strong>a)</strong> Beispiele: Prozess abstrahiert CPU-Ausführung; Datei abstrahiert Sekundärspeicher; virtueller Speicher abstrahiert Hauptspeicher; Socket abstrahiert Netzwerkkommunikation; Gerätedateien abstrahieren E/A-Geräte.</div>
+  <div class="answer"><strong>b)</strong> Sequentieller Zugriff: Lesen/Schreiben der Reihe nach. Direkter/wahlfreier Zugriff: Zugriff auf beliebige Positionen. Indexierter Zugriff: Zugriff über Index-/Metadatenstruktur.</div>
+  <div class="answer"><strong>c)</strong> Verkettete Listen sind schlecht für Auslagerungsdateien, weil wahlfreier Zugriff auf eine Seite lange Kettenverfolgung erfordert. Virtueller Speicher braucht schnellen direkten Zugriff auf Seiten.</div>
+  <div class="answer"><strong>d)</strong> Block = 1 KiB, ein indirekter Block enthält 256 Adressen. Datenblöcke: <code>8 + 8*256 = 2056</code>. Max. Dateigröße: <code>2056 KiB = 2.105.344 Byte</code>.</div>
+
+  <h3>Aufgabe 2: Scheduling</h3>
+  <div class="answer"><strong>a)</strong> Pro CPU kann nur ein Prozess gleichzeitig aktiv/laufend sein. Blockiert sein können theoretisch beliebig viele Prozesse, begrenzt nur durch Speicher/Verwaltungsressourcen.</div>
+  <div class="answer"><strong>b)</strong> Round Robin mit Quantum 3 und 1 Zeiteinheit Wechselkosten: P1 0-3, P2 4-7, P3 8-11, P4 12-15, P1 16-19, P2 ab 20.</div>
+  <div class="answer"><strong>c)</strong> Scheduler und Dispatcher benötigen zusammen 1 Zeiteinheit pro Prozesswechsel.</div>
+  <div class="answer"><strong>d/e) EDF:</strong><br><span class="segments">T4: 0-1, 4-9 &nbsp;|&nbsp; T1: 1-4 &nbsp;|&nbsp; T3: 9-13 &nbsp;|&nbsp; T2: 13-16</span><br>Verdrängung: <code>V bei t=1</code>, weil T1 Deadline 7 früher ist als T4 Deadline 10.</div>
+  <div class="answer"><strong>f)</strong> Nicht alle Deadlines werden eingehalten: T3 hat Deadline 12, wird aber erst bei t=13 fertig. T1, T4 und T2 werden rechtzeitig fertig.</div>
+  <div class="answer"><strong>g)</strong> Für T1/T2 periodisch: <code>U = 3/7 + 3/17 ≈ 0,605</code>. Für n=2 ist die RMS-Grenze <code>0,828</code>. Da <code>0,605 < 0,828</code>, garantiert RMS die Deadline-Einhaltung.</div>
+
+  <h3>Aufgabe 3: Speicher</h3>
+  <div class="answer"><strong>a)</strong> <code>1024 MiB / 32 KiB = 2^30 / 2^15 = 2^15</code> Rahmen.</div>
+  <div class="answer"><strong>b)</strong> <code>2^32 / 2^15 = 2^17</code> Seitentabelleneinträge.</div>
+  <div class="answer"><strong>c)</strong> Es gibt mehr virtuelle Seiten als physische Rahmen, weil der virtuelle Adressraum 4 GiB umfasst, der physische Speicher aber nur 1 GiB.</div>
+  <div class="answer"><strong>d)</strong> 32 KiB = <code>0x8000</code>. Adresse <code>0x0F3DA7A1</code> liegt in der Seite <code>0x0F3D8000</code> bis <code>0x0F3DFFFF</code>.</div>
+  <div class="answer"><strong>e)</strong> Mit 32-Bit-Adressierung maximal 4 GiB direkt adressierbarer Hauptspeicher. Der virtuelle Adressraum eines einzelnen 32-Bit-Prozesses ist ebenfalls auf 4 GiB begrenzt; insgesamt können mehrere Prozesse durch getrennte Adressräume/backing store mehr virtuelle Speicherbereiche haben.</div>
+
+  <h3>Aufgabe 4: Seitenersetzung</h3>
+  <table class="trace"><tr><th>Seq</th><th>7</th><th>5</th><th>8</th><th>6</th><th>5</th><th>9</th><th>6</th><th>9</th><th>8</th><th>6</th><th>9</th><th>6</th></tr>
+    <tr><th>OPT R1</th><td>7</td><td>7</td><td>7</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+    <tr><th>OPT R2</th><td>-</td><td>5</td><td>5</td><td>5</td><td>5</td><td>9</td><td>9</td><td>9</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
+    <tr><th>OPT R3</th><td>-</td><td>-</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td></tr>
+    <tr><th>F</th><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td>F</td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>
+  <div class="answer"><strong>b)</strong> Optimalstrategie heißt so, weil sie die Seite ersetzt, deren nächster Zugriff am weitesten in der Zukunft liegt.</div>
+  <div class="answer"><strong>c)</strong> Das Betriebssystem kann OPT nicht direkt verwenden, weil es die zukünftigen Zugriffe nicht kennt. Es dient als theoretische Untergrenze/Vergleichsmaßstab.</div>
+  <div class="answer small"><strong>d) Clock:</strong> Faults bei 7, 5, 8, 6, 9, 8. Zustände: (7,-,-), (7,5,-), (7,5,8), (6,5,8), (6,5,8), (6,5,9), (6,5,9), (6,5,9), (6,8,9), (6,8,9), (6,8,9), (6,8,9).</div>
+
+  <h3>Aufgabe 5: Deadlocks</h3>
+  <div class="answer"><strong>a)</strong> Kanten: B2→P1, P1→B5; B6→P2, P2→B2 und P2→B3; B3→P3, P3→B1; B1→P4, P4→B6; B5→P5, P5→B4.</div>
+  <div class="answer"><strong>b)</strong> Ja. Es gibt den Zyklus <code>P2 -> B3 -> P3 -> B1 -> P4 -> B6 -> P2</code>.</div>
+  <div class="answer"><strong>c)</strong> Es genügt, einen Prozess aus dem Zyklus zu terminieren: P2 oder P3 oder P4.</div>
+  <div class="answer"><strong>d)</strong> Zyklusanalyse ist zur Verhinderung allgemein unpraktikabel, weil sie laufend globale Zustände prüfen müsste, bei mehreren Instanzen komplizierter ist und Deadlocks erst nahe am Eintritt erkennt. Verhinderung arbeitet besser über feste Regeln.</div>
+  <div class="answer"><strong>e)</strong> Methoden: globale Ressourcenordnung, alle Ressourcen auf einmal anfordern, Hold-and-Wait verhindern, Ressourcen entziehen/Preemption, Spooling/Virtualisierung exklusiver Ressourcen.</div>
+</section>
+
+<section class="page" id="ws1516">
+  <h2>Prüfung Betriebssysteme WS 2015/16 - Musterlösung</h2>
+  <h3>Aufgabe 1: Scheduling</h3>
+  <div class="answer"><strong>a)</strong> Mindestens sechs: CPU-Auslastung, Durchsatz, Antwortzeit, Wartezeit, Durchlaufzeit, Fairness, Deadline-Einhaltung, geringer Overhead, Prioritäten beachten.</div>
+  <div class="answer"><strong>b)</strong> Beispiel: kurze Antwortzeit vs. hoher Durchsatz. Häufige Verdrängung verbessert Interaktivität, erhöht aber Kontextwechselkosten.</div>
+  <div class="answer"><strong>c)</strong> Verdrängung: laufender Prozess verliert CPU, obwohl er nicht fertig/blockiert ist. Sein Zustand wird gesichert; er geht zurück in Ready. Ein anderer Prozess wird geladen und läuft.</div>
+  <div class="answer"><strong>d)</strong> Präemptives Scheduling erlaubt genau diese zwangsweise Unterbrechung laufender Prozesse.</div>
+  <h3>Aufgabe 2: EDF/RMS</h3>
+  <div class="answer"><strong>a) EDF:</strong><br><span class="segments">T4: 0-3, 9-13 &nbsp;|&nbsp; T1: 3-5, 7-9 &nbsp;|&nbsp; T2: 5-7 &nbsp;|&nbsp; T3: 13-15</span><br>Verdrängungen: <code>V bei t=3</code> und <code>V bei t=5</code>. Deadline-Miss: <code>X bei t=12</code> für T4.</div>
+  <div class="answer"><strong>b)</strong> RMS-Prioritäten: T2(P=5) &gt; T1(P=8) &gt; T4(P=12) &gt; T3(P=20).</div>
+  <div class="answer"><strong>c)</strong> Nur T1/T2: <code>U=4/8+2/5=0,9</code>. Notwendiges Kriterium <code>U<=1</code> erfüllt. RMS-Garantiegrenze für n=2 ist <code>0,828</code>; <code>0,9</code> liegt darüber, also keine Garantie durch die einfache Grenze.</div>
+  <h3>Aufgabe 3: Speicher</h3>
+  <div class="answer"><strong>a)</strong> <code>2048 MiB / 64 KiB = 2^31 / 2^16 = 2^15</code> Rahmen.</div>
+  <div class="answer"><strong>b)</strong> Adresse <code>0x4B301568</code>, Pagegröße 64 KiB: Seitennummer <code>0x4B30</code>, Offset <code>0x1568</code>. Kleinste Adresse: <code>0x4B300000</code>. Größte: <code>0x4B30FFFF</code>.</div>
+  <div class="answer"><strong>c)</strong> 82114 Byte, Startoffset <code>0xFE01=65025</code>. <code>floor((65025+82114-1)/65536)+1=3</code>. Also 3 Rahmen.</div>
+  <table class="trace"><tr><th>Seq</th><th>4</th><th>5</th><th>3</th><th>5</th><th>6</th><th>5</th><th>2</th><th>5</th><th>6</th></tr>
+    <tr><th>OPT R1</th><td>4</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><th>OPT R2</th><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>2</td><td>2</td><td>2</td></tr><tr><th>OPT R3</th><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr><tr><th>F</th><td>F</td><td>F</td><td></td><td></td><td></td><td></td><td>F</td><td></td><td></td></tr></table>
+  <table class="trace"><tr><th>Seq</th><th>4</th><th>5</th><th>3</th><th>5</th><th>6</th><th>5</th><th>2</th><th>5</th><th>6</th></tr>
+    <tr><th>LRU R1</th><td>4</td><td>4</td><td>4</td><td>4</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr><tr><th>LRU R2</th><td>3</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><th>LRU R3</th><td>6</td><td>6</td><td>3</td><td>3</td><td>3</td><td>3</td><td>2</td><td>2</td><td>2</td></tr><tr><th>F</th><td>F</td><td>F</td><td>F</td><td></td><td>F</td><td></td><td>F</td><td></td><td></td></tr></table>
+  <h3>Aufgabe 4: Dateisysteme</h3>
+  <div class="answer"><strong>a)</strong> <code>2^16 * 512 = 33.554.432 Byte = 32 MiB</code>.</div>
+  <div class="answer"><strong>b)</strong> Clustergröße bei i=4: 16 Blöcke = 8192 Byte. Obergrenze: <code>2^16 * 8192 = 512 MiB</code>.</div>
+  <div class="answer"><strong>c)</strong> 652 Byte: ohne Cluster 2 Blöcke = 1024 Byte; mit 8192-Byte-Cluster: 8192 Byte.</div>
+  <div class="answer"><strong>d)</strong> <code>(8 + 4*128)*512 = 520*512 = 266.240 Byte</code>.</div>
+  <div class="answer"><strong>e)</strong> Vorteil zusammenhängend: sehr schneller sequentieller und wahlfreier Zugriff. Nachteil: externe Fragmentierung und schwieriges Wachstum. Gut geeignet für überwiegend lesende, selten veränderte Medien/Dateien.</div>
+  <h3>Aufgabe 5: Semaphore</h3>
+  <div class="answer"><strong>a)</strong> Kein Deadlock. P2 kann S2/S3 erst nach Freigabe von S1 anfordern; P1 hält S1 bis nach seinem kritischen Ablauf. Es entsteht keine Situation, in der P1 und P2 gegenseitig je eine benötigte Semaphore halten.</div>
+  <div class="answer"><strong>b)</strong> Wie bei binären Semaphoren: wait belegt bei freier Semaphore oder blockiert den Prozess; signal gibt frei und weckt ggf. genau einen wartenden Prozess. Operationen sind atomar und werden vom Betriebssystem verwaltet.</div>
+</section>
+
+<section class="page" id="ws1920">
+  <h2>Prüfung Betriebssysteme WS 2019/20 - Musterlösung</h2>
+  <h3>Aufgabe 1: Synchronisation/Deadlocks</h3>
+  <div class="answer"><strong>a)</strong> Race Condition: Das Ergebnis hängt vom zeitlichen Ablauf nebenläufiger Zugriffe auf gemeinsame Daten ab.</div>
+  <div class="answer"><strong>b)</strong> Nicht geeignet: Prüfung <code>while(lock==1)</code> und Setzen <code>lock=1</code> sind nicht atomar. Zwei Threads können beide lock=0 sehen und beide eintreten.</div>
+  <div class="answer"><strong>c)</strong> Möglichkeiten: atomare Test-and-Set/CAS-Locks, Mutex/Semaphore, Monitore.</div>
+  <div class="answer"><strong>d)</strong> Situation P1 bei wait(S3), P2 bei wait(S1): P1 hält S2 und wartet auf S3; P2 hält S3 und wartet auf S1. Da S1 frei ist, ist das noch kein Deadlock.</div>
+  <div class="answer"><strong>e)</strong> Ja, andere Situation: P1 hält S2 und wartet bei <code>wait(S3)</code>; P2 hält S3 und S1 und wartet bei <code>wait(S2)</code>. Zyklus: P1→S3→P2→S2→P1.</div>
+  <div class="answer"><strong>f)</strong> Barriere für n=5: <code>mutex=1</code>, <code>barrier=0</code>, <code>count=0</code>. Thread: <code>wait(mutex); count++; if count==5 signal(barrier); signal(mutex); wait(barrier); signal(barrier);</code>. Erst der fünfte Thread öffnet das Drehkreuz.</div>
+
+  <h3>Aufgabe 2: RMS</h3>
+  <div class="answer"><strong>a)</strong> Notwendig: <code>U = 3/8 + 2/5 + 1/6 ≈ 0,942 <= 1</code>. Grundsätzlich CPU-zeitlich möglich.</div>
+  <div class="answer"><strong>b)</strong> RMS-Prioritäten: T2(P=5) &gt; T3(P=6) &gt; T1(P=8). Zeitdiagramm: <span class="segments">T1 0-1, T2 1-3, T1 3-4, T3 4-5, T1 5-6, T2 6-8, T1 8-10, T3 10-11, T2 11-13, T1 13-14, T2 16-18, T3 18-19, T1 19-20</span>. Verdrängungen: t=1, t=4, t=10. Keine Deadline-Verletzung bis t=20.</div>
+  <div class="answer"><strong>c)</strong> Hinreichende RMS-Grenze für n=3: <code>3(2^(1/3)-1)≈0,779</code>. Da <code>0,942</code> darüber liegt, gibt die einfache RMS-Grenze keine Garantie.</div>
+  <div class="answer"><strong>d)</strong> Prioritätsinvertierung: hoher Task wartet auf Ressource eines niedrigen Tasks, während mittlere Tasks den niedrigen verdrängen. Dadurch wartet der hohe Task indirekt auf mittlere Tasks.</div>
+  <div class="answer"><strong>e)</strong> Lösung: Priority Inheritance oder Priority Ceiling; der niedrige Ressourceneigentümer wird temporär auf höhere Priorität angehoben.</div>
+
+  <h3>Aufgabe 3: Speicher</h3>
+  <div class="answer"><strong>a)</strong> <code>1 GiB / 2 KiB = 2^30 / 2^11 = 2^19</code> Rahmen.</div>
+  <div class="answer"><strong>b)</strong> <code>0x8B0D09F8</code>, Seitengröße <code>0x800</code>: kleinste Adresse <code>0x8B0D0800</code>, größte <code>0x8B0D0FFF</code>.</div>
+  <div class="answer"><strong>c)</strong> 9172 Byte: minimal <code>ceil(9172/2048)=5</code>, maximal 6 Rahmen.</div>
+  <div class="answer"><strong>d)</strong> Start <code>0x31BA2FFE</code>, Offset <code>0x7FE=2046</code>. <code>floor((2046+9172-1)/2048)+1 = 6</code> Rahmen.</div>
+  <table class="trace"><tr><th>Seq</th><th>1</th><th>3</th><th>4</th><th>5</th><th>1</th><th>5</th><th>4</th><th>2</th><th>1</th><th>5</th></tr>
+    <tr><th>FIFO R1</th><td>5</td><td>3</td><td>3</td><td>3</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><th>FIFO R2</th><td>1</td><td>1</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>2</td><td>2</td><td>2</td></tr><tr><th>FIFO R3</th><td>2</td><td>2</td><td>2</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><th>F</th><td></td><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td></td><td>F</td><td></td><td></td></tr></table>
+  <table class="trace"><tr><th>Seq</th><th>1</th><th>3</th><th>4</th><th>5</th><th>1</th><th>5</th><th>4</th><th>2</th><th>1</th><th>5</th></tr>
+    <tr><th>OPT R1</th><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><th>OPT R2</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><th>OPT R3</th><td>2</td><td>3</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>2</td><td>2</td><td>2</td></tr><tr><th>F</th><td></td><td>F</td><td>F</td><td></td><td></td><td></td><td></td><td>F</td><td></td><td></td></tr></table>
+
+  <h3>Aufgabe 4: Dateisysteme</h3>
+  <div class="answer"><strong>a)</strong> System A ohne Tabelle: Nutzdaten pro Block <code>512-2=510</code>. 156 B → 1 Block = 512 B. 3065 B → <code>ceil(3065/510)=7</code> Blöcke = 3584 B. System B/FAT: 156 B → 512 B; 3065 B → <code>ceil(3065/512)=6</code> Blöcke = 3072 B.</div>
+  <div class="answer"><strong>b)</strong> Random Access = direkter Zugriff auf beliebige Dateiposition. FAT ist besser als verkettete Liste ohne Tabelle, weil die Kette zentral in der Tabelle verfolgt werden kann; zusammenhängende oder indexierte Belegung wäre noch besser.</div>
+  <div class="answer"><strong>c)</strong> Für Auslagerungsdatei eignet sich B besser als A, weil Seiten direkt/regelmäßiger adressiert werden müssen und die Datenblöcke bei A durch Zeigerplatz verkleinert sind.</div>
+  <div class="answer"><strong>d)</strong> <code>2^16*512 = 32 MiB</code>. FAT-Größe: <code>2^16 * 2 Byte = 128 KiB</code>.</div>
+  <div class="answer"><strong>e)</strong> Zusammenhängend: Vorteil sehr schneller direkter/sequentieller Zugriff; Nachteil externe Fragmentierung und schwieriges Wachstum. Gut bei vielen Lesezugriffen und wenigen Änderungen.</div>
+  <div class="answer"><strong>f)</strong> Datenblöcke: <code>8 + 2*256 + 2*256^2 = 131592</code>. Bei 512 B: <code>67.375.104 Byte</code>.</div>
+</section>
+
+<section class="page" id="ss21">
+  <h2>Exam Operating Systems SS 2021 - Sample Solution</h2>
+  <h3>Question 1: Synchronization/Deadlocks</h3>
+  <div class="answer"><strong>a)</strong> No deadlock at t0. P1 waits for free R2; P2 waits for R3 held by P3; P3 waits for R5 held by P1. Since R2 is free, P1 can proceed and later release R5.</div>
+  <div class="answer"><strong>b)</strong> P1 must not request R1, R3 or R4. R1/R3 are held by P3 and produce a cycle through P3→R5→P1; R4 is held by P2 and produces P1→R4→P2→R3→P3→R5→P1.</div>
+  <div class="answer"><strong>c)</strong> The resource graph can be used for deadlock avoidance: before granting a request, check whether the new edge would create an unsafe cycle.</div>
+  <div class="answer"><strong>d)</strong> The attempt is not safe because testing <code>flag==1</code> and setting <code>flag=1</code> are not atomic. Two processes may both observe 0, both leave the loop, both set flag to 1, and both enter the critical region.</div>
+  <div class="answer"><strong>e)</strong> Even if correct, it would be inefficient because the waiting process busy-waits in the while-loop and consumes CPU time.</div>
+  <div class="answer"><strong>f)</strong> A binary semaphore is kernel-controlled and manipulated by atomic wait/signal operations. Value 1 means free, 0 means occupied. Waiting processes are blocked in a queue, not spinning in user code; user programs cannot freely change the internal variable.</div>
+  <div class="answer"><strong>g)</strong> Rendezvous with semaphores: initialize <code>s1=0</code>, <code>s2=0</code>. P1 before barrier: <code>signal(s1); wait(s2);</code> after barrier. P2 before barrier: <code>signal(s2); wait(s1);</code> after barrier. Each process releases the other only after arriving.</div>
+
+  <h3>Question 2: RMS</h3>
+  <div class="answer"><strong>a)</strong> Necessary condition: <code>U <= 1</code>. <code>U = 3/8 + 1/4 + 2/6 = 0.9583 <= 1</code>, so CPU time is not impossible.</div>
+  <div class="answer"><strong>b)</strong> Sufficient RMS bound: <code>U <= n(2^(1/n)-1)</code>. For n=3: about <code>0.779</code>. Since <code>0.9583 > 0.779</code>, the bound is not satisfied, so RMS does not get a simple guarantee.</div>
+  <div class="answer"><strong>c)</strong> Priorities: T2(P=4) &gt; T3(P=6) &gt; T1(P=8). Schedule:<br><span class="segments">T1 0-1, T2 1-2, T3 2-4, T1 4-5, T2 5-6, T1 6-7, T3 8-9, T2 9-10, T3 10-11, T1 11-13, T2 13-14, T3 14-16, T1 16-17, T2 17-18, T1 18-20</span><br>Preemptions: <code>P at t=1,5,9,13</code>. Deadline miss: <code>X at t=16</code> for T1's job released at t=8.</div>
+  <div class="answer"><strong>d)</strong> Relevant real-time goals: meeting deadlines/predictability, bounded response time/low latency, and low jitter. A real-time scheduler is judged by timeliness, not only average throughput.</div>
+
+  <h3>Question 3: Memory</h3>
+  <div class="answer"><strong>a)</strong> <code>1 GiB / 16 KiB = 2^30 / 2^14 = 2^16</code> frames.</div>
+  <div class="answer"><strong>b)</strong> Page table entries: <code>2^32 / 2^14 = 2^18</code>.</div>
+  <div class="answer"><strong>c)</strong> Address <code>0x1B32FFE0</code>, page size 16 KiB = 14 offset bits. Page number: <code>0x6CCB</code>, offset <code>0x3FE0</code>.</div>
+  <table class="trace"><tr><th>Seq</th><th>3</th><th>1</th><th>4</th><th>5</th><th>1</th><th>5</th><th>4</th><th>2</th><th>1</th><th>5</th></tr>
+    <tr><th>LRU R1</th><td>3</td><td>3</td><td>3</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>1</td><td>1</td></tr><tr><th>LRU R2</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td></tr><tr><th>LRU R3</th><td>2</td><td>2</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>5</td></tr><tr><th>F</th><td>F</td><td></td><td>F</td><td>F</td><td></td><td></td><td></td><td>F</td><td>F</td><td>F</td></tr></table>
+  <table class="trace"><tr><th>Seq</th><th>3</th><th>1</th><th>4</th><th>5</th><th>1</th><th>5</th><th>4</th><th>2</th><th>1</th><th>5</th></tr>
+    <tr><th>LFU R1</th><td>3</td><td>3</td><td>3</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><th>LFU R2</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><th>LFU R3</th><td>2</td><td>2</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>2</td><td>2</td><td>2</td></tr><tr><th>F</th><td>F</td><td></td><td>F</td><td>F</td><td></td><td></td><td></td><td>F</td><td></td><td></td></tr></table>
+  <div class="answer"><strong>f)</strong> Temporal locality: recently used data/instructions are likely to be used again. Spatial locality: addresses near a used address are likely to be used soon.</div>
+  <div class="answer"><strong>g)</strong> Correct: Caching. Locking and spooling do not primarily rely on locality.</div>
+
+  <h3>Question 4: File Systems</h3>
+  <div class="answer"><strong>a)</strong> Contiguous allocation: <code>ceil(100,000,000/1024)=97,657</code> blocks, so <code>100,000,768 bytes</code>.</div>
+  <div class="answer"><strong>b)</strong> Linked list without table: 32-bit pointer = 4 bytes, useful payload per block = 1020 bytes. <code>ceil(100,000,000/1020)=98,040</code> blocks, so <code>100,392,960 bytes</code>.</div>
+  <div class="answer"><strong>c)</strong> I-Node: data blocks 97,657. Pointer blocks needed: 1 single-indirect block + 1 double-indirect root + 381 leaf pointer blocks = 383, plus 1 I-Node block. Total <code>97,657+383+1=98,041</code> blocks = <code>100,393,984 bytes</code>.</div>
+  <div class="answer"><strong>d)</strong> Random access fastest to slowest: A, C, B. A needs the start block and direct offset calculation, so roughly one target block. C needs index lookup (I-node and indirect blocks, for the last block here up to I-node + double root + indirect leaf + data block). B must follow the linked list through almost all previous blocks to reach the last block.</div>
+</section>
+</body>
+</html>

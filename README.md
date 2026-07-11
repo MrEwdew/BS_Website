@@ -19,6 +19,8 @@ normalen HTML-Dateien besteht.
 - `index.html` - Startseite
 - `cheatsheet_abschreibvorlage.html` - reduzierte 2-Seiten-Vorlage zum handschriftlichen Abschreiben
 - `cheatsheet_a4.html` - druckfertiges 2-Seiten-A4-Cheatsheet
+- `musterloesungen.html` - druckbares Loesungsheft zu den Probeklausuren
+- `musterloesungen.pdf` - PDF-Ausgabe des Loesungshefts
 - `Betriebssysteme_pruefungsorientierte_Zusammenfassung.html`
 - `scheduling_trainer.html`
 - `deadlock_trainer.html`

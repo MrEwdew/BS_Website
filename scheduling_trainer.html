@@ -334,8 +334,8 @@ const examples = [
     preemptions: [{ time: 5, text: "T3 verdrängt T1" }],
     misses: [{ task: "T1", time: 13, text: "T1 erst bei 14 fertig" }],
     rmsOrder: ["T4", "T3", "T1", "T2"],
-    rmsGuarantee: "ja",
-    rmsGuaranteeText: "ja; der einfache Auslastungstest reicht nicht, aber die Antwortzeitprüfung ergibt R1=7≤13 und R2=13≤18.",
+    rmsGuarantee: "nein",
+    rmsGuaranteeText: "nein mit der einfachen RMS-Garantiegrenze: U≈0,872 liegt über 0,828. Das heißt nicht 'unmöglich'; eine genaue Antwortzeitprüfung ergibt für diese konkrete Zweitaskmenge R1=7≤13 und R2=13≤18.",
     utilization: "U = 7/13 + 6/18 ≈ 0,872; RMS-Grenze für n=2: 2(√2-1) ≈ 0,828. Der einfache Garantietest reicht nicht, eine exakte Antwortzeitprüfung zeigt für T1/T2 aber: R1=7≤13 und R2=13≤18."
   },
   {
