@@ -17,6 +17,7 @@ normalen HTML-Dateien besteht.
 ## Enthaltene Seiten
 
 - `index.html` - Startseite
+- `cheatsheet_a4.html` - druckfertiges 2-Seiten-A4-Cheatsheet
 - `Betriebssysteme_pruefungsorientierte_Zusammenfassung.html`
 - `scheduling_trainer.html`
 - `deadlock_trainer.html`
