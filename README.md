@@ -17,6 +17,7 @@ normalen HTML-Dateien besteht.
 ## Enthaltene Seiten
 
 - `index.html` - Startseite
+- `cheatsheet_abschreibvorlage.html` - reduzierte 2-Seiten-Vorlage zum handschriftlichen Abschreiben
 - `cheatsheet_a4.html` - druckfertiges 2-Seiten-A4-Cheatsheet
 - `Betriebssysteme_pruefungsorientierte_Zusammenfassung.html`
 - `scheduling_trainer.html`

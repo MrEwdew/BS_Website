@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BS Cheatsheet - Abschreibvorlage</title>
+<link rel="icon" href="data:,">
+<style>
+@page { size: A4; margin: 9mm; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #e9e9e9;
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.18;
+}
+.toolbar {
+  max-width: 210mm;
+  margin: 10px auto;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.toolbar a, .toolbar button {
+  border: 1px solid #777;
+  background: #fff;
+  color: #000;
+  padding: 6px 9px;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 10px;
+  padding: 9mm;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,.16);
+  page-break-after: always;
+  overflow: hidden;
+}
+.page:last-child { page-break-after: auto; }
+header {
+  border-bottom: 2px solid #000;
+  margin-bottom: 4mm;
+  padding-bottom: 2mm;
+}
+h1 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.1;
+}
+.hint {
+  margin-top: 1mm;
+  font-size: 10px;
+}
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5mm;
+}
+section {
+  border: 1px solid #000;
+  padding: 2.6mm;
+  margin-bottom: 3.2mm;
+  break-inside: avoid;
+}
+h2 {
+  margin: -2.6mm -2.6mm 2mm;
+  padding: 1.2mm 2mm;
+  background: #000;
+  color: #fff;
+  font-size: 10.6px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+h3 {
+  margin: 2mm 0 1mm;
+  font-size: 9.6px;
+  border-bottom: 1px solid #888;
+}
+p, li, td, th, .line {
+  font-size: 8.6px;
+}
+p { margin: 1mm 0; }
+ul, ol {
+  margin: 1mm 0 1mm 4mm;
+  padding: 0;
+}
+li { margin: .65mm 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1mm 0;
+}
+th, td {
+  border: 1px solid #777;
+  padding: 1mm;
+  vertical-align: top;
+}
+th { background: #eee; text-align: left; }
+.mono {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 8.2px;
+}
+.copy {
+  border-left: 2px solid #000;
+  padding-left: 1.5mm;
+  margin: 1mm 0;
+}
+.must {
+  background: #f1f1f1;
+  border: 1px dashed #333;
+  padding: 1.2mm;
+  margin: 1.2mm 0;
+}
+.mini {
+  font-size: 7.8px;
+}
+.blockline {
+  display: block;
+  margin: .75mm 0;
+}
+.short td:first-child { width: 28%; font-weight: 700; }
+@media screen and (max-width: 900px) {
+  .toolbar { margin: 8px; }
+  .page { width: auto; min-height: auto; margin: 0 8px 10px; }
+  .columns { grid-template-columns: 1fr; }
+}
+@media print {
+  body { background: #fff; }
+  .toolbar { display: none; }
+  .page {
+    width: auto;
+    min-height: auto;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <a href="index.html">Zur Startseite</a>
+  <a href="cheatsheet_a4.html">Dichte Druckversion</a>
+  <button type="button" onclick="window.print()">Drucken / PDF zum Abschreiben</button>
+</div>
+
+<article class="page">
+  <header>
+    <h1>BS Cheatsheet Abschreibvorlage - Seite 1/2</h1>
+    <div class="hint">Schreibe diese Bloecke in dieser Reihenfolge ab. Kurz halten, Symbole nutzen, keine ganzen Saetze.</div>
+  </header>
+
+  <div class="columns">
+    <div>
+      <section>
+        <h2>1. Scheduling</h2>
+        <ol>
+          <li>Tasks notieren: <span class="mono">A</span> Ankunft, <span class="mono">C</span> Rechenzeit, <span class="mono">D</span> Deadline.</li>
+          <li>Bei <span class="mono">D=A+x</span>: absolute Deadline = <span class="mono">A+x</span>.</li>
+          <li>Nur bei Ereignissen neu entscheiden: Ankunft, CPU-Ende, Quantum, Deadline.</li>
+          <li>Ready Queue pruefen: bereit != blockiert.</li>
+          <li>Am Ende: Summe CPU-Balken je Task = <span class="mono">C</span>.</li>
+        </ol>
+        <table class="short">
+          <tr><td>FCFS</td><td>erst bereit, erst dran.</td></tr>
+          <tr><td>SJF</td><td>kuerzester Job zuerst.</td></tr>
+          <tr><td>SRT</td><td>kuerzeste Restzeit, verdraengend.</td></tr>
+          <tr><td>RR</td><td>Quantum, dann hinten anstellen.</td></tr>
+          <tr><td>EDF</td><td>kleinste absolute Deadline gewinnt.</td></tr>
+          <tr><td>RMS</td><td>kleinste Periode = hoechste Prio.</td></tr>
+        </table>
+        <div class="must">Fallen: EDF absolute Deadline! RMS nicht nach Rechenzeit sortieren.</div>
+      </section>
+
+      <section>
+        <h2>2. RMS / Echtzeit</h2>
+        <div class="copy"><span class="mono">U = sum(C_i / P_i)</span></div>
+        <div class="copy"><span class="mono">U > 1</span> => auf 1 CPU unmoeglich.</div>
+        <div class="copy"><span class="mono">U <= n(2^(1/n)-1)</span> => RMS garantiert.</div>
+        <p>Werte: n=2: 0,828 | n=3: 0,779 | n->inf: 0,693.</p>
+        <p>Grenze ist <b>hinreichend</b>, nicht notwendig.</p>
+        <h3>Antwortzeit-Test</h3>
+        <div class="copy mono">R_i = C_i + sum(ceil(R_i/P_j)*C_j)</div>
+        <p>Nur hoehere Prioritaeten <span class="mono">j</span> summieren. Starte mit <span class="mono">R=C_i</span>, iteriere bis stabil. OK wenn <span class="mono">R_i <= D_i</span>.</p>
+      </section>
+
+      <section>
+        <h2>3. Prozesse / Threads</h2>
+        <table class="short">
+          <tr><td>Prozess</td><td>Programm in Ausfuehrung + eigener Adressraum + Ressourcen + PCB.</td></tr>
+          <tr><td>Thread</td><td>eigener Stack/Register, teilt Adressraum im Prozess.</td></tr>
+          <tr><td>Ready</td><td>lauffaehig, wartet auf CPU.</td></tr>
+          <tr><td>Blocked</td><td>wartet auf Ereignis/E-A/Semaphore.</td></tr>
+          <tr><td>Switch</td><td>alten Zustand sichern, neuen laden, Dispatcher startet.</td></tr>
+        </table>
+        <div class="must">Verdraengung != Blockieren. Verdraengung = CPU wird entzogen.</div>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2>4. Paging / Adressen</h2>
+        <div class="copy"><span class="mono">PageSize = 2^k</span> => Offsetbits = <span class="mono">k</span>.</div>
+        <div class="copy"><span class="mono">Seitennr-Bits = Adressbits - Offsetbits</span>.</div>
+        <div class="copy"><span class="mono">#Pages = 2^(Seitennr-Bits)</span>.</div>
+        <div class="copy"><span class="mono">#Frames = phys. Speicher / PageSize</span>.</div>
+        <div class="copy"><span class="mono">Seitentabelle = Eintraege * Bytes/Eintrag</span>.</div>
+        <div class="must">4 KiB = 2^12 => 12 Offsetbits = letzte 3 Hex-Ziffern.</div>
+        <p>Beispiel: <span class="mono">0x4B30A568</span> => Page <span class="mono">4B30A</span>, Offset <span class="mono">568</span>.</p>
+        <h3>Physische Adresse</h3>
+        <ol>
+          <li>Virtuelle Adresse splitten: Page + Offset.</li>
+          <li>Page in Seitentabelle nachschlagen => Frame.</li>
+          <li>Physische Adresse = Frame + Offset.</li>
+        </ol>
+        <h3>Array ueber Pages</h3>
+        <div class="copy mono">Pages = floor((Offset + Laenge - 1)/PageSize)+1</div>
+      </section>
+
+      <section>
+        <h2>5. TLB / Page Fault</h2>
+        <div class="copy mono">EAT = h*T_hit + (1-h)*T_miss</div>
+        <p>TLB-Hit: TLB + Datenzugriff. Miss: TLB + Seitentabelle + Datenzugriff.</p>
+        <div class="must">10 ns TLB, 100 ns RAM, h=90%: Hit=110, Miss=210, EAT=120 ns.</div>
+        <h3>Page Fault Ablauf</h3>
+        <ol>
+          <li>Present-Bit 0 => Trap.</li>
+          <li>Prozess blockieren.</li>
+          <li>Freien Frame suchen / Opfer waehlen.</li>
+          <li>Dirty Opferseite zurueckschreiben.</li>
+          <li>Seite laden, Tabelle/TLB aktualisieren.</li>
+          <li>Instruktion spaeter erneut ausfuehren.</li>
+        </ol>
+        <p><b>Thrashing:</b> Working Sets passen nicht in Frames => viele Page Faults. Fix: Multiprogramminggrad senken.</p>
+      </section>
+
+      <section>
+        <h2>6. Replacement / Cache</h2>
+        <table class="short">
+          <tr><td>FIFO</td><td>ersetzt Seite, die am laengsten im Speicher ist.</td></tr>
+          <tr><td>LRU</td><td>ersetzt Seite, die am laengsten nicht benutzt wurde.</td></tr>
+          <tr><td>Clock</td><td>Use=1 -> 0 und weiter; Use=0 ersetzen.</td></tr>
+          <tr><td>OPT</td><td>ersetzt Seite, die am spaetesten wieder gebraucht wird.</td></tr>
+        </table>
+        <ol>
+          <li>Referenzen links nach rechts.</li>
+          <li>Bei Hit: LRU/Use-Bit aktualisieren.</li>
+          <li>Bei Fault: laden oder Opfer nach Regel.</li>
+          <li>Nach jedem Schritt alle Frames notieren.</li>
+        </ol>
+        <h3>Cache</h3>
+        <div class="copy mono">Misses = ceil(Bytes / Blockgroesse)</div>
+        <div class="copy mono">HitRate = Hits / Zugriffe</div>
+        <p>200 B, Block 64 B, Cold Cache => 4 Misses, 196 Hits, 98%.</p>
+      </section>
+    </div>
+  </div>
+</article>
+
+<article class="page">
+  <header>
+    <h1>BS Cheatsheet Abschreibvorlage - Seite 2/2</h1>
+    <div class="hint">Seite 2: Synchronisation, Deadlocks, Dateisysteme, Kurzantworten. Bei Platznot zuerst Fallenliste behalten.</div>
+  </header>
+
+  <div class="columns">
+    <div>
+      <section>
+        <h2>7. Synchronisation</h2>
+        <p><b>Race Condition:</b> Ergebnis haengt vom zeitlichen Ablauf nebenlaeufiger Zugriffe ab.</p>
+        <p><b>Kritischer Abschnitt:</b> Code mit gemeinsamer Ressource, exklusiv schuetzen.</p>
+        <table class="short">
+          <tr><td>Mutex</td><td>exklusiver Eintritt, initial 1.</td></tr>
+          <tr><td>Semaphore</td><td>Zaehler mit atomarem wait/signal.</td></tr>
+          <tr><td>Monitor</td><td>Daten + Prozeduren gekapselt, automatisch exklusiv.</td></tr>
+          <tr><td>Cond. Var.</td><td>wait gibt Monitor frei, signal weckt.</td></tr>
+        </table>
+        <div class="copy mono">Mutex: wait(S); krit. Abschnitt; signal(S)</div>
+        <p>Initialwert: 1 = freier Mutex, 0 = Reihenfolge/Event, N = Ressourcenpool.</p>
+      </section>
+
+      <section>
+        <h2>8. Semaphor-Code</h2>
+        <ol>
+          <li>Initialwerte an Code schreiben.</li>
+          <li>Nach jedem wait: "haelt S".</li>
+          <li>Bei wait auf belegtes S: "wartet auf S".</li>
+          <li>Bei signal: S wird freigegeben.</li>
+          <li>Deadlock suchen: P1 haelt S1 wartet S2, P2 haelt S2 wartet S1.</li>
+          <li>Mehrere Locks immer gleiche Reihenfolge nehmen.</li>
+        </ol>
+        <div class="must">Klassiker: P1 wait(S1),wait(S2); P2 wait(S2),wait(S1) => Deadlock moeglich.</div>
+        <h3>Producer / Consumer</h3>
+        <div class="copy mono">mutex=1, empty=N, full=0</div>
+        <p>Prod: <span class="mono">wait(empty), wait(mutex), insert, signal(mutex), signal(full)</span></p>
+        <p>Cons: <span class="mono">wait(full), wait(mutex), remove, signal(mutex), signal(empty)</span></p>
+      </section>
+
+      <section>
+        <h2>9. Deadlocks</h2>
+        <p><b>Deadlock:</b> zyklische Wartebeziehung, keiner kann die benoetigte Ressource freigeben.</p>
+        <ul>
+          <li>Mutual Exclusion</li>
+          <li>Hold and Wait</li>
+          <li>No Preemption</li>
+          <li>Circular Wait</li>
+        </ul>
+        <table class="short">
+          <tr><td>R -> P</td><td>Ressource R ist P zugeordnet.</td></tr>
+          <tr><td>P -> R</td><td>P wartet auf Ressource R.</td></tr>
+          <tr><td>P -> Q</td><td>P wartet auf Ressource, die Q haelt.</td></tr>
+        </table>
+        <div class="must">Eine Instanz je Ressource: Zyklus => Deadlock. Mehrere Instanzen: Zyklus nur Warnsignal.</div>
+        <h3>Mehrinstanz-Pruefung</h3>
+        <ol>
+          <li>Freie Instanzen zaehlen.</li>
+          <li>Prozess finden, dessen Request erfuellbar ist oder der nicht wartet.</li>
+          <li>Als fertig markieren, Ressourcen freigeben.</li>
+          <li>Wiederholen. Bleibt ein wartender Rest => Deadlock.</li>
+        </ol>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2>10. Dateisysteme</h2>
+        <div class="copy mono">belegt = ceil(Dateigroesse / Einheit) * Einheit</div>
+        <p>Einheit = Block oder Cluster. Immer auf ganze Einheit runden.</p>
+        <h3>FAT / Cluster</h3>
+        <div class="copy mono">FAT-Eintraege = 2^b</div>
+        <div class="copy mono">max Partition = Eintraege * Block/Cluster</div>
+        <div class="copy mono">FAT-Groesse = Eintraege * Bytes/Eintrag</div>
+        <p>16-bit FAT, 512 B: <span class="mono">2^16*512=32 MiB</span>.</p>
+        <p>Cluster i=3: <span class="mono">8*512=4096 B</span>, max 256 MiB.</p>
+        <p>652 B Datei: ohne Cluster 1024 B, mit Cluster 4096 B.</p>
+        <h3>Belegungsarten</h3>
+        <table class="short">
+          <tr><td>zusammenh.</td><td>schnell; aber Fragmentierung/Wachstum.</td></tr>
+          <tr><td>verkettet</td><td>kein zusammenh. Platz; Random schlecht, Zeigerplatz.</td></tr>
+          <tr><td>FAT</td><td>Kette in Tabelle; FAT gross, Clusterverlust.</td></tr>
+          <tr><td>I-Node</td><td>Index mit direkten/indirekten Adressen.</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>11. I-Node</h2>
+        <div class="copy mono">ptr = Blockgroesse / Adressgroesse</div>
+        <div class="copy mono">Daten = direkt + einfach*ptr + doppelt*ptr^2 + dreifach*ptr^3</div>
+        <div class="copy mono">MaxBytes = Datenbloecke * Blockgroesse</div>
+        <div class="must">Nutzdateigroesse: nur Datenbloecke. Plattenplatz: Daten + I-Node + Zeigerbloecke.</div>
+        <p>Beispiel: 8 direkte + 4 einfach indirekte, 128 Adr./Block, Block 512:</p>
+        <p class="mono">Daten = 8 + 4*128 = 520</p>
+        <p class="mono">Max = 520*512 = 266240 B = 260 KiB</p>
+      </section>
+
+      <section>
+        <h2>12. Kurzantworten</h2>
+        <table class="short">
+          <tr><td>Interrupt</td><td>asynchrone Unterbrechung; ISR behandelt Ereignis; Fortsetzung.</td></tr>
+          <tr><td>DMA</td><td>Controller uebertraegt Geraet-RAM; CPU initialisiert; Ende per Interrupt.</td></tr>
+          <tr><td>TLB</td><td>Cache fuer virtuelle->physische Adressuebersetzungen.</td></tr>
+          <tr><td>Thrashing</td><td>Working Sets passen nicht; viele Page Faults; wenig Nutzarbeit.</td></tr>
+          <tr><td>IPC</td><td>Pipes, Queues, Shared Memory, Sockets, Signale.</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>13. Fallenliste</h2>
+        <ul>
+          <li>EDF: absolute Deadline rechnen.</li>
+          <li>RMS: nach Periode, nicht nach C.</li>
+          <li>RMS-Grenze nur hinreichend.</li>
+          <li>Ready != Blocked.</li>
+          <li>Semaphor initial 0/1/N unterscheiden.</li>
+          <li>Mehrinstanzen: Zyklus allein reicht nicht.</li>
+          <li>Paging: Offsetbits aus Pagegroesse.</li>
+          <li>Array: Startoffset beachten.</li>
+          <li>Cache: Miss laedt ganzen Block.</li>
+          <li>Liste: Zeigerplatz abziehen.</li>
+          <li>FAT/Cluster: aufrunden.</li>
+          <li>I-Node: Nutzgroesse vs. Plattenplatz.</li>
+          <li>Theorie: Definition + Eigenschaft + Beispiel.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</article>
+</body>
+</html>
